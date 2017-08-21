@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>面向对象编程/函数式编程/过程式编程</title>
+</head>
+<body>
+	<script>
+		/****
+		 *阮一峰面向对象编程教程
+		 *http://www.ruanyifeng.com/blog/2010/05/object-oriented_javascript_encapsulation.html
+		 *
+		**/
+		/*第一节：封装*/
+		//构造函数Cat
+		function Cat(name, color){
+			this.name = name;
+			this.color = color;
+		}
+		//给构造函数配个原型(prototype对象)用于存放多个实例中的重复代码，节省内存，提高效率
+		Cat.prototype.type = '猫科动物';
+		Cat.prototype.eat = function(){
+			alert('吃老鼠');
+		}
+		//生成一个实例
+		var cat1 = new Cat('大毛','黄色');
+
+		/*第二节：继承*/
+		//封装一个继承的函数
+		function extend(Child, Parent){
+			var F = function(){};//声明一个空对象用于中转，避免了父子prototype对象关联导致污染
+			F.prototype = Parent.prototype;//关联父构造函数的原型
+			Child.prototype = new F();//获取了父prototype，并作为副本，就避免了污染的问题，同时改变了子构造函数的constructor
+			Child.prototype.constructor = Child;//把子构造函数的constructor重新指回构造函数
+			Child.uber = Parent.prototype;//原型备用
+		}
+	</script>
+</body>
+</html>
