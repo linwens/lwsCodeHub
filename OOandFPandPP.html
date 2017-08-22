@@ -17,6 +17,8 @@
 			this.name = name;
 			this.color = color;
 		}
+		function Animal(){}
+		Animal.prototype.species = '动物';
 		//给构造函数配个原型(prototype对象)用于存放多个实例中的重复代码，节省内存，提高效率
 		Cat.prototype.type = '猫科动物';
 		Cat.prototype.eat = function(){
@@ -24,16 +26,52 @@
 		}
 		//生成一个实例
 		var cat1 = new Cat('大毛','黄色');
-
+		//console.log(cat1.species);//undefined
 		/*第二节：继承*/
 		//封装一个继承的函数
 		function extend(Child, Parent){
 			var F = function(){};//声明一个空对象用于中转，避免了父子prototype对象关联导致污染
 			F.prototype = Parent.prototype;//关联父构造函数的原型
-			Child.prototype = new F();//获取了父prototype，并作为副本，就避免了污染的问题，同时改变了子构造函数的constructor
+			Child.prototype = new F();//获取了父prototype，并作为副本，就避免了污染的问题，同时改变了子构造函数的constructor的指向导致继承链的紊乱
 			Child.prototype.constructor = Child;//把子构造函数的constructor重新指回构造函数
 			Child.uber = Parent.prototype;//原型备用
 		}
+		//拷贝继承
+		function extend2(Child, Parent){
+			var p = Parent.prototype;
+			var c = Child.prototype;
+			for(var i in p){
+				c[i] = p[i]
+			}
+			c.uber = p;//实例里能访问的uber
+			//Child.uber = p;//实例里访问不到uber,因为：
+		}
+		//测试
+		extend2(Cat,Animal);
+		var cat2 = new Cat('大毛','黄色');
+		console.log(cat2.species);//动物
+		/*第三节：非构造函数的继承*/
+		/*
+		 *浅拷贝只是拷贝基础类型的值，对于数组或是对象就存在篡改的风险
+		 */
+		//深拷贝就是浅拷贝做递归
+		function deepCopy(obj,c){
+			var c = c||{};
+			for(var i in obj){
+				if(typeof obj[i] === 'object'){
+					/*typeof检查数组都是返回object的，所以不行，可以用instanceof 或者检查构造函数
+					 *http://blog.csdn.net/wmjblog/article/details/15026377
+					 */
+					c[i] = (obj[i].constructor = array) ? []:{}
+					deepCopy(obj[i],c[i])
+				}else{
+					c[i] = obj[i];
+				}
+			}
+			return c;
+		}
+
+		//延伸阅读，面向对象与面向过程写法差别：http://www.jianshu.com/p/76dd9f59c1cf
 	</script>
 </body>
 </html>
