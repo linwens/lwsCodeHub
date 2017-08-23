@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>用面向对象与面向过程两种写法写简单的拖拽效果</title>
+	<style>
+		#J_drag{
+			width: 100px;
+			height: 100px;
+			position: absolute;
+			left: 0;
+			top: 0;
+			background: #2AE8E6;
+		}
+	</style>
+</head>
+<body>
+	<div id="J_drag"></div>
+	<script>
+		window.onload = function(){
+			var dom = document.getElementById('J_drag');
+			//面向对象
+			var drager = new CreatDrager('J_drag');
+			//面向过程
+			//startDrag(dom)
+		}
+		//面向对象写法
+		function CreatDrager(id, callback){
+			this.left= 0;
+			this.top= 0;
+			this.currentX= 0;
+			this.currentY= 0;
+			this.flag= false;
+			this.target = document.getElementById(id);
+			this.startDrag();//触发函数绑定事件句柄
+		}
+		CreatDrager.prototype = {
+			constructor:CreatDrager,//《高设》里说的可写可不写，但是阮一峰大神的文章里说可能造成继承链紊乱，万一后期涉及了继承的内容，保险起见先写上
+			getCss:function(o, key){
+				return o.currentStyle? o.currentStyle[key] : document.defaultView.getComputedStyle(o,false)[key];
+			},
+			startDrag:function(){
+				if(this.getCss(this.target, "left") !== "auto"){
+					this.left = this.getCss(this.target, "left");
+				}
+				if(this.getCss(this.target, "top") !== "auto"){
+					this.top = this.getCss(this.target, "top");
+				}
+				var _this = this;
+				if(typeof window.addEventListener!='undefined'){
+					//PC端
+					this.target.addEventListener('mousedown',function(){_this.start()});
+					this.target.addEventListener('mousemove',function(){_this.move()});
+					this.target.addEventListener('mouseup',function(){_this.end()});
+					//移动端
+					this.target.addEventListener('touchstart',function(){_this.start()});
+					this.target.addEventListener('touchmove',function(){_this.move()});
+					this.target.addEventListener('touchend',function(){_this.end()});
+				}else{
+					this.target.attachEvent('onmousedown',function(){_this.start()});
+					this.target.attachEvent('onmousemove',function(){_this.move()});
+					this.target.attachEvent('onmouseup',function(){_this.end()});
+				}
+			},
+			start:function(event){
+				var e = event ? event : window.event;
+				console.log(this);
+				this.flag = true;
+				if(!event){
+					event = window.event;
+					//防止IE旧版本中点击选中文字，return false就可以了
+					this.target.onselectstart = function(){
+						return false;
+					}
+				}
+				var e = event;
+				//e.changedTouches如果存在，说明是移动端touch触摸事件，如果不存在说明是PC端点击事件
+				this.currentX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+				this.currentY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+			},
+			end:function(){
+				this.flag = false;
+				document.body.style.overflow='visible';	
+				if(this.getCss(this.target, "left") !== "auto"){
+					this.left = this.getCss(this.target, "left");
+				}
+				if(this.getCss(this.target, "top") !== "auto"){
+					this.top = this.getCss(this.target, "top");
+				}
+			},
+			move:function(event){
+				var e = event ? event: window.event;
+				e.preventDefault();
+				if(e.changedTouches){
+					document.body.style.overflow='hidden';
+				}
+				if(this.flag){
+					var nowX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX, 
+						nowY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+					var disX = nowX - this.currentX, 
+						disY = nowY - this.currentY;
+					this.target.style.left = parseInt(this.left) + disX + "px";
+					this.target.style.top = parseInt(this.top) + disY + "px";
+					//控制不超出可视范围
+					if((parseInt(this.left)+disX)<0){
+						this.target.style.left=0;
+					}else if((parseInt(this.left)+disX)>window.innerWidth-this.target.offsetWidth){
+						this.target.style.left=window.innerWidth-this.target.offsetWidth+'px';
+					}
+					if((parseInt(this.top)+disY)<0){
+						this.target.style.top=0;
+					}else if((parseInt(this.top)+disY)>window.innerHeight-this.target.offsetHeight){
+						this.target.style.top=window.innerHeight-this.target.offsetHeight+'px';
+					}
+				}
+				
+				if (typeof callback == "function") {
+					callback(parseInt(this.left) + disX, parseInt(this.top) + disY);
+				}
+			}
+		}
+		/*
+		//面向过程写法
+		var params = {
+			left: 0,
+			top: 0,
+			currentX: 0,
+			currentY: 0,
+			flag: false
+		};
+		//获取相关元素CSS属性（目标DOM节点，样式属性名）
+		var getCss = function(o,key){
+			return o.currentStyle? o.currentStyle[key] : document.defaultView.getComputedStyle(o,false)[key]; 	
+		};
+		//拖拽的实现（触发拖拽的对象，被拖拽的对象，回调函数）
+		var startDrag = function(target, callback){
+			if(getCss(target, "left") !== "auto"){
+				params.left = getCss(target, "left");
+			}
+			if(getCss(target, "top") !== "auto"){
+				params.top = getCss(target, "top");
+			}
+			if(typeof window.addEventListener!='undefined'){
+				//PC端
+				target.addEventListener('mousedown',start);
+				target.addEventListener('mousemove',move);
+				target.addEventListener('mouseup',end);
+				//移动端
+				target.addEventListener('touchstart',start);
+				target.addEventListener('touchmove',move);
+				target.addEventListener('touchend',end);
+			}else{
+				target.attachEvent('onmousedown',start);
+				target.attachEvent('onmousemove',move);
+				target.attachEvent('onmouseup',end);
+			}
+			
+			//o是移动对象
+			function start(event){
+				var e = event ? event : window.event;
+				params.flag = true;
+				if(!event){
+					event = window.event;
+					//防止IE旧版本中点击选中文字，return false就可以了
+					target.onselectstart = function(){
+						return false;
+					}
+				}
+				var e = event;
+				//e.changedTouches如果存在，说明是移动端touch触摸事件，如果不存在说明是PC端点击事件
+				params.currentX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+				params.currentY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+			};
+			function end(){
+				params.flag = false;
+				document.body.style.overflow='visible';	
+				if(getCss(target, "left") !== "auto"){
+					params.left = getCss(target, "left");
+				}
+				if(getCss(target, "top") !== "auto"){
+					params.top = getCss(target, "top");
+				}
+			};
+			function move(event){
+				var e = event ? event: window.event;
+				e.preventDefault();
+				if(e.changedTouches){
+					document.body.style.overflow='hidden';
+				}
+				if(params.flag){
+					var nowX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX, 
+						nowY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+					var disX = nowX - params.currentX, 
+						disY = nowY - params.currentY;
+					target.style.left = parseInt(params.left) + disX + "px";
+					target.style.top = parseInt(params.top) + disY + "px";
+					//控制不超出可视范围
+					if((parseInt(params.left)+disX)<0){
+						target.style.left=0;
+					}else if((parseInt(params.left)+disX)>window.innerWidth-target.offsetWidth){
+						target.style.left=window.innerWidth-target.offsetWidth+'px';
+					}
+					if((parseInt(params.top)+disY)<0){
+						target.style.top=0;
+					}else if((parseInt(params.top)+disY)>window.innerHeight-target.offsetHeight){
+						target.style.top=window.innerHeight-target.offsetHeight+'px';
+					}
+				}
+				
+				if (typeof callback == "function") {
+					callback(parseInt(params.left) + disX, parseInt(params.top) + disY);
+				}
+			}	
+		};
+		*/
+	</script>
+</body>
+</html>
