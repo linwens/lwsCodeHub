@@ -17,13 +17,11 @@
 <body>
 	<div id="J_drag"></div>
 	<script>
-		/*
-		//面向对象
+		
 		window.onload = function(){
-			var drager = new CreatDrager('J_drag');
+			var drager = new CreatDrager("J_drag");//实例化
 		}
-		//面向对象写法
-		function CreatDrager(id, callback){
+		function CreatDrager(id, callback){//构造函数，包含了元素运动的初始状态
 			this.left= 0;
 			this.top= 0;
 			this.currentX= 0;
@@ -32,7 +30,7 @@
 			this.target = document.getElementById(id);
 			this.startDrag();//触发函数绑定事件句柄
 		}
-		CreatDrager.prototype = {
+		CreatDrager.prototype = {//原型对象，包含了实现元素拖动效果的方法
 			constructor:CreatDrager,//《高设》里说的可写可不写，但是阮一峰大神的文章里说可能造成继承链紊乱，万一后期涉及了继承的内容，保险起见先写上
 			getCss:function(o, key){
 				return o.currentStyle? o.currentStyle[key] : document.defaultView.getComputedStyle(o,false)[key];
@@ -44,6 +42,8 @@
 				if(this.getCss(this.target, "top") !== "auto"){
 					this.top = this.getCss(this.target, "top");
 				}
+				//这里涉及一个this指向的问题，如果直接写成this.target.addEventListener('mousedown',this.start);那么在原型对象中的start方里的this是指向dom元素而不是构造函数，导致报错。
+				//这里的解决办法就是添加一个闭包
 				var _this = this;
 				if(typeof window.addEventListener!='undefined'){
 					//PC端
@@ -117,8 +117,8 @@
 				}
 			}
 		}
-		*/
-
+		
+		/*
 		//面向过程
 		var params = {
 			left: 0,
@@ -215,6 +215,7 @@
 				}
 			}	
 		};
+		*/
 	</script>
 </body>
 </html>
