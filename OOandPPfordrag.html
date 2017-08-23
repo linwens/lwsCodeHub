@@ -17,12 +17,10 @@
 <body>
 	<div id="J_drag"></div>
 	<script>
+		/*
+		//面向对象
 		window.onload = function(){
-			var dom = document.getElementById('J_drag');
-			//面向对象
 			var drager = new CreatDrager('J_drag');
-			//面向过程
-			//startDrag(dom)
 		}
 		//面向对象写法
 		function CreatDrager(id, callback){
@@ -119,8 +117,9 @@
 				}
 			}
 		}
-		/*
-		//面向过程写法
+		*/
+
+		//面向过程
 		var params = {
 			left: 0,
 			top: 0,
@@ -128,6 +127,10 @@
 			currentY: 0,
 			flag: false
 		};
+		window.onload = function(){
+			var dom = document.getElementById('J_drag');
+			startDrag(dom);
+		}
 		//获取相关元素CSS属性（目标DOM节点，样式属性名）
 		var getCss = function(o,key){
 			return o.currentStyle? o.currentStyle[key] : document.defaultView.getComputedStyle(o,false)[key]; 	
@@ -155,7 +158,7 @@
 				target.attachEvent('onmouseup',end);
 			}
 			
-			//o是移动对象
+			//为了能访问到需要拖动的元素target，把所有方法都写在了startDrag里，很占内存
 			function start(event){
 				var e = event ? event : window.event;
 				params.flag = true;
@@ -212,7 +215,6 @@
 				}
 			}	
 		};
-		*/
 	</script>
 </body>
 </html>
