@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>this关键字</title>
+</head>
+<body>
+	<input type="text" id="J_input">
+	<script>
+		/***********demo1**************/
+		//js中一切皆对象，运行环境也是对象，所以函数在哪个环境（对象）中运行，那this就指向这个环境（对象）。环境（对象）可切换，所以this的指向才会不确定。
+		var dom = document.getElementById('J_input');
+		//情况1
+		dom.addEventListener('focus', function(){
+			console.log(this);//<input type="text" id="J_input">
+			f1();//window
+		})
+		//情况2
+		dom.addEventListener('focus', f1);//<input type="text" id="J_input">
+		function f1(){
+			console.log(this);
+		}
+		/***
+		 *上面的例子说明，函数的执行作用域（this所指向的作用域）与它定义的作用域有关，与它调用的作用域无关
+		 *情况2相当于把整个f1函数传入addEventListener，那么在addEventListener里执行的时候就相当于在addEventListener里定义了一个新的f1，这个f1是在dom这个作用域下定义的，所以this指向dom,返回<input type="text" id="J_input">
+		**/
+		/***********demo2**************/
+		var o = {
+		  f1: function () {
+		    console.log(this);
+		    var f2 = function () {
+		      console.log(this);
+		    }();//注意写法，相当于前面说的IIFE，而且是一个匿名函数的IIFE，函数内部this指向window
+		  }
+		}
+		o.f1()// Object  // Window
+		/***
+		 *回忆IIFE的写法，那么把var f2 = ...就可以理解成一个IIFE，IIFE内的this指向顶层window
+		 *
+		**/
+		/***********demo3**************/
+		var counter = {
+			count: 0
+		};
+		counter.inc = function () {
+		   //'use strict';
+		   console.log(this);
+		   console.log(this.count);
+		   this.count++
+		};
+		var f = counter.inc;
+		f();
+		/***
+		 *在严格模式下，this指向顶层，就会返回undefined
+		 *在非严格模式下，this指向顶层，就会返回window
+		**/
+		/***********demo4**************/
+		var o = {
+			v: 'hello',
+		    p: [ 'a1', 'a2' ],
+		    f: function (){
+		      	this.p.forEach(function (item) {
+		        	console.log(this.v + ' ' + item);
+		      	});
+		    }
+		}
+		o.f();
+		/***
+		 *上面的例子中，第一个this指向o对象，这个没问题，但是第二个this指向的是window
+		 *因为第二个this是写在forEach的回调函数里的，forEach的回调函数里this指向顶层。
+		**/
+		/***********demo5**************/
+		if(!('bind' in Function.prototype)){
+			Function.prototype.bind = function(){
+		    	var fn = this;//需要绑定this指向的函数（函数也是对象）
+		    	var context = arguments[0];//获取第一个参数，即:this指向的对象
+		    	var args = Array.prototype.slice.call(arguments, 1);//获取arguments对象内的出第一个参数外的所有参数，并返回数组
+		    	//由于apply方法（或者call方法）不仅绑定函数执行时所在的对象，还会立即执行函数，因此不得不把绑定语句写在一个函数体内。
+		    	return function(){
+		      		return fn.apply(context, args);
+		    	}
+			}
+		}
+		/***
+		 *老浏览器不支持bind，自行编写。理解函数的逻辑。
+		 *
+		**/
+		/***********demo6**************/
+		var obj = {
+		  	name: '张三',
+		  	times: [1, 2, 3]
+		};
+		obj.print = function () {
+			console.log(this);//obj
+		  	this.times.forEach(function (n) {
+				console.log(this.name);
+		  	}.bind(this));
+		};
+		obj.print();
+		/***
+		 *bind(this)把forEach方法内的匿名函数里的this指向obj,本来是指向window
+		**/
+		/***********demo7**************/
+		var a = 10;
+		var obj = {
+		    a: 20
+		}
+		function fn () {
+			console.log(this);
+		    //this = obj; // 后台报错Invalid left-hand side in assignment
+		    console.log(this.a);
+		}
+		fn();
+		/***
+		 *在函数执行过程中，this一旦被确定，就不可更改了。
+		**/
+		/***********demo8**************/
+		var a = 20;
+		function fn() {
+			console.log(this);//window
+		    // function foo() {
+		    // 	console.log(this);//window
+		    //     console.log(this.a);
+		    // }
+		    // foo();
+		    var foo = function (){
+		    	console.log(this);//window
+		    }()
+		}
+		fn();
+		/***
+		 *函数声明在立即调用，就相当于一个匿名函数的IIFE，this指向window
+		 *
+		**/
+		/***********demo9**************/
+		var a = 20;
+		var obj = {
+		    a: 10,
+		    c: this.a + 20,
+		    fn: function () {
+		        return this.a;
+		    }
+		}
+		console.log(obj.c);//40
+		console.log(obj.fn());//10
+		/***
+		 *单独的{}是不会形成新的作用域的，因此这里的this.a，由于并没有作用域的限制，所以它仍然处于全局作用域之中。所以这里的this其实是指向的window对象。所以obj.c是40
+		 *
+		**/
+	</script>
+</body>
+</html>
