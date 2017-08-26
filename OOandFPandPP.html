@@ -43,8 +43,8 @@
 			for(var i in p){
 				c[i] = p[i]
 			}
-			c.uber = p;//实例里能访问的uber
-			//Child.uber = p;//实例里访问不到uber,因为：
+			c.uber = p;//实例里能访问的uber,实例里都包含一个[[Prototype]]指向构造函数的原型对象。
+			//Child.uber = p;//实例里访问不到uber,因为：这样只是Uber指向p，而不是Child的原型指向p。
 		}
 		//测试
 		extend2(Cat,Animal);
