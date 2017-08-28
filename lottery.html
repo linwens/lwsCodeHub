@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>模拟彩票（娱乐为主）</title>
+</head>
+<style>
+	.m-lottery p{
+		width: 200px;
+		height: 30px;
+		line-height: 30px;
+		border:1px solid #000;
+	}
+</style>
+<body>
+	<div class="m-lottery">
+		<p id="J_front">14,18,23,31,35</p>
+		<p id="J_end">05,12</p>
+	</div>
+	<input type="button" value="生成随机号码" class="u-createBtn" id="btn_create">
+	<input type="button" value="还原" class="u-resetBtn" id="btn_reset">
+	<script>
+		/***
+		 *1、先定义两个数组存储备选的普通号码和特殊号码
+		 *2、点击按钮获取数字，应该是无放回的抽取
+		 *
+		**/
+		function Lottery(front_id, end_id){
+			//this.creatBtn = id;
+			this.front_arr = [];
+			this.end_arr = [];
+			this.front_dom = document.getElementById(front_id);
+			this.end_dom = document.getElementById(end_id);
+			this.reset();
+		};
+		Lottery.prototype.choose = function(){//获取号码
+			var front_rslt = [],
+				end_rslt = [],
+				front_len = this.front_arr.length,
+				end_len = this.end_arr.length,
+				front_arr_cach = [],
+				end_arr_cach = [];
+			//拷贝原数组
+			for(var i = 0;i<front_len;i++){front_arr_cach[i]=this.front_arr[i]};
+			for(var i = 0;i<end_len;i++){end_arr_cach[i]=this.end_arr[i]};
+			//获取号码
+			for(var i = 0;i<5;i++){
+				var front_ri = Math.round(Math.random()*front_arr_cach.length);
+				front_rslt.push(front_arr_cach[front_ri]);
+				front_arr_cach.splice(front_ri,1);
+			}
+			for(var i = 0;i<2;i++){
+				var end_ri = Math.round(Math.random()*end_arr_cach.length);
+				end_rslt.push(end_arr_cach[end_ri]);
+				end_arr_cach.splice(end_ri,1);
+			}
+			this.front_dom.innerHTML = front_rslt.toString();
+			this.end_dom.innerHTML = end_rslt.toString();
+		};
+		Lottery.prototype.reset = function(){//生成选项数组
+			this.front_arr = [];
+			this.end_arr = [];
+			for(var i = 1;i<=35;i++){
+				this.front_arr.push(i)
+			}
+			for(var i = 1;i<=12;i++){
+				this.end_arr.push(i)
+			}
+			console.log(this.front_arr);
+			console.log(this.end_arr);
+		};
+		//实例化
+		var lottery = new Lottery('J_front','J_end');
+		//绑定点击事件
+		var btn_c = document.getElementById('btn_create'),
+			btn_r = document.getElementById('btn_reset');
+		btn_c.addEventListener('click',function(){
+			lottery.choose();
+		});
+		btn_r.addEventListener('click',function(){
+			lottery.reset();
+		});
+	</script>
+</body>
+</html>
