@@ -147,6 +147,68 @@
 		 *单独的{}是不会形成新的作用域的，因此这里的this.a，由于并没有作用域的限制，所以它仍然处于全局作用域之中。所以这里的this其实是指向的window对象。所以obj.c是40
 		 *
 		**/
+		/************demo10************/
+		function baz(){
+			console.log('baz');
+			console.log(this);//window
+			bar();
+		}
+		function bar(){
+			console.log('bar');
+			console.log(this);//window
+			foo();
+		}
+		function foo(){
+			console.log('foo');
+			console.log(this);//window
+		}
+		baz();
+		/***
+		 *独立调用的函数内部的this是指向window的
+		 *
+		**/
+		/************demo11************/
+		function Createperson(name){
+			this.name = name;
+		}
+		Createperson.prototype.sayHi = function(){
+			console.log(this.name);
+		}
+		var person1 = new Createperson('james');
+		console.log(person1.name);//james
+		person1.sayHi();//james
+		/***
+		 *构造函数中的this指向new出来的实例person1，第二个好理解，this指向当前被调用函数的所有者
+		**/
+		/*******demo12*******/
+		//不使用箭头函数
+		var obj = {
+		    birth: 1990,
+		    getAge: function () {
+		        var b = this.birth; // 1990
+		        var fn = function () {
+		            return new Date().getFullYear() - this.birth; // this指向window或undefined
+		        };
+		        return fn();
+		    }
+		};
+		obj.getAge();
+		//使用箭头函数
+		var obj2 = {
+		    birth: 1990,
+		    getAge: function () {
+		        var b = this.birth; // 1990
+		        var fn = () => new Date().getFullYear() - this.birth; // this指向obj对象
+		        return fn();
+		    }
+		};
+		obj2.getAge();
+		/***
+		 *不用箭头函数的话，getAge中的fn中的fn是独立调用，fn内部的this指向window
+		 *理解箭头函数中的this
+		 *
+		 *箭头函数中，this总是指向词法作用域，也就是外层调用者obj
+		**/
 	</script>
 </body>
 </html>
