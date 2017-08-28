@@ -45,12 +45,12 @@
 			for(var i = 0;i<end_len;i++){end_arr_cach[i]=this.end_arr[i]};
 			//获取号码
 			for(var i = 0;i<5;i++){
-				var front_ri = Math.round(Math.random()*front_arr_cach.length);
+				var front_ri = Math.floor(Math.random()*front_arr_cach.length);
 				front_rslt.push(front_arr_cach[front_ri]);
 				front_arr_cach.splice(front_ri,1);
 			}
 			for(var i = 0;i<2;i++){
-				var end_ri = Math.round(Math.random()*end_arr_cach.length);
+				var end_ri = Math.floor(Math.random()*end_arr_cach.length);
 				end_rslt.push(end_arr_cach[end_ri]);
 				end_arr_cach.splice(end_ri,1);
 			}
