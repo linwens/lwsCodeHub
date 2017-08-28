@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>全面理解this(你不知道的js)</title>
+</head>
+<body>
+	<script>
+		/************2demo1************/
+		function baz(){
+			console.log('baz');
+			console.log(this);//window
+			bar();
+		}
+		function bar(){
+			console.log('bar');
+			console.log(this);//window
+			foo();
+		}
+		function foo(){
+			console.log('foo');
+			console.log(this);//window
+		}
+		baz();
+		/***
+		 *独立调用的函数内部的this是指向window的
+		 *
+		**/
+	</script>
+</body>
+</html>
