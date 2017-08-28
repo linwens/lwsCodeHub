@@ -26,12 +26,19 @@
 		 *
 		**/
 		function Lottery(front_id, end_id){
-			//this.creatBtn = id;
 			this.front_arr = [];
 			this.end_arr = [];
 			this.front_dom = document.getElementById(front_id);
 			this.end_dom = document.getElementById(end_id);
-			this.reset();
+			this.create();
+		};
+		Lottery.prototype.create = function(){//生成数组
+			for(var i = 1;i<=35;i++){
+				this.front_arr.push(i)
+			}
+			for(var i = 1;i<=12;i++){
+				this.end_arr.push(i)
+			}
 		};
 		Lottery.prototype.choose = function(){//获取号码
 			var front_rslt = [],
@@ -57,17 +64,9 @@
 			this.front_dom.innerHTML = front_rslt.toString();
 			this.end_dom.innerHTML = end_rslt.toString();
 		};
-		Lottery.prototype.reset = function(){//生成选项数组
-			this.front_arr = [];
-			this.end_arr = [];
-			for(var i = 1;i<=35;i++){
-				this.front_arr.push(i)
-			}
-			for(var i = 1;i<=12;i++){
-				this.end_arr.push(i)
-			}
-			console.log(this.front_arr);
-			console.log(this.end_arr);
+		Lottery.prototype.reset = function(){//重置数组
+			this.front_dom.innerHTML = '';
+			this.end_dom.innerHTML = '';
 		};
 		//实例化
 		var lottery = new Lottery('J_front','J_end');
