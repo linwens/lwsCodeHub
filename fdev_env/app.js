@@ -5,6 +5,10 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var lessMiddleware = require('less-middleware');
+//跨域访问中间件
+var config = require('./config');
+var proxyMiddleware = require('http-proxy-middleware');
+
 
 var index = require('./routes/index');//处理页面路由
 var users = require('./routes/users');//处理请求url
@@ -24,6 +28,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(lessMiddleware(path.join(__dirname, 'public')));//less解析中间件
 app.use(express.static(path.join(__dirname, 'public')));
+//跨域处理
+app.use('/devapi',proxyMiddleware(config.dev.proxyTable));
 
 app.use('/', index);
 app.use('/users', users);

@@ -4,8 +4,25 @@
 	<meta charset="UTF-8">
 	<title>测试html文件</title>
 	<link rel="stylesheet" href="/stylesheets/style.css">
+	<script src="/javascripts/jquery.js"></script>
 </head>
 <body>
 	<div>可以诶<%= title%></div>
+	<script>
+		$(function(){
+			getMsg();
+		})
+		function getMsg(){
+			$.ajax({
+				url:'/devapi/app/borrow/typeBorrow.html',
+				type:'GET',
+				dataType:'json',
+				success:function(rslt){
+					console.log(rslt);
+				},
+				error:function(){}
+			})
+		}
+	</script>
 </body>
 </html>
