@@ -2,15 +2,19 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>测试html文件</title>
-	<link rel="stylesheet" href="/stylesheets/style.css">
-	<script src="/javascripts/jquery.js"></script>
+	<title>测试html</title>
+	<link rel='stylesheet' href='/css/test.css' />
+	<script src="js/jquery.js"></script>
+	<script src="js/test.js"></script>
 </head>
 <body>
-	<div>可以诶<%= title%></div>
+	<div>欢迎<%= title%>
+		<a href="javascript:;">a标签</a>
+		<p>测试下啥啥啥</p>
+	</div>
 	<script>
 		$(function(){
-			getMsg();//测试本地开发跨域
+			getMsg();
 		})
 		function getMsg(){
 			$.ajax({

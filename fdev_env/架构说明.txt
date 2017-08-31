@@ -1,0 +1,22 @@
+
+
+目的：为了前端本地开发调试不依赖后端eclipse;所以做个前端本地开发环境，开发完成直接把源码拖到公司服务器上。
+
+要具备的功能
+1、ajax跨域请求--ok
+2、热更新--ok
+3、路由前端控制
+4、个人开发参数可配
+5、less/es6解析，自动压缩到相应的文件夹--ok
+6、页面请求路径动态修改
+7、一个build命令，将dist内的资源美化并压缩
+
+用到的工具：
+1、nodemon：express修改自启动
+2、http-proxy-middleware代理跨域
+3、babel-core gulp-babel babel-preset-env.（babel-preset-env：用于自动设置将es6转换为相应版本的es旧版）
+4、browser-sync配置proxy指向自己起的node服务器
+
+
+极严重的一个问题：
+1、使用browser-sync，要确保gulp的task  return  工作流

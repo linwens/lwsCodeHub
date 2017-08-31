@@ -1,0 +1,12 @@
+div {
+  font-size: 16px;
+  color: #000;
+}
+div a {
+  color: #BC0E0E;
+}
+div a:hover {
+  color: #666;
+  -webkit-transform: rotate(10deg, 20deg);
+          transform: rotate(10deg, 20deg);
+}
