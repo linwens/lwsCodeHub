@@ -17,30 +17,28 @@ var babel = require('gulp-babel');
 var less = require('gulp-less');
 var autoprefixer = require('gulp-autoprefixer');
 var cache = require('gulp-cache');
+var runSequence = require('run-sequence');
 var browserSync = require('browser-sync').create();
+var nodemon = require('gulp-nodemon');
 var path = require('path');
+var del = require('del');
 
-var config = {
-	jsPath:{
-		src:'public/javascripts/**/*.js',
-		dist:'dist/js/'
-	},
-	cssPath:{
-		src:'public/stylesheets/**/*.less',
-		dist:'dist/css/'
-	}
-}
+var config = require('./config');
+// 删除文件
+gulp.task('clean', function(cb) {
+    return del(['dist/css/*', 'dist/js/*', 'dist/img/*'], cb)
+});
 //babel转换es5
 gulp.task('babel', function (){
-    return gulp.src('public/javascripts/**/*.js')
+    return gulp.src(config.dev.jsPath.src)
         .pipe(babel({
             presets: ['env']
         }))
-        .pipe(gulp.dest('dist/js/'))
+        .pipe(gulp.dest(config.dev.jsPath.dist))
 });
 //less转换css
 gulp.task('less', function (){
-  	return gulp.src('public/stylesheets/**/*.less')
+  	return gulp.src(config.dev.cssPath.src)
     	.pipe(less({
       		paths: [ path.join(__dirname, 'less', 'includes') ]
     	}))
@@ -49,19 +47,38 @@ gulp.task('less', function (){
     	    cascade: true, //是否美化属性值(对齐)，默认true
     	    remove:true //是否去掉不必要的前缀 默认：true
     	}))
-    	.pipe(gulp.dest('dist/css/'));
+    	.pipe(gulp.dest(config.dev.cssPath.dist));
 });
-//发布线上
-gulp.task('build',[],function(){
-	//后期优化
+//发布线上,清除代码并美化压缩js，css文件
+gulp.task('build', function(){//gulp正在监听，这时候打包会报错
+	runSequence('clean', ['babel', 'less'])
+});
+
+//启动node服务
+gulp.task('nodemon',function(cb){
+    var started = false;
+    return nodemon({
+      script: 'bin/www'
+    }).on('start', function () {
+      // to avoid nodemon being started multiple times
+      // thanks @matthisk
+      if (!started) {
+        cb();
+        started = true;
+      } 
+    });
+});
+
+gulp.task('browser-sync', ['nodemon'], function() {
+    browserSync.init({
+        proxy: process.env.PORT?"http://localhost:"+process.env.PORT:"http://localhost:3000",
+        browser: "chrome",
+        port: config.dev.devPort
+    });
 });
 //监听静态资源变化，热更新
-gulp.task('default',['babel','less'], function(){
-	browserSync.init({
-		proxy: "http://localhost:3000",//指向本地node服务，需要可配
-    	browser: "chrome"//官方文档错误，写Google chrome是找不到的
-    });
-	gulp.watch('public/stylesheets/**/*.less',['less']);
-	gulp.watch('public/javascripts/**/*.js',['babel']);
+gulp.task('default',['browser-sync'], function(){
+	gulp.watch(config.dev.cssPath.src,['less']);
+	gulp.watch(config.dev.jsPath.src,['babel']);
 	gulp.watch(['views/**/*.html', 'dist/js/**/*.js', 'dist/css/**/*.css']).on("change",browserSync.reload);
 });

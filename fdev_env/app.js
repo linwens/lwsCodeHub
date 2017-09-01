@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var proxy = require('http-proxy-middleware');
 
+var config = require('./config');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
@@ -24,13 +25,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'dist')));
 
-app.use('/devapi', proxy({
-	target: 'http://192.168.1.251:8188', 
-	changeOrigin: true,
-	pathRewrite:{
-		'^/devapi':''
-	}
-}))
+for(key in config.dev.proxyTable){
+  app.use(key, proxy(config.dev.proxyTable[key]));
+}
+
 app.use('/', index);
 app.use('/users', users);
 

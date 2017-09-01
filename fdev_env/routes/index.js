@@ -5,5 +5,8 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
+router.get('/activity/nationalDay.html', function(req, res, next) {
+  res.render('activity/nationalDay', { title: 'Express' });
+});
 
 module.exports = router;
