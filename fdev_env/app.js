@@ -8,7 +8,7 @@ var proxy = require('http-proxy-middleware');
 
 var config = require('./config');
 var index = require('./routes/index');
-var users = require('./routes/users');
+var mocks = require('./routes/mocks');
 
 var app = express();
 
@@ -24,13 +24,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'dist')));
-
+//跨域
 for(key in config.dev.proxyTable){
   app.use(key, proxy(config.dev.proxyTable[key]));
 }
 
 app.use('/', index);
-app.use('/users', users);
+app.use('/mocks', mocks);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

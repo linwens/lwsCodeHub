@@ -13,4 +13,12 @@ function getMsg() {
 		},
 		error: function error() {}
 	});
+	$.ajax({
+		url: '/mocks/getData',
+		type: 'GET',
+		success: function success(rslt) {
+			console.log(rslt);
+		},
+		error: function error() {}
+	});
 }
