@@ -10,6 +10,10 @@ module.exports = {
 			src:'public/stylesheets/**/*.less',
 			dist:'dist/css/'
 		},
+		imgPath:{//img加工路径
+			src:'public/images/**/*.{png,jpg,gif,ico}',
+			dist:'dist/img/'
+		},
 		devPort:8688,//本地开发端口号
 		proxyTable: {//设置跨域地址和路径名称
 		    '/devapi/':{

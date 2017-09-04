@@ -2,7 +2,7 @@
  *基本：
  *1、babel处理es6--ok
  *2、less解析成css--ok
- *3、图片压缩--环境各种报错
+ *3、图片压缩--用npm下载包，确保包下载完整！
  *4、实时监听静态资源(css,js)变化，并刷新浏览器--ok
  *******
  *build静态资源：
@@ -17,6 +17,7 @@ var babel = require('gulp-babel');
 var less = require('gulp-less');
 var autoprefixer = require('gulp-autoprefixer');
 var cache = require('gulp-cache');
+var imagemin = require('gulp-imagemin');
 var runSequence = require('run-sequence');
 var browserSync = require('browser-sync').create();
 var nodemon = require('gulp-nodemon');
@@ -28,6 +29,19 @@ var config = require('./config');
 gulp.task('clean', function(cb) {
     return del(['dist/css/*', 'dist/js/*', 'dist/img/*'], cb)
 });
+
+//图片压缩
+gulp.task('imagemin', function(){
+    return gulp.src(config.dev.imgPath.src)
+          .pipe(cache(imagemin([
+              imagemin.gifsicle({interlaced: true}),
+              imagemin.jpegtran({progressive: true}),
+              imagemin.optipng({optimizationLevel: 5}),
+              imagemin.svgo({plugins: [{removeViewBox: true}]})
+          ],{verbose:true})))
+          .pipe(gulp.dest(config.dev.imgPath.dist))
+});
+
 //babel转换es5
 gulp.task('babel', function (){
     return gulp.src(config.dev.jsPath.src)
@@ -51,7 +65,7 @@ gulp.task('less', function (){
 });
 //发布线上,清除代码并美化压缩js，css文件
 gulp.task('build', function(){//gulp正在监听，这时候打包会报错
-	runSequence('clean', ['babel', 'less'])
+	runSequence('clean', ['babel', 'less', 'imagemin'])
 });
 
 //启动node服务
@@ -80,5 +94,6 @@ gulp.task('browser-sync', ['nodemon'], function() {
 gulp.task('default',['browser-sync'], function(){
 	gulp.watch(config.dev.cssPath.src,['less']);
 	gulp.watch(config.dev.jsPath.src,['babel']);
-	gulp.watch(['views/**/*.html', 'dist/js/**/*.js', 'dist/css/**/*.css']).on("change",browserSync.reload);
+  gulp.watch(config.dev.imgPath.src,['imagemin']);
+	gulp.watch(['views/**/*.html', 'dist/js/**/*.js', 'dist/css/**/*.css', 'dist/img/**/*.{png,jpg,gif,ico}']).on("change",browserSync.reload);
 });
