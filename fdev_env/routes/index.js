@@ -11,7 +11,7 @@ router.get('/auth.html', authorize, function(req,res,next){
 	res.render('auth', { title: 'auth' });
 });
 //使用通配符，再根据url去查找文件目录
-router.get('/**/*.html', function(req,res,next){
+router.get('/*.html', function(req,res,next){
 	console.log('进入html渲染');
 	res.render(req.path.slice(1,req.path.length-5), { title: 'Express' });
 })

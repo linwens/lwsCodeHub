@@ -4,14 +4,17 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var proxy = require('http-proxy-middleware');
+var proxy = require('express-http-proxy');
+var session = require('express-session');
 
-var config = require('./config');
+//切换生产及开发环境
+var config = require('./config');   // 生产环境中使用的配置
+global.config = process.env.NODE_ENV === "development" ? config.dev : config.prod;
+
+var handleAjax = require('./ajax');//独立出一个处理请求的中间件
 var index = require('./routes/index');
-var mocks = require('./routes/mocks');
 
 var app = express();
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,13 +27,20 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'dist')));
-//跨域
-for(key in config.dev.proxyTable){
-  app.use(key, proxy(config.dev.proxyTable[key]));
-}
-
+app.use(session({//默认存到内存中，可以设置存到redis(研究中)
+    name:'hqbcookie',
+    secret:'hqb',
+    saveUninitialized: true,
+    resave: true,
+    // cookie:{
+    //     expires: new Date(Date.now() + 300000),//5分钟
+    //     maxAge:300000
+    // }
+}))
+//处理请求
+handleAjax(app);
+//页面渲染
 app.use('/', index);
-app.use('/mocks', mocks);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

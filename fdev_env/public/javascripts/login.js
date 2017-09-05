@@ -9,7 +9,7 @@ function doLogin(){
 	var data = {'username':username,'pwd':pwd};
 	
 	$.ajax({
-		url:'/users/login',
+		url:'/mocks/login',
 		type:'POST',
 		dataType:'JSON',
 		data:data,
