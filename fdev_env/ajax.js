@@ -4,7 +4,6 @@ var mocks = require('./routes/mocks');
 module.exports = function(app){
 	if(!config.proxyTable){
 		console.log('不需要跨域');
-		app.use('/mocks', mocks);
 	}else{
 		//跨域express转发并操作返回值
 		app.use('/mocks', mocks);

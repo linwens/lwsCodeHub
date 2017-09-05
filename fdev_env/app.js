@@ -16,6 +16,7 @@ var index = require('./routes/index');
 
 var app = express();
 console.log(process.env.NODE_ENV);
+console.log(config.assetsRoot);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.html', require('ejs').renderFile);
@@ -26,7 +27,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(config.assetsRoot));
 app.use(session({//默认存到内存中，可以设置存到redis(研究中)
     name:'hqbcookie',
     secret:'hqb',
