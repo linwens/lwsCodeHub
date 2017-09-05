@@ -12,7 +12,6 @@ router.post('/login', function(req, res, next) {
 		password:req.body.pwd
 	}
 	req.session.user = user;
-	console.log(req.session.user);
   	res.send('respond with a resource');
 });
 module.exports = router;
