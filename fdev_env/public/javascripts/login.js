@@ -1,19 +1,27 @@
 $(function(){
+	var str = commonParams();
 	$('#J_submit').on('click',function(){
-		doLogin();
+		doLogin(str);
 	})
 })
-function doLogin(){
+function doLogin(str){
 	var username = $('#J_name').val(),
-		pwd = $('#J_pwd').val();
-	var data = {'username':username,'pwd':pwd};
+		password = $('#J_pwd').val(),
+		validCode = $('#validCode').val();
+	var data = {
+		actionType: 'login',
+		username: username,
+		password: password,
+		validCode: validCode,
+	};
 	
 	$.ajax({
-		url:'/mocks/login',
+		url:'/api/user/doLogin.htm?'+str,
 		type:'POST',
 		dataType:'JSON',
 		data:data,
-		success:function(){
+		success:function(rslt){
+			console.log(rslt);
 			console.log('登陆成功！');
 		}
 	})

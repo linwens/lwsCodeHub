@@ -32,8 +32,12 @@ module.exports = {
 		},
 		devPort:8688,//本地开发端口号
 		proxyTable: {//设置跨域地址和路径名称
-		    '/devapi/':{
-		        target:'http://192.168.1.251:8188'
+		    '/api/':{
+		        target:'http://192.168.1.251:8188',
+		        changeOrigin: true,
+		        pathRewrite:{
+		        	'/api':''
+		        }
 		    }
 		}
 	}

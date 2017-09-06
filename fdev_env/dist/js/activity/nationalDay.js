@@ -5,7 +5,7 @@ $(function () {
 });
 function getMsg() {
 	$.ajax({
-		url: '/devapi/app/borrow/typeBorrow.html',
+		url: '/api/app/borrow/typeBorrow.html',
 		type: 'GET',
 		dataType: 'json',
 		success: function success(rslt) {

@@ -4,8 +4,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var proxy = require('express-http-proxy');
-var session = require('express-session');
+//var proxy = require('express-http-proxy');
+//var session = require('express-session');
 
 //切换生产及开发环境
 //var config = require('./config');   // 生产环境中使用的配置
@@ -28,6 +28,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(config.assetsRoot));
+/*
 app.use(session({//默认存到内存中，可以设置存到redis(研究中)
     name:'hqbcookie',
     secret:'hqb',
@@ -40,6 +41,7 @@ app.use(session({//默认存到内存中，可以设置存到redis(研究中)
         maxAge: config.cookies.maxAge
     }
 }))
+*/
 //处理请求
 handleAjax(app);
 //页面渲染
