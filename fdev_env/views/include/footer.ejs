@@ -1,0 +1,128 @@
+<div id="footer">
+    <div class="footer_inner footer_inner_new clearfix">
+        <div class="kefu kefu_new">
+        <p>
+            <a href="/article/list.htm?code=gywm" target="_blank">关于我们</a>
+            <a href="/safe.htm" target="_blank">安全保障</a>
+            <a href="/activityCenter.htm" target="_blank">活动中心</a>
+            <a href="/article/list.htm?code=reg_login" target="_blank">帮助中心</a>
+        </p>
+        <p class="info">客服热线：400-692-2828  　 工作日：09:00-20:00  　节假日：10:00-18:00 </p>
+        </div>
+        <div class="foot_bot foot_bot_new">
+            <p>
+                <a href="http://www.anquan.org/authenticate/cert/?site=www.huaqiaobao.cn&at=business" target="_blank">
+                    <img src='<%= G_staticPath%>/img/foot-img1.png' border='0' />
+                </a>
+                <a href="http://webscan.360.cn/index/checkwebsite/url/www.huaqiaobao.cn" target="_blank">
+                    <img src='<%= G_staticPath%>/img/foot-img4.png' border='0' />
+                </a>
+                <a  href='https://credit.szfw.org/CX20160106013128380158.html' target='_blank'>
+                    <img src='<%= G_staticPath%>/img/foot-img3.png' border='0' />
+                </a>
+                <a href="http://si.trustutn.org/info?sn=789160113000360434859" target='_blank'>
+                    <img src='<%= G_staticPath%>/img/foot-img2.jpg' />
+                </a>
+                <a href="https://trustsealinfo.websecurity.norton.com/splash?form_file=fdf/splash.fdf&dn=www.huaqiaobao.cn&lang=zh_cn" target='_blank'>
+                    <img src='<%= G_staticPath%>/img/foot-img5.png' style="height: 38px;"/>
+                </a>
+            </p>
+        </div>
+    </div>
+    <div class="copy copy_new">
+        <p>${copyright}</p>
+        <p>
+            <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33010402002841" target="_blank" >
+            <img src="<%= G_staticPath%>/img/foot-img6.png" border='0'style="vertical-align: middle;"/>浙公网安备 33010402002841号</a>&nbsp;&nbsp;${beian}&nbsp;&nbsp;ICP经营许可证编号：浙B2-20160903
+        </p>
+    </div>
+</div>
+<div class="fix_online_link_new">
+    <ul>
+        <li class="fix_online_li2 fix_wx_hover">
+            <a class="inner_icon iconfont"></a>
+            <div class="online_wx">
+                <p>关注华侨宝公众号</p>
+                <img src="<%= G_staticPath%>/img/hqb_wechat.jpg" alt="关注华侨宝微信号"  width="80">
+            </div>
+        </li>
+        <li class="fix_online_li3 cal_open_btn">
+            <a class="caculate_icon inner_icon iconfont"></a>
+            <div class="caculate_content hide" id="caculate_content">
+                <div class="ca_cantral">
+                    <input type="text" placeholder="输入投资金额" class="ca_money" maxlength="10">元
+                </div>
+                <div class="ca_cantral">
+                    <input type="text" placeholder="输入投资期限"  class="ca_mouth" maxlength="5">月
+                </div>
+                <div class="ca_cantral">
+                    <input type="text" placeholder="输入年化利率" class="ca_rate" maxlength="5">%
+                </div>
+                <div class="caculate_result">
+                    <p>收益：<span class="cal_num">0</span>元</p>
+                </div>
+                <div class="caculate_button">计算收益</div>
+                <p class="error_tip"></p>
+                <a class="closer"></a>
+            </div>
+        </li>
+        <li class="fix_online_li4 goTotop" id="backToTop">
+            <a class="inner_icon iconfont"></a>
+        </li>
+    </ul>
+</div>
+<script type="text/javascript">
+    slidingFunction();
+    $(window).scroll(function() {
+        slidingFunction();
+    });
+    function slidingFunction(){
+        var top_hei = document.body.scrollTop || document.documentElement.scrollTop;
+        (top_hei > 300) ? $("#backToTop").css("display", "block") : $("#backToTop").css("display", "none");
+    }
+    $(".goTotop").click(function() {
+        $("html, body").animate({
+            scrollTop: 0
+        }, 150);
+    });
+    $(function(){
+        var obj = $("#caculate_content");
+        var profit;
+        $(".ca_money").val("");
+        $(".ca_mouth").val("");
+        $(".ca_rate").val("");
+        $(".cal_num").html("0.00");
+        $(".caculate_button").click(function(){
+            var money =　$(".ca_money").val();
+            var mouth =　$(".ca_mouth").val();
+            var rate  =　$(".ca_rate").val();
+            profit = money*mouth*rate/1200;
+            if (isNaN(profit)) {
+                $(".caculate_content .error_tip").html("请输入合适的数字>.< ~")
+            }else{
+                console.log(profit)
+                var profit = profit.toFixed(2)
+                $(".cal_num").html(profit);
+                console.log(profit)
+            }
+        })
+        $(".closer").click(function(){
+            obj.addClass('hide');
+        })
+        $(".caculate_icon").click(function(){
+            if(obj.hasClass('hide')){
+                obj.removeClass('hide');
+            }else{
+                obj.addClass('hide');
+            }
+        })
+    })
+    //百度统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?1fb1438eb67b7a68acffbb63867b66e2";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>

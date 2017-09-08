@@ -1,17 +1,58 @@
+<% include ../cfg/envpath.ejs %>
 <!DOCTYPE html>
-<html lang="en">
+<html>
+<% var sid="login"%>
+<% var nid="member"%>
 <head>
-	<meta charset="UTF-8">
-	<title><%= title%></title>
-	<script src="/js/jquery.js"></script>
-	<script src="/js/cmn.js"></script>
-	<script src="/js/login.js"></script>
+<% include ./include/meta.ejs %>
+<% include ./include/linkScript.ejs %>
+<link href="<%= G_staticPath%>/css/user/reg.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-	<input type="text" id="J_name" /></br>
-	<input type="password" id="J_pwd" /></br>
-	<input type="text" name="validCode" id="validCode" maxlength="4" tabindex="3" autocomplete="off"  placeholder="请输入图形验证码"/>
-	<img src="/api/validimg.html" title="点击更换验证码" class="validcode-img" onclick="this.src='/api/validimg.html?t=' + Math.random();" id="imgCode" />
-	<input type="button" id="J_submit" value="登录" />
+    <% include ./include/header.ejs %>
+    <input type="text" style="display: none"  name="phone">
+    <input type="password" style="display: none" name="password">
+
+    <div class="clearfix regbox-bor_new">
+        <div class="reg-ad"><img src="<%= G_staticPath%>/img/register/login-ad.png" alt="华侨宝安全保障"></div>
+        <div class="regFrom_new">
+            <h1>欢迎登录</h1>
+            <div class="show-error iconfont"></div>
+            <ul class='reg_ul'>
+                <li>
+                    <div class="list_contral">
+                      <i class="iconfont">&#xe62f;</i>
+                        <input type="text" name="username" id="username" tabindex="1" autocomplete="off" placeholder="请输入手机号">
+                    </div>
+                </li>
+                <li>
+                    <div class="list_contral">
+                        <i class="iconfont">&#xe62e;</i>
+                        <input type="password" name="password" id="password" maxlength="16" tabindex="2" autocomplete="off" placeholder="请输入密码">
+                    </div>
+                </li>
+                <li class="clearfix">
+                    <div class="list_contral list_contral_other wid50">
+                        <i class="iconfont">&#xe630;</i>
+                        <input type="text" name="validCode" id="validCode" maxlength="4" tabindex="3" autocomplete="off"  placeholder="请输入图形验证码"/>
+                    </div>
+                    <img src="/validimg" title="点击更换验证码" class="validcode-img" onclick="this.src='/validimg?t=' + Math.random();" id="imgCode" />
+                </li>
+                <li>
+                    <div  class="btn-login active" />登录</div>
+                    <div class="notes clearfix">
+                        <a href="/user/getpwd.html" class="forget">忘记密码？</a>
+                        <a class="go_register" href="/user/register.html">没有账号？立即注册</a>
+                    </div>
+                </li>
+                <li class="reg_notice tc"><i class="iconfont">&#xe65c;</i>您的信息已使用<span>SSL加密</span>技术，数据传输更安全</li>
+            </ul>
+        </div>
+    </div>
+    <% include ./include/footer.ejs %>
 </body>
+<script src="<%= G_staticPath%>/js/login.js?v=2.6.0"></script>
+<script>
+    loginFun("/invest/index.html");
+</script>
 </html>

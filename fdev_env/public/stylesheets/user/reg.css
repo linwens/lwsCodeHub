@@ -1,0 +1,241 @@
+
+/* 登录页面new:   begin  2016-07-22*/
+.regbox-bor_new{width: 1210px;margin:0px auto;    padding: 55px 0 70px 0;}
+.regbox-bor_new .reg-ad{float:left;}
+.regFrom_new{width:298px;float:right;background:#fff;padding:40px 50px 15px 50px;margin-top:140px;border: 1px solid #eceaea;border-radius: 4px;}
+.regFrom_new h1{color: #2d2d2d;font-size: 24px;text-align:center;margin-bottom: 15px;}
+.regFrom_new .show-error{-webkit-text-stroke-width: inherit;font-size: 14px;;height: 30px;line-height: 30px;color: #fe6164;background: #fff2f3;border: 1px solid #fe6164;width: 300px;margin-bottom:10px;box-sizing: border-box;display: none;}
+.regFrom_new .show-error:before{content: "\e632";font-size: 20px;vertical-align: middle;margin: 0 5px;}
+.regFrom_new .show-error.active{display: block;}
+.regFrom_new .reg_ul .iconfont{font-size: 20px;color: #a6a3a3;margin:0 5px;vertical-align: middle;}
+.regFrom_new .reg_ul li{margin-bottom: 20px;}
+.regFrom_new .reg_ul .list_contral{border:1px solid #eceaea;border-radius: 3px}
+.regFrom_new .reg_ul .list_contral input{border: none;padding:10px 0;width: 250px;}
+.regFrom_new .reg_ul .list_contral.wid50{width:50%;float: left;}
+.regFrom_new .reg_ul .list_contral.list_contral_other input{width: 110px;}
+.regFrom_new .reg_ul li img{float: right;cursor: pointer;}
+.regFrom_new .reg_ul li .btn-login{margin:28px 0 10px 0;cursor: pointer;font-size: 18px;background: #ABABAB;color: #fff;text-align: center;padding: 13px 0;border-radius: 3px;}
+.regFrom_new .reg_ul li .btn-login.active{background: #ec3a2e;}
+.regFrom_new .reg_ul li .btn-login.active:hover{background: #d7180b;}
+.regFrom_new .reg_ul li .notes .forget{color: #ec3a2e;}
+.regFrom_new .reg_ul li .notes .go_register{color: #6298c4;float: right;}
+
+.regFrom_new li .list_contral.error{border:1px solid #ec584e;}
+.regFrom_new li .list_contral.active{border:1px solid #00B50E;}
+
+/* 2.8 新增“加密保障”  张瑞芳修改 */
+.regFrom_news{width:298px;float:right;padding:20px 50px 5px 50px;}
+.regFrom_news .reg_notice{color: #5e5e5e;font-size: 12px;margin-bottom: 10px;line-height: 19px;}
+.regFrom_news .reg_notice .iconfont{color: #e83c36;font-size: 19px;margin-right:8px;vertical-align: middle;}
+.regFrom_news .reg_notice span{color: #e83c36;}
+
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: #a6a3a3; opacity:1; 
+}
+
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: #a6a3a3;opacity:1;
+}
+
+input:-ms-input-placeholder{
+    color: #a6a3a3;opacity:1;
+}
+
+input::-webkit-input-placeholder{
+    color: #a6a3a3;opacity:1;
+}
+
+/* 登录页面:end */
+
+/* 注册页面 new :begin */
+.bg-register_new{padding:20px 0;}
+.wp-form-register_new{width: 1020px;background: #fff;margin: 0 auto;overflow: hidden;padding:40px 70px 40px 70px;}
+.step_progress_new{font-size: 18px;color: #fe6164}
+.step_progress_new li{position: relative;z-index: 1;float: left;width: 500px;background: #fff2f3;padding: 15px 0;text-align: center;}
+.step_progress_new li:after{width: 38px;height: 38px;content: '';display: block;background: #fff2f3;
+  position: absolute;right: -19px;top: 8px;transform: rotate(45deg);-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);}
+.step_progress_new li:nth-child(1){margin-right: 15px;z-index: 2;}
+.step_progress_new li:nth-child(2){border-top-right-radius: 4px;border-bottom-right-radius: 4px;}
+.step_progress_new li.active{background: #ec3a2e;color: #fff;border-bottom-left-radius: 4px;
+  border-top-left-radius: 4px;}
+.step_progress_new li.active:after{background: #ec3a2e;}
+.step_progress_new li:nth-child(2):after{background: #fff;left: -19px;}
+.wp-form-register_new .reg-ad{margin: 70px 0 0 30px;float: left;}
+.wp-form-register_new .regFrom_new{border: none;margin-top: 45px;width: 320px;padding-right: 90px;}
+.wp-form-register_new .regFrom_new .reg_ul li{position: relative}
+.wp-form-register_new .regFrom_new .reg_ul li .errMsg_contral{-webkit-text-stroke-width: inherit;display: none;width: 155px;height: 100%; position: absolute;right: -160px;top: 0;}
+.wp-form-register_new .regFrom_new .reg_ul li .errMsg_contral .iconfont{color: #fe6164;font-size: 15px;margin:0;}
+.wp-form-register_new .regFrom_new .reg_ul li .errMsg{color: #fe6164;font-size: 14px;height: 50px; display: table-cell;vertical-align: middle;padding-left:3px}
+.wp-form-register_new .regFrom_new .reg_ul .list_contral{padding:6px 0;position:relative;}
+.wp-form-register_new .regFrom_new .reg_ul .list_contral.focus{border-color: #be873c;}
+.wp-form-register_new .regFrom_new .reg_ul .list_contral.active{border:1px solid #00B50E;}
+.wp-form-register_new .regFrom_new .reg_ul .list_contral.error{border-color: #fe6164;}
+.wp-form-register_new .regFrom_new .reg_ul .list_contral.error+.errMsg_contral{display: block;}
+.wp-form-register_new .regFrom_new .reg_ul .list_contral input{border-radius:0;border-left: 1px solid #eceaea;padding:9px 0 9px 20px}
+.wp-form-register_new .regFrom_new .reg_ul .list_contral .iconfont{font-size: 24px;}
+.wp-form-register_new .regFrom_new .reg_ul .list_contral.list_contral_other input{width:140px;}
+.wp-form-register_new .regFrom_new .reg_ul .list_contral.list_contral_other img{height: 36px;cursor: pointer;}
+.wp-form-register_new .regFrom_new .reg_ul .list_contral.list_contral_other .send_code_btn{float: right;position:absolute;right: 3px;top: 3px;
+  color:#9CA5AD;background: #f5f3f3;border-radius: 3px;height: 42px;line-height: 42px;padding: 0 10px;cursor: pointer;}
+.wp-form-register_new .regFrom_new .reg_ul .list_contral.list_contral_other .send_code_btn.active{color: #ec3a2e;}
+.wp-form-register_new .regFrom_new .reg_ul li .code_notes{font-size: 12px;text-align: right;padding: 4px 0 10px 0;}
+.wp-form-register_new .regFrom_new .reg_ul li .code_notes b{cursor: pointer;color:#9CA5AD}
+.wp-form-register_new .regFrom_new .reg_ul li .code_notes b.active{color: #6298c4;}
+.wp-form-register_new .regFrom_new .reg_ul .marginB0{margin-bottom:0}
+.wp-form-register_new .regFrom_new .reg_ul .protocol{margin-top: 10px;font-size: 12px;
+  -moz-user-select:none;/*火狐*/
+  -webkit-user-select:none;/*webkit浏览器*/
+  -ms-user-select:none;/*IE10*/
+  -khtml-user-select:none;/*早期浏览器*/
+  user-select:none;}
+.wp-form-register_new .regFrom_new .reg_ul .protocol .checkbox{cursor: pointer;-webkit-text-stroke-width: inherit;margin:0 3px 0 0;}
+.wp-form-register_new .regFrom_new .reg_ul .protocol .checkbox:before{content:"\e62c";font-size: 16px;vertical-align: middle;}
+.wp-form-register_new .regFrom_new .reg_ul .protocol.error .checkbox:before{color: #fe6164}
+.wp-form-register_new .regFrom_new .reg_ul .protocol .checkbox.active:before{content:"\e625";color:#00b057}
+.wp-form-register_new .regFrom_new .reg_ul .protocol a{color: #ec3a2e;}
+.wp-form-register_new .regFrom_new .reg_ul .protocol.error+.errMsg_contral{display: block;}
+.wp-form-register_new .regFrom_new .reg_ul .protocol+.errMsg_contral span{height: 23px}
+.wp-form-register_new .regFrom_new .btn-register{color: #fff;background: #ABABAB;display: block;text-align: center;padding: 13px 0;font-size: 18px;border-radius: 3px;margin: 45px 0 8px 0;}
+.wp-form-register_new .regFrom_new .btn-register.active{background: #ec3a2e;}
+.wp-form-register_new .regFrom_new .btn-register.active:hover{background: #d7180b;}
+.wp-form-register_new .regFrom_new .go-login a{color: #ec3a2e;}
+
+.wp-form-register_new .reg_success{text-align: center;}
+.wp-form-register_new .reg_success .reg_success_txt{margin-top: 60px}
+.wp-form-register_new .reg_success .content{width: 720px;margin:40px auto 0 auto;padding-bottom: 40px;}
+.wp-form-register_new .reg_success .left{float: left;}
+.wp-form-register_new .reg_success .right{float: right;padding-top: 52px;}
+.wp-form-register_new .reg_success a{width: 300px;height: 50px;display: block;line-height: 50px;
+  font-size: 18px;background: #ec3a2e;color: #fff;border-radius: 3px;margin-top: 50px;box-sizing: border-box;}
+.wp-form-register_new .reg_success .right a{border: 1px solid #eceaea;background: #fff;color: #2d2d2d;}
+.wp-form-register_new .reg_success a:hover{background: #d7180b;}
+.wp-form-register_new .reg_success .right a:hover{background: #F3F2F2}
+
+
+
+/*服务条款*/
+#dialog-protocol{width: 1145px;overflow-x: hidden;overflow-y: auto;padding: 0 20px;background: #fff;}
+#dialog-protocol h1{line-height: 40px;font-size: 24px;text-align: center;color: #333;}
+#dialog-protocol h2{line-height: 30px;margin-top: 15px;font-size: 18px;color: #f6d066;}
+#dialog-protocol h3{line-height: 26px;font-size: 14px;color: #ae8e2d;}
+#dialog-protocol p{line-height: 22px;margin-bottom: 10px;font-size: 14px;text-indent: 20px;color: #555;}
+#dialog-protocol ul li{line-height: 22px;font-size: 14px;text-indent: 20px;list-style-type: square;list-style-position: inside;}
+/* 注册页面:end */
+
+/* 找回密码:begin */
+/*.forgetpwd_tit{margin-bottom: 31px;}
+.getpwdbtn {text-align: center;}
+.getpwdbtn .btn-get-pwd{color:#fff;width:316px;height:40px;line-height: 40px;border:0;background: #fc5014;border-radius: 5px;font-size:14px;font-family:'Microsoft YaHei';}
+.wp-form-login li.return_link{text-align: center;margin-top: 10px;}
+.wp-form-login li.getpwdbtn{margin-top: 40px;}*/
+.return_link a{color:#737373;text-align: center;}
+.return_link a:hover{color:#fc5014;}
+.getpwd_step2_ul .sendcode_tip{font-size: 14px;color:#fc5014;}
+.getpwd_step2_ul .code_li{font-size: 14px;color:#333;}
+.getpwd_step2_ul .code_li input{display: inline-block;width: 100px;height:25px;line-height: 25px;padding:2px 5px;}
+.getpwd_step2_ul .code_li .send_code_btn{
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 120px;
+    height: 30px;
+    line-height: 30px;
+    background: #f5f5f9;
+    text-align: center;
+    color: #8d8d8d;
+    border: 0;
+    padding: 0;
+}
+.getpwd_step2_ul .code_li .send_code_btn.active{background: #d84836;color:#fff;}
+.btn-get-pwd{cursor: pointer;}
+.regFrom .error_area{color:#d84836;}
+.regFrom li.error_area_li{margin-top:13px;text-indent: 50px;}
+
+.setpwd_success{color:#000;font-size: 16px;text-align: center;}
+.setpwd_success a{color:#d84836;text-decoration: underline;}
+.setpwd_success .succ_tit{color:#d84836;font-size: 18px;margin-bottom: 10px;}
+/* 找回密码:end */
+
+/* 重置密码:begin */
+.wp-form-setpwd{width: 980px;height: 390px;margin: 30px auto;background: #fff url(../bg/bg-setpwd.png) no-repeat 430px 0;box-shadow: 1px 1px 10px rgba(150, 150, 150, 0.3);}
+.form-setpwd {position: relative;float: left;width: 400px;background: #fff;margin-top: 20px;}
+.form-setpwd .show-error{display: none;position: absolute;top: 20px;height: 34px;color: #f00;line-height: 34px;background: #FCEBEC;border: 1px solid #FFD8D9;font-size: 14px;border-radius: 3px;padding: 0 10px;right: 0;}
+.form-setpwd ul #bg-password-strength{height: 20px;line-height: 20px;margin-bottom: 10px;text-indent: 40px;}
+.form-setpwd ul .strength{background: url(../bg/password-strength.png) no-repeat 50px 20px;}
+.form-setpwd ul li{position: relative;margin-bottom: 10px;height: 80px;}
+.form-setpwd ul li.username{height: 50px;margin-top: 20px;}
+.form-setpwd ul li label{float: left;width: 120px;line-height: 50px;font-size: 16px;text-align: right;}
+.form-setpwd ul li input{float:left;width: 263px;height: 18px;padding: 15px 0 15px 15px;font: bold 16px/18px 'Verdana','Microsoft YaHei';background: #fff;color: #333;outline:0;letter-spacing:1px;}
+.form-setpwd ul li.username label{line-height: 30px;}
+.form-setpwd ul li.username span{font: 18px/30px 'Arial','Microsoft YaHei';color: #222;}
+.form-setpwd ul li .tooltip-input{line-height: 30px;}
+.form-setpwd ul li .tooltip-input.error{color: #f20c00;}
+.form-setpwd ul li .tooltip-input.error img{float: left;margin: 6px 3px 0 0;}
+.form-setpwd ul li .icon-input-right{width: 16px;height: 16px;background: url(../bg/icon-right.png) no-repeat;position: absolute;right: 30px;top: 16px;}
+.form-setpwd ul li .btn-setpwd{display: block;width: 280px;height: 50px;line-height: 50px;margin-left: 120px;font-size: 14px;text-align: center;background: #f6d066;letter-spacing: 10px;color: #FFF;border-radius: 3px;padding: 0;border: none;}
+.blue{color: #6298c4;}
+/* 重置密码:end */
+
+
+/* 登录页面:begin*/
+.regbox-bor{width:988px;border:0px solid #e2e2e2;padding:10px 0px 160px 0;background: #fff;margin:30px auto;}
+.regFrom{width: 100%;border:0px solid #e2e2e2;margin-top: 40px;position: relative; margin: 0 auto;}
+.regFrom h1{color: #2d2d2d; font-size: 24px; text-align: center; width: 100%; padding: 30px 0; border-bottom:  solid 1px #eceaea; margin-bottom: 60px;}
+#getpwd_step1{width: 420px; margin: 0 auto;}
+.contral-input{display: inline-block;border: solid 1px #eceaea; width: 35%;;height: 35px;line-height: 35px;padding-left: 10px; width:280px;  margin-left: 5px;}
+.send_code_btns{
+    float: right;
+    right: 3px;
+    top: 3px;
+    color: #ec3a2e;
+    background: #f5f3f3;
+    border-radius: 3px;
+    height: 30px;
+    line-height: 30px;
+    margin-top: 2px;
+    padding: 0 10px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-right: 3px;
+}
+.regFrom .show-error{height:38px;line-height: 38px;color:#d84836;text-indent: 10px;border-radius: 5px; position: absolute;top:0px;left:300px;width:380px;background:#ffded1;display: none;}
+.regFrom .show-error.active{display: block;}
+.regFrom .go_register,.regFrom li .go-login{color: #4ec5ec;font-weight: bold;float:right;line-height: 40px; }
+.regFrom .go_register a,.regFrom li .go-login a,.bg-register .go-login a{color: #008EBD;}
+.bg-register .go-login a:hover{text-decoration: underline;}
+.regFrom .go_register a:hover,.regFrom li .go-login a:hover{text-decoration: underline;}
+.regFrom li{position: relative;margin-top: 20px;}
+.regFrom li:nth-child(1){margin-top: 10px;}
+.regFrom li.input_bg input,.regFrom  li.input_text2 input{height: 30px;line-height:30px;border:1px solid #e8e8e8;color: #333;display: inline-block;vertical-align: middle;text-indent: 10px;}
+.noline{border: 0; font-size: 12px; }
+.regFrom li.input_bg input{width: 290px;}
+.mylabel{ float: left;}
+.regFrom li input.error,.regFrom  ul.reg_ul li.input_text2 input.error{border:1px solid #ec584e;}
+.regFrom li input.active,.regFrom  ul.reg_ul li.input_text2 input.active{border:1px solid #00B50E;}
+.regFrom li label{display: inline-block;vertical-align: middle;width:80px;height:30px;line-height:30px;color: #2d2d2d;text-align: right;padding-right: 20px}
+.regFrom li .icon_username,.regFrom li .icon_pwd{display: inline-block;vertical-align: middle;width:22px;height:41px;background-position: -1px -6px;}
+.regFrom li .icon_pwd{width:29px;height:33px;background-position: -1px -54px;}
+.reg_ul .click-code,.regbox-bor .click-code{display: block;line-height: 40px;height: 40px;text-indent: 106px;}
+.reg_ul .click-code b,.regbox-bor .click-code b{color:#008EBD;cursor: pointer;text-decoration: underline;}
+.regbox-bor .click-code{text-indent: 40px;}
+.regbox-bor .mt10{margin-top: 10px;}
+.regFrom li .forget{float:left;color: #fc5014;font-size: 12px;line-height: 40px;font-weight: bold;}
+.regFrom li .validcode-img{width: 90px;display: inline-block;vertical-align: middle;margin-left: 10px;cursor: pointer;}
+.regFrom .btn-login,.regFrom .btn-get-pwd,.regFrom .btn-register{margin-top: 20px;
+  display: inline-block;width: 290px;height:50px;line-height:50px;
+  background: #ec3a2e;color: #fff;font-size: 18px;text-align: center; margin-left: 23%;
+  border: 0;cursor: pointer;border-radius: 3px;
+}
+.regFrom .btn-login.active,.regFrom .btn-get-pwd.active,.regFrom .btn-register.active{background: #ABABAB;}
+.gologin a{ margin-left: 23%; color: #fc5014;}
+#getpwd_step3{width: 420px; margin: 0 auto;}
+
+.tipssuccess{width: 320px; height: auto; padding: 30px 40px; background: #f4f4f4; border-radius: 15px;}
+.tipssuccess .titles{text-align: center; font-size: 18px; font-family: '黑体';    height: 40px;  line-height: 40px; margin-bottom: 20px;}
+.tipssuccess .contentst{height: auto; line-height: 25px;letter-spacing: 0.5px; margin-bottom: 15px;}
+.greencolor{color: #09bc58; font-size: 30px; margin-top: 15px; padding-right: 5px;}
+.goindexs{ color: #6298c4;}
+
+
+
+/* 登录页面:end */

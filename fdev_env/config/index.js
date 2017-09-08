@@ -8,6 +8,15 @@ module.exports = {
 			httpOnly: true,//确保cookie仅通过HTTP(S)被发送，而不是客户端的JavaScript。用来帮助抵御跨站脚本攻击。
 			domain: 'www.hqblicai.com',//确保在指定域名下才发送cookies
 			maxAge:600000//cookie有效期
+		},
+		proxyTable: {//设置跨域地址和路径名称
+		    '/api/':{
+		        target:'',//生成环境地址
+		        changeOrigin: true,
+		        pathRewrite:{
+		        	'/api':''
+		        }
+		    }
 		}
 	},
 	dev:{
@@ -31,6 +40,7 @@ module.exports = {
 			maxAge:600000
 		},
 		devPort:8688,//本地开发端口号
+		proxyDomain:'http://p2psystem.huaqiaobao.cn:83',
 		proxyTable: {//设置跨域地址和路径名称
 		    '/api/':{
 		        target:'http://192.168.1.251:8188',

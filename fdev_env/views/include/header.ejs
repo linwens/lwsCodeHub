@@ -1,0 +1,68 @@
+<div id="header">
+    <div class="wrp_toplink">
+        <div class="toplink_conten clearfix">
+            <div class="kefu_time_top clearfix">
+                <p class="left"><i class="iconfont">&#xe604;</i>客服电话：400-692-2828 </p>
+                <ul class="netlink">
+                    <li class="wrp_show_block wx_block">
+                        <i class="iconfont iconfont_wx">&#xe601;</i>
+                        <div class="show_block wx_show">
+                            <p>关注华侨宝公众号</p>
+                            <img src="<%= G_staticPath%>/img/hqb_wechat.jpg" alt="华侨宝微信公众号">
+                        </div>
+                    </li>
+                    <li class="wrp_show_block wb_block">
+                        <a href="http://weibo.com/u/5703152346#_rnd1445840787323" target="_blank"><i class="iconfont">&#xe602;</i></a>
+                        <div class="show_block wb_show">点击关注华侨宝微博</div>
+                    </li>
+                    <li class="wrp_show_block pnone_block">
+                        <i class="iconfont icon_phone"></i>下载app
+                        <div class="show_block phone_show">
+                            <p>扫码下载手机客户端</p>
+                            <img src="<%= G_staticPath%>/img/QRcode-all.png" alt="华侨宝手机客户端下载">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="entrance">
+                <a href="/article/list.htm?code=reg_login" class="register_pad"><i class="iconfont">&#xe62a;</i>帮助中心</a>
+                <!-- 登陆后方session，再通过router.render，把req.session.user传到页面上 -->
+                <% var user = {username:'hqb'}%>
+                <%if(user){%>
+                    <a href="/member/index.html" class="username register_pad">Hi,<%= user.username%></a>
+                    <a href="/user/logout.html">退出</a>
+                <%}else{%>
+                    <a href="/user/login.html" class="register_pad">登录</a>
+                    <a href="/user/register.html" >注册</a>
+                <%}%>
+            </div>
+        </div>
+    </div>
+    <div class="navigation clearfix">
+        <div class="wrp_logo">
+            <a href="/" class="icon_a">
+                <b class="iconfont iconlogo">&#xe612;</b><b class="iconfont logofont">&#xe61a;</b>
+            </a>
+        </div>
+        <ul class="navlist">
+            <li class="<%if(nid&&nid=='index'){%>current<%}%>">
+                <a href="/">首页</a>
+            </li>
+            <li class="<%if(nid&&nid=='invest'){%>current<%}%>">
+                <a  href="/invest/index.htm">理财产品</a>
+            </li>
+            <li class="<%if(nid&&nid=='vip'){%>current<%}%>">
+                <a href="/vip/index.htm">会员中心<label>New</label></a>
+            </li>
+            <li class="<%if(nid&&nid=='new'){%>current<%}%>">
+                <a href="/noviceZone.htm">新手专区</a>
+            </li>
+            <li class="<%if(nid&&nid=='safe'){%>current<%}%>">
+                <a href="/safe.htm">安全保障</a>
+            </li>
+            <li class="<%if(nid&&nid=='article'){%>current<%}%>">
+                <a href="/article/list.htm?code=gywm">关于我们</a>
+            </li>
+        </ul>
+    </div>
+</div>
