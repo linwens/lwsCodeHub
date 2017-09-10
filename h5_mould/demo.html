@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>h5-demo</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2.0,user-scalable=no">
+	<meta name="format-detection" content="telephone=no">
+	<link rel='stylesheet' href='./css/animate.css' />
+	<link rel="stylesheet" href="./css/style.css">
+	<script src="./js/flexible.js"></script>
+	<script src="./js/zepto.min.js"></script>
+	<script src="./js/swiper.jquery.min.js"></script>
+</head>
+<body>
+	<div class="m-projectName"><!-- 项目名 -->
+		<div class="u-loading u-type1"></div><!-- 加载动画 -->
+		<div class="swiper-container"><!-- 翻页容器 -->
+			<div class="swiper-wrapper">
+				<div class="swiper-slide">
+					<p class="animated" data-amt=""></p>
+				</div>
+				<div class="swiper-slide"></div>
+				<div class="swiper-slide"></div>
+			</div>
+		</div>
+		<div class="arrowDown"></div><!-- 箭头 -->
+		<div class="sharePop" style="display:none;"></div><!-- 微信分享 -->
+	</div>
+	<script>
+		var mySwiper = new Swiper('.swiper-container', {
+			direction: 'vertical',
+			autoplay: 0,//可选选项，自动滑动
+			onSlideChangeStart:function(swiper){
+				mySwiper.disableTouchControl();
+			},
+			onSlideChangeEnd:function(swiper){
+				addAmt();
+			}
+		});
+		//下滑添加动画
+		function addAmt(){
+			var imgAmt = $('.swiper-slide-active').find('.animated'),
+				otherImgamt = $('.swiper-slide-active').siblings().find('.animated');
+			for(var i = 0;i<imgAmt.length;i++){
+				imgAmt.eq(i).attr('data-amt');//获取动画名
+				imgAmt.eq(i).addClass(imgAmt.eq(i).attr('data-amt'));
+			}
+			otherImgamt.each(function(){
+				$(this).removeClass($(this).attr('data-amt'));
+			});
+			if(mySwiper.activeIndex==3){//最后一张，隐藏箭头
+				$('.arrowDown').hide();
+			}else{
+				$('.arrowDown').show();
+			}
+			mySwiper.enableTouchControl();
+		};
+
+		window.onload = function(){//确保图片加载完成
+			//channelVisit();
+			$('.u-loading').remove();
+			addAmt();
+			$('#goShare').on('click',function(){
+				$('.sharePop').show();
+			});
+			$('.sharePop').on('click',function(){
+				$(this).hide();
+			});
+		};
+	</script>
+</body>
+</html>
