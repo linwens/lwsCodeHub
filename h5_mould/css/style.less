@@ -1,0 +1,147 @@
+//几处通用的样式
+/*loading*/
+.u-loading {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top:0;
+  left:0;
+  background: #1f2a3d;
+  z-index: 100;
+}
+.spinner {
+  width: 1.6rem;
+  height: 1.6rem;
+  position: absolute;
+  top:50%;
+  left:50%;
+  -webkit-transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+}
+.double-bounce1, .double-bounce2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #00a1aa;
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  left: 0;
+   
+  -webkit-animation: bounce 2.0s infinite ease-in-out;
+  animation: bounce 2.0s infinite ease-in-out;
+}
+.double-bounce2 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+@-webkit-keyframes bounce {
+  0%, 100% { -webkit-transform: scale(0.0) }
+  50% { -webkit-transform: scale(1.0) }
+}
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 50% {
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}
+/*下拉箭头*/
+.u-arrowDown{
+	position: fixed;
+	bottom: 0.5rem;
+	width: 100%;
+	text-align: center;
+	z-index: 99;
+	>img{
+		width: 0.6rem;
+		height: 0.36rem;
+	}
+}
+.u-arrowDown .arrowAmt{
+	-webkit-animation-name: arrowAmt;
+	animation-name: arrowAmt;
+	-webkit-animation-duration: 1s;
+	animation-duration: 1s;
+	-webkit-animation-timing-function: ease-in-out;
+	animation-timing-function: ease-in-out;
+	-webkit-animation-iteration-count: infinite;
+	animation-iteration-count: infinite;
+	-webkit-animation-delay: 1.5s;
+	animation-delay: 1.5s
+}
+@keyframes arrowAmt{
+	from {
+		-webkit-transform: translate(0,-35%);
+		transform: translate(0,-35%);
+		opacity: 0.6;
+	}
+	80%{
+		-webkit-transform: translate(0,10%);
+		transform: translate(0,10%);
+		opacity: 1;
+	}
+	to {
+		-webkit-transform: translate(0,-35%);
+		transform: translate(0,-35%);
+		opacity: 0.6;
+	}
+}
+/*微信分享遮罩*/
+.sharePop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,.5)
+}
+.sharePop>img {
+	position: absolute;
+	top: .46rem;
+	right: .68rem;
+	width: 4.787rem
+}
+/*设置多个延迟时间*/
+.f-delay1{animation-delay: 1s!important;}
+/*基本样式,确保满屏*/
+.m-projectName{
+	width: 100%;
+	height: 100%;
+}
+.swiper-container{
+	width: 100%;
+	height: 100%;
+	margin: 0 auto;
+	overflow: hidden
+}
+.m-page{
+	position: relative;
+	width: 100%;
+	height: 100%;
+	background-size: 100% 100%;
+}
+
+
+/*每个页面独立样式*/
+.m-page1{
+	background: #DD12F6;
+}
+.m-page2{
+	background: #16FEEE;
+}
+//transition效果
+.u-test1{
+	position: absolute;
+	height: 20px;
+	width: 30%;
+	margin-top: 20px;
+	background: #18F321;
+	opacity: 1;//因为animated初始化时opacity：0；
+}
+.gotrans{
+	transition:all 2s 1s;
+	width:100%;
+}
