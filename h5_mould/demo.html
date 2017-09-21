@@ -5,6 +5,7 @@
 	<title>h5-demo</title>
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2.0,user-scalable=no">
 	<meta name="format-detection" content="telephone=no">
+	<link rel='stylesheet' href='./css/reset.css' />
 	<link rel='stylesheet' href='./css/animate.css' />
 	<link rel="stylesheet" href="./css/style.css">
 	<script src="./js/flexible.js"></script>
@@ -13,18 +14,32 @@
 </head>
 <body>
 	<div class="m-projectName"><!-- 项目名 -->
-		<div class="u-loading u-type1"></div><!-- 加载动画 -->
-		<div class="swiper-container"><!-- 翻页容器 -->
-			<div class="swiper-wrapper">
-				<div class="swiper-slide">
-					<p class="animated" data-amt=""></p>
-				</div>
-				<div class="swiper-slide"></div>
-				<div class="swiper-slide"></div>
+		<div class="u-loading"><!-- 加载动画 -->
+			<div class="spinner">
+				<div class="double-bounce1"></div>
+				<div class="double-bounce2"></div>
 			</div>
 		</div>
-		<div class="arrowDown"></div><!-- 箭头 -->
-		<div class="sharePop" style="display:none;"></div><!-- 微信分享 -->
+		<div class="swiper-container"><!-- 翻页容器 -->
+			<div class="swiper-wrapper">
+				<div class="swiper-slide m-page1 m-page">
+					<p class="animated" data-amt="fadeInRight">animation效果</p>
+					<p class="animated u-test1" data-amt="gotrans">transition效果</p>
+				</div>
+				<div class="swiper-slide m-page2">
+					<p class="animated" data-amt="fadeInUpBig">animation效果</p>
+					<p class="animated" data-amt="bounceIn">animation效果</p>
+					<p class="animated" data-amt="rotateIn">animation效果</p>
+				</div>
+				<div class="swiper-slide m-page3"></div>
+			</div>
+		</div>
+		<div class="u-arrowDown"><!-- 箭头 -->
+			<img src="./img/btn-arrow.png" alt="" class="arrowAmt">
+		</div>
+		<div class="sharePop" style="display:none;"><!-- 微信分享 -->
+			<img src="./img/goShare.png" alt="">
+		</div>
 	</div>
 	<script>
 		var mySwiper = new Swiper('.swiper-container', {
@@ -48,16 +63,15 @@
 			otherImgamt.each(function(){
 				$(this).removeClass($(this).attr('data-amt'));
 			});
-			if(mySwiper.activeIndex==3){//最后一张，隐藏箭头
-				$('.arrowDown').hide();
+			if(mySwiper.activeIndex==2){//最后一张，隐藏箭头
+				$('.u-arrowDown').hide();
 			}else{
-				$('.arrowDown').show();
+				$('.u-arrowDown').show();
 			}
 			mySwiper.enableTouchControl();
 		};
 
 		window.onload = function(){//确保图片加载完成
-			//channelVisit();
 			$('.u-loading').remove();
 			addAmt();
 			$('#goShare').on('click',function(){
