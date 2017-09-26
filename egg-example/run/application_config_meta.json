@@ -1,0 +1,231 @@
+{
+  "keys": "G:\\lwsCodeHub\\egg-example\\config\\config.default.js",
+  "view": {
+    "defaultViewEngine": "G:\\lwsCodeHub\\egg-example\\config\\config.default.js",
+    "mapping": {
+      ".tpl": "G:\\lwsCodeHub\\egg-example\\config\\config.default.js"
+    },
+    "root": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.1.2@egg-view\\config\\config.default.js",
+    "cache": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.1.2@egg-view\\config\\config.default.js",
+    "defaultExtension": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.1.2@egg-view\\config\\config.default.js"
+  },
+  "news": {
+    "pageSize": "G:\\lwsCodeHub\\egg-example\\config\\config.default.js",
+    "serverUrl": "G:\\lwsCodeHub\\egg-example\\config\\config.default.js"
+  },
+  "middleware": "G:\\lwsCodeHub\\egg-example\\config\\config.default.js",
+  "robot": {
+    "ua": "G:\\lwsCodeHub\\egg-example\\config\\config.default.js"
+  },
+  "onerror": {
+    "errorPageUrl": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.5.0@egg-onerror\\config\\config.default.js",
+    "appErrorFilter": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.5.0@egg-onerror\\config\\config.default.js"
+  },
+  "session": {
+    "maxAge": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.1.1@egg-session\\config\\config.default.js",
+    "key": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.1.1@egg-session\\config\\config.default.js",
+    "httpOnly": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.1.1@egg-session\\config\\config.default.js",
+    "encrypt": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.1.1@egg-session\\config\\config.default.js"
+  },
+  "i18n": {
+    "defaultLocale": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.2.0@egg-i18n\\config\\config.default.js",
+    "dirs": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.2.0@egg-i18n\\config\\config.default.js",
+    "queryField": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.2.0@egg-i18n\\config\\config.default.js",
+    "cookieField": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.2.0@egg-i18n\\config\\config.default.js",
+    "cookieMaxAge": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.2.0@egg-i18n\\config\\config.default.js"
+  },
+  "watcher": {
+    "type": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.2.0@egg-watcher\\config\\config.unittest.js",
+    "eventSources": {
+      "default": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.2.0@egg-watcher\\config\\config.default.js",
+      "development": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.2.0@egg-watcher\\config\\config.default.js"
+    }
+  },
+  "multipart": {
+    "autoFields": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.5.0@egg-multipart\\config\\config.default.js",
+    "defaultCharset": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.5.0@egg-multipart\\config\\config.default.js",
+    "fieldNameSize": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.5.0@egg-multipart\\config\\config.default.js",
+    "fieldSize": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.5.0@egg-multipart\\config\\config.default.js",
+    "fields": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.5.0@egg-multipart\\config\\config.default.js",
+    "fileSize": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.5.0@egg-multipart\\config\\config.default.js",
+    "files": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.5.0@egg-multipart\\config\\config.default.js",
+    "fileExtensions": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.5.0@egg-multipart\\config\\config.default.js",
+    "whitelist": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.5.0@egg-multipart\\config\\config.default.js"
+  },
+  "security": {
+    "domainWhiteList": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+    "protocolWhiteList": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+    "defaultMiddleware": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+    "csrf": {
+      "enable": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+      "useSession": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+      "ignoreJSON": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+      "cookieName": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+      "sessionName": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+      "headerName": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+      "bodyName": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+      "queryName": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js"
+    },
+    "xframe": {
+      "enable": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+      "value": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js"
+    },
+    "hsts": {
+      "enable": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+      "maxAge": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+      "includeSubdomains": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js"
+    },
+    "dta": {
+      "enable": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js"
+    },
+    "methodnoallow": {
+      "enable": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js"
+    },
+    "noopen": {
+      "enable": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js"
+    },
+    "nosniff": {
+      "enable": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js"
+    },
+    "xssProtection": {
+      "enable": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+      "value": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js"
+    },
+    "csp": {
+      "enable": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js",
+      "policy": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js"
+    }
+  },
+  "helper": {
+    "shtml": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.12.1@egg-security\\config\\config.default.js"
+  },
+  "logrotator": {
+    "filesRotateByHour": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.2.3@egg-logrotator\\config\\config.default.js",
+    "filesRotateBySize": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.2.3@egg-logrotator\\config\\config.default.js",
+    "maxFileSize": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.2.3@egg-logrotator\\config\\config.default.js",
+    "maxFiles": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.2.3@egg-logrotator\\config\\config.default.js",
+    "rotateDuration": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.2.3@egg-logrotator\\config\\config.default.js",
+    "maxDays": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.2.3@egg-logrotator\\config\\config.default.js"
+  },
+  "static": {
+    "prefix": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.4.1@egg-static\\config\\config.default.js",
+    "dir": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.4.1@egg-static\\config\\config.default.js",
+    "dynamic": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.4.1@egg-static\\config\\config.default.js",
+    "preload": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.4.1@egg-static\\config\\config.default.js",
+    "buffer": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.4.1@egg-static\\config\\config.default.js",
+    "maxFiles": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.4.1@egg-static\\config\\config.default.js"
+  },
+  "jsonp": {
+    "limit": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.1.2@egg-jsonp\\config\\config.default.js",
+    "callback": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.1.2@egg-jsonp\\config\\config.default.js",
+    "csrf": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.1.2@egg-jsonp\\config\\config.default.js"
+  },
+  "nunjucks": {
+    "autoescape": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.1.4@egg-view-nunjucks\\config\\config.default.js",
+    "throwOnUndefined": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.1.4@egg-view-nunjucks\\config\\config.default.js",
+    "trimBlocks": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.1.4@egg-view-nunjucks\\config\\config.default.js",
+    "lstripBlocks": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.1.4@egg-view-nunjucks\\config\\config.default.js",
+    "cache": "G:\\lwsCodeHub\\egg-example\\node_modules\\.2.1.4@egg-view-nunjucks\\config\\config.default.js"
+  },
+  "env": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+  "name": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+  "proxy": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+  "protocolHeaders": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+  "ipHeaders": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+  "hostHeaders": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+  "pkg": {
+    "name": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "version": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "description": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "main": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "scripts": {
+      "test": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+      "dev": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js"
+    },
+    "author": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "license": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "dependencies": {
+      "egg": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+      "egg-view-nunjucks": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js"
+    },
+    "devDependencies": {
+      "egg-bin": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+      "egg-mock": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js"
+    }
+  },
+  "baseDir": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+  "HOME": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+  "rundir": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+  "dump": {
+    "ignore": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js"
+  },
+  "confusedConfigurations": {
+    "bodyparser": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "notFound": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "sitefile": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "middlewares": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "httpClient": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js"
+  },
+  "notfound": {
+    "pageUrl": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js"
+  },
+  "siteFile": {
+    "/favicon.ico": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js"
+  },
+  "bodyParser": {
+    "enable": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "encoding": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "formLimit": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "jsonLimit": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "strict": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "queryString": {
+      "arrayLimit": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+      "depth": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+      "parameterLimit": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js"
+    }
+  },
+  "logger": {
+    "dir": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "encoding": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "env": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "level": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "consoleLevel": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.unittest.js",
+    "disableConsoleAfterReady": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "outputJSON": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "buffer": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.unittest.js",
+    "appLogName": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "coreLogName": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "agentLogName": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "errorLogName": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "coreLogger": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js"
+  },
+  "httpclient": {
+    "enableDNSCache": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "dnsCacheMaxLength": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "dnsCacheMaxAge": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+    "request": {
+      "timeout": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js"
+    },
+    "httpAgent": {
+      "keepAlive": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+      "freeSocketKeepAliveTimeout": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+      "maxSockets": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+      "maxFreeSockets": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js"
+    },
+    "httpsAgent": {
+      "keepAlive": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+      "freeSocketKeepAliveTimeout": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+      "maxSockets": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+      "maxFreeSockets": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js"
+    }
+  },
+  "coreMiddleware": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+  "workerStartTimeout": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+  "cluster": {
+    "listen": {
+      "path": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+      "port": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js",
+      "hostname": "G:\\lwsCodeHub\\egg-example\\node_modules\\.1.8.0@egg\\config\\config.default.js"
+    }
+  }
+}
