@@ -27,7 +27,7 @@ app.use(cookieParser());
 app.use('/static', express.static(config.assetsRoot));
 
 app.use(session({//默认存到内存中，可以设置存到redis(研究中)
-    name:'hqbcookie',
+    name:'gr_user_id',
     secret:'hqb',
     saveUninitialized: true,
     resave: true,

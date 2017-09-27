@@ -30,7 +30,7 @@ function loginFun(url) {
     }
 
     $.ajax({
-      url: '/user/doLogin.htm?' + str,
+      url: '/loginService?' + str,
       type: 'POST',
       dataType: 'json',
       data: {
