@@ -27,7 +27,6 @@
             <div class="entrance">
                 <a href="/article/list.htm?code=reg_login" class="register_pad"><i class="iconfont">&#xe62a;</i>帮助中心</a>
                 <!-- 登陆后方session，再通过router.render，把req.session.user传到页面上 -->
-                <% var user = {username:'hqb'}%>
                 <%if(user){%>
                     <a href="/member/index.html" class="username register_pad">Hi,<%= user.username%></a>
                     <a href="/user/logout.html">退出</a>

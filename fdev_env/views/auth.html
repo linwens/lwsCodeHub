@@ -1,10 +1,17 @@
+<% include ../cfg/envpath.ejs %>
 <!DOCTYPE html>
 <html lang="en">
+<% var sid="login"%>
+<% var nid="member"%>
 <head>
 	<meta charset="UTF-8">
 	<title>测试权限</title>
+	<% include ./include/meta.ejs %>
+	<% include ./include/linkScript.ejs %>
 </head>
 <body>
+	<% include ./include/header.ejs %>
 	<div><%= title%>登陆后首页</div>
+	<% include ./include/footer.ejs %>
 </body>
 </html>

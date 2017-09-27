@@ -39,8 +39,10 @@ router.post('/loginService', function(req, res, next) {//请求登录接口
 	  			username:req.body.username,
 	  			password:req.body.pwd
 	  		}
-	  		req.session.token = 'usertokenvalue';
-	  		console.log(req.session.token)
+	  		req.session.user = {
+	  			token:'usertokenvalue',
+	  			username:'hqb'
+	  		};
 	  	}else{
 	  		console.log(rslt.res_msg);
 	  	}

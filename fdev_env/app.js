@@ -38,7 +38,10 @@ app.use(session({//默认存到内存中，可以设置存到redis(研究中)
         maxAge: config.cookies.maxAge
     }
 }))
-
+app.use(function(req, res, next){//实现ejs引擎里获取session的值
+  res.locals.user = req.session.user?req.session.user:'';
+  next();
+})
 //处理请求
 app.use('/', mocks);
 //页面渲染

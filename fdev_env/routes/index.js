@@ -9,8 +9,7 @@ router.get('/', function(req, res, next) {
 });
 //页面需要登录
 router.get('/auth.html', authorize, function(req,res,next){
-	console.log(req.session);
-	res.render('auth', { title: req.session.token });
+	res.render('auth', { title: req.session.user.username });
 });
 //登录页面
 router.get('/login.html', function(req, res, next) {
