@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>粒子线条canvas效果</title>
+</head>
+<body>
+	<!-- 
+		**canvasAPI
+			https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API
+		**教程
+		1、http://www.qdfuns.com/notes/33868/7393fd13b05cac36799c179cdd81129b.html
+		2、http://www.cnblogs.com/axes/p/4960171.html
+		**原理
+		1、生成多个随机移动的点
+		2、当点与点之间的距离小于一定值时产生连线，大于这个值连线消失
+		3、鼠标放上去确定一个点
+		4、鼠标点有磁性
+	 -->
+	<canvas id="J_dotLine" style="background-color: #F7F7F7;"></canvas>
+	<script>
+		var c = document.getElementById('J_dotLine');
+		//设置全屏，canvas标签样式无法识别100%
+		c.width = window.innerWidth;
+		c.height = window.innerHeight;
+		var ctx = c.getContext('2d');
+		//画图构造函数
+		function Dotline(){
+			this.paintDot = function(){
+				ctx.beginPath();
+				ctx.arc(Math.floor(Math.random()*10),Math.floor(Math.random()*10),65,0.5,0,Math.PI*2,true);
+				ctx.stroke();
+			}
+		}
+		//生成存放圆形的数组
+		var dotsArray = [];
+		function createDots(){
+			var dotLine = new Dotline();
+			dotsArray[dotsArray.length] = dotLine;
+		}
+		//生成多个点
+		function moreDots(){
+			for(var i =0;i<dotsArray.length;i++){
+				dotsArray[i].paintDot();
+			}
+		};
+		window.onload = function(){
+			var time = 0;
+			setInterval(function(){
+				time++;
+				if(time<10){
+					createDots();
+				}else{
+					moreDots();
+				}
+			},50);
+		}
+	</script>
+</body>
+</html>
