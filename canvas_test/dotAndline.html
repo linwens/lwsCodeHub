@@ -3,6 +3,12 @@
 <head>
 	<meta charset="UTF-8">
 	<title>粒子线条canvas效果</title>
+	<style>
+		#J_dotLine{
+			display: block;
+			margin: 0 auto;
+		}
+	</style>
 </head>
 <body>
 	<!-- 
@@ -16,21 +22,96 @@
 		2、当点与点之间的距离小于一定值时产生连线，大于这个值连线消失
 		3、鼠标放上去确定一个点
 		4、鼠标点有磁性
+		**注意点
+		1、设置画布内元素的随机分布占满画布，请用Math.floor(Math.random()*c.width)//c.width是画布尺寸
+		2、如何让canvas动起来请使用requestAnimationFrame （http://blog.csdn.net/jiulan1996/article/details/51291087）
+		3、continue关键字（http://www.cnblogs.com/jiechn/p/3989849.html）
+		4、如何确定两点间的距离？三角形两边平方和 = 第三边的平方
+		5、鼠标上移汇聚每个点效果
 	 -->
 	<canvas id="J_dotLine" style="background-color: #F7F7F7;"></canvas>
 	<script>
 		var c = document.getElementById('J_dotLine');
 		//设置全屏，canvas标签样式无法识别100%
-		c.width = window.innerWidth;
-		c.height = window.innerHeight;
+		c.width = 1000;
+		c.height = 600;
 		var ctx = c.getContext('2d');
+		var ballDis = 100;
+		ballDis *=ballDis;
+		//增加鼠标效果
+		var mousedot = new Dotline(null,null);
+		c.onmousemove = function(e){
+			var e = e || window.event;
+			mousedot.x = e.clientX - c.offsetLeft;
+			mousedot.y = e.clientY - c.offsetTop;
+		};
+		c.onmouseout = function(e){
+			mousedot.x = null;
+			mousedot.y = null;
+		}
+		//处理帧动画
+		var RAF = (function() {
+		    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
+		            window.setTimeout(callback, 1000 / 60);
+		        };
+		})();
 		//画图构造函数
-		function Dotline(){
-			this.paintDot = function(){
+		function Dotline(x,y){
+			this.x = x?null:Math.floor(Math.random()*c.width)-0.5;//点的初始位置
+			this.y = y?null:Math.floor(Math.random()*c.height)-0.5;
+			this.ax = (Math.random() * 2 - 1) / 1.5;
+			this.ay = (Math.random() * 2 - 1) / 1.5;
+			this.paintDot = function(){//画点
 				ctx.beginPath();
-				ctx.arc(Math.floor(Math.random()*10),Math.floor(Math.random()*10),65,0.5,0,Math.PI*2,true);
+				ctx.arc(this.x,this.y, 0.5,0,Math.PI*2,true);
 				ctx.stroke();
 			}
+			this.moveDot = function(){//点运动
+				this.x += this.ax;
+				this.y += this.ay;
+				//点碰到边缘返回(大牛很巧妙，用*=来转向)
+				this.ax *= (this.x>(c.width-0.5)||this.x<0.5)?-1:1;
+				this.ay *= (this.y>(c.height-0.5)||this.y<0.5)?-1:1;
+			}
+		}
+		//开始动画的函数
+		function animate(){
+			ctx.clearRect(0,0,c.width,c.height);//及时清除画布
+			moreDots();
+			paintLine([mousedot].concat(dotsArray));
+			RAF(animate);//启动帧动画API，间隔一定时间就执行animate
+		}
+		//点之间产生连线
+		function paintLine(nowDots){
+			var nowDot;
+			//自己的思路：遍历两次所有的点，比较点之间的距离，函数的触发放在animate里
+			dotsArray.forEach(function(dot){
+				dot.moveDot();
+				for(var j=0; j<nowDots.length; j++){
+					nowDot = nowDots[j];
+					if(nowDot===dot||nowDot.x===null||nowDot.y===null) continue;//continue跳出当前循环开始新的循环
+					var dx = dot.x - nowDot.x,//别的点坐标减当前点坐标
+						dy = dot.y - nowDot.y;
+					var dc = dx*dx + dy*dy;
+					if(dc>ballDis) continue;
+					// 如果是鼠标，则让粒子向鼠标的位置移动
+					if (nowDot === mousedot && Math.sqrt(dc) >Math.sqrt(ballDis)/2) {
+						dot.x -= dx * 0.01;
+						dot.y -= dy * 0.01;
+					}
+					var ratio;
+					ratio = (ballDis - dc) / ballDis;
+
+					ctx.beginPath();
+					ctx.lineWidth = ratio / 2;
+          			ctx.strokeStyle = 'rgba(0,0,0,' + (ratio + 0.2) + ')';
+					ctx.moveTo(dot.x, dot.y);
+					ctx.lineTo(nowDot.x, nowDot.y);
+					ctx.stroke();//不描边看不出效果
+
+					//nowDots.splice(nowDots.indexOf(dot), 1);
+				}
+			});
 		}
 		//生成存放圆形的数组
 		var dotsArray = [];
@@ -40,18 +121,23 @@
 		}
 		//生成多个点
 		function moreDots(){
-			for(var i =0;i<dotsArray.length;i++){
+			for(var i=0; i<dotsArray.length; i++){
 				dotsArray[i].paintDot();
 			}
 		};
 		window.onload = function(){
 			var time = 0;
-			setInterval(function(){
+			var timer = setInterval(function(){
 				time++;
-				if(time<10){
+				if(time<50){
 					createDots();
 				}else{
+					clearInterval(timer);
+					console.log(dotsArray);
 					moreDots();
+					setTimeout(function(){//晚一秒启动动画
+						animate();
+					},1000);
 				}
 			},50);
 		}
