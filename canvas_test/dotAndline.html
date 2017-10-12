@@ -31,6 +31,7 @@
 	 -->
 	<canvas id="J_dotLine" style="background-color: #F7F7F7;"></canvas>
 	<script>
+	/*
 		var c = document.getElementById('J_dotLine');
 		//设置全屏，canvas标签样式无法识别100%
 		c.width = 1000;
@@ -140,6 +141,122 @@
 					},1000);
 				}
 			},50);
+		}*/
+		/**
+		 *重写
+		***/
+		function Dotline(disMax){
+			this.c = document.getElementById('J_dotLine');//参数
+			this.ctx = this.c.getContext('2d');
+			this.c.width = 1000;//参数
+			this.c.height = 500;//参数
+			this.radius = 0.5;//圆点的半径
+			this.disMax = disMax?disMax:100;//点与点触发连线的间距
+
+			this.RAF = function(callback) {
+			    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
+			            window.setTimeout(callback, 1000 / 60);
+			        };
+			};			
+			this.dots = [];
+			// this.move = function(dot){
+			// 	dot.x += dot.ax;
+			// 	dot.y += dot.ay;
+			// 	//点碰到边缘返回
+			// 	dot.ax *= (dot.x>(this.c.width-this.radius)||dot.x<this.radius)?-1:1;
+			// 	dot.ay *= (dot.y>(this.c.height-this.radius)||dot.y<this.radius)?-1:1;
+			// 	//绘制点
+			// 	this.ctx.beginPath();
+			// 	this.ctx.arc(dot.x, dot.y, this.radius, 0, Math.PI*2, true);
+			// 	this.ctx.stroke();
+			// };
+			
+		}
+		/*
+		Dotline.prototype.creatCanvas = function(){
+			var c = document.getElementById('J_dotLine');//参数
+			var ctx = c.getContext('2d');
+			c.width = 1000;//参数
+			c.height = 500;//参数
+		};*/
+		Dotline.prototype.addDots = function(){
+			var dot;
+			for(var i=0; i<200; i++){//参数
+				dot = {
+					x : Math.floor(Math.random()*this.c.width)-this.radius,
+					y : Math.floor(Math.random()*this.c.height)-this.radius,
+					ax : (Math.random() * 2 - 1) / 1.5,
+					ay : (Math.random() * 2 - 1) / 1.5
+				}
+				this.dots.push(dot);
+			}
+		};
+		Dotline.prototype.move = function(dot){
+			dot.x += dot.ax;
+			dot.y += dot.ay;
+			//点碰到边缘返回
+			dot.ax *= (dot.x>(this.c.width-this.radius)||dot.x<this.radius)?-1:1;
+			dot.ay *= (dot.y>(this.c.height-this.radius)||dot.y<this.radius)?-1:1;
+			//绘制点
+			this.ctx.beginPath();
+			this.ctx.arc(dot.x, dot.y, this.radius, 0, Math.PI*2, true);
+			this.ctx.stroke();
+		};
+		Dotline.prototype.drawLine = function(dots){
+			var nowDot;
+			var _that = this;
+			//自己的思路：遍历两次所有的点，比较点之间的距离，函数的触发放在animate里
+			dots.forEach(function(dot){
+				
+				_that.move(dot);
+				for(var j=0; j<dots.length; j++){
+					nowDot = dots[j];
+					if(nowDot===dot||nowDot.x===null||nowDot.y===null) continue;//continue跳出当前循环开始新的循环
+					var dx = dot.x - nowDot.x,//别的点坐标减当前点坐标
+						dy = dot.y - nowDot.y;
+					var dc = dx*dx + dy*dy;
+					if(dc>_that.disMax) continue;
+					// 如果是鼠标，则让粒子向鼠标的位置移动
+					// if (nowDot === mousedot && Math.sqrt(dc) >Math.sqrt(_that.disMax)/2) {
+					// 	dot.x -= dx * 0.01;
+					// 	dot.y -= dy * 0.01;
+					// }
+					var ratio;
+					ratio = (_that.disMax - dc) / _that.disMax;
+
+					_that.ctx.beginPath();
+					_that.ctx.lineWidth = ratio / 2;
+          			_that.ctx.strokeStyle = 'rgba(0,0,0,' + (ratio + 0.2) + ')';
+					_that.ctx.moveTo(dot.x, dot.y);
+					_that.ctx.lineTo(nowDot.x, nowDot.y);
+					_that.ctx.stroke();//不描边看不出效果
+
+					//nowDots.splice(nowDots.indexOf(dot), 1);
+				}
+			});
+		};
+		var RAF = (function(callback) {
+			    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
+			            window.setTimeout(callback, 1000 / 60);
+			        };
+			})();	
+		Dotline.prototype.animate = function(){
+			console.log(this.c.width)
+			this.ctx.clearRect(0, 0, this.c.width, this.c.height);
+			console.log(this)
+			this.drawLine(this.dots);
+			console.log(this)
+			this.RAF(this.animate);////问题卡在这里，动画没继续
+			console.log('=================')
+		};
+
+		//调用
+		window.onload = function(){
+			var dotline = new Dotline();
+			dotline.addDots();
+			setTimeout(function() {
+			     dotline.animate();
+			}, 100);
 		}
 	</script>
 </body>
