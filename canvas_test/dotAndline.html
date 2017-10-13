@@ -28,160 +28,63 @@
 		3、continue关键字（http://www.cnblogs.com/jiechn/p/3989849.html）
 		4、如何确定两点间的距离？三角形两边平方和 = 第三边的平方
 		5、鼠标上移汇聚每个点效果
+		6、这个点困扰了很久：animate要使用window的requestAnimationFrame，如果方法写在原型链上，this指向一直指window，方法就是把这些方法想写到构造函数里，而不是写在原型链上。
 	 -->
 	<canvas id="J_dotLine" style="background-color: #F7F7F7;"></canvas>
 	<script>
-	/*
-		var c = document.getElementById('J_dotLine');
-		//设置全屏，canvas标签样式无法识别100%
-		c.width = 1000;
-		c.height = 600;
-		var ctx = c.getContext('2d');
-		var ballDis = 100;
-		ballDis *=ballDis;
-		//增加鼠标效果
-		var mousedot = new Dotline(null,null);
-		c.onmousemove = function(e){
-			var e = e || window.event;
-			mousedot.x = e.clientX - c.offsetLeft;
-			mousedot.y = e.clientY - c.offsetTop;
-		};
-		c.onmouseout = function(e){
-			mousedot.x = null;
-			mousedot.y = null;
-		}
-		//处理帧动画
-		var RAF = (function() {
-		    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
-		            window.setTimeout(callback, 1000 / 60);
-		        };
-		})();
-		//画图构造函数
-		function Dotline(x,y){
-			this.x = x?null:Math.floor(Math.random()*c.width)-0.5;//点的初始位置
-			this.y = y?null:Math.floor(Math.random()*c.height)-0.5;
-			this.ax = (Math.random() * 2 - 1) / 1.5;
-			this.ay = (Math.random() * 2 - 1) / 1.5;
-			this.paintDot = function(){//画点
-				ctx.beginPath();
-				ctx.arc(this.x,this.y, 0.5,0,Math.PI*2,true);
-				ctx.stroke();
-			}
-			this.moveDot = function(){//点运动
-				this.x += this.ax;
-				this.y += this.ay;
-				//点碰到边缘返回(大牛很巧妙，用*=来转向)
-				this.ax *= (this.x>(c.width-0.5)||this.x<0.5)?-1:1;
-				this.ay *= (this.y>(c.height-0.5)||this.y<0.5)?-1:1;
-			}
-		}
-		//开始动画的函数
-		function animate(){
-			ctx.clearRect(0,0,c.width,c.height);//及时清除画布
-			moreDots();
-			paintLine([mousedot].concat(dotsArray));
-			RAF(animate);//启动帧动画API，间隔一定时间就执行animate
-		}
-		//点之间产生连线
-		function paintLine(nowDots){
-			var nowDot;
-			//自己的思路：遍历两次所有的点，比较点之间的距离，函数的触发放在animate里
-			dotsArray.forEach(function(dot){
-				dot.moveDot();
-				for(var j=0; j<nowDots.length; j++){
-					nowDot = nowDots[j];
-					if(nowDot===dot||nowDot.x===null||nowDot.y===null) continue;//continue跳出当前循环开始新的循环
-					var dx = dot.x - nowDot.x,//别的点坐标减当前点坐标
-						dy = dot.y - nowDot.y;
-					var dc = dx*dx + dy*dy;
-					if(dc>ballDis) continue;
-					// 如果是鼠标，则让粒子向鼠标的位置移动
-					if (nowDot === mousedot && Math.sqrt(dc) >Math.sqrt(ballDis)/2) {
-						dot.x -= dx * 0.01;
-						dot.y -= dy * 0.01;
-					}
-					var ratio;
-					ratio = (ballDis - dc) / ballDis;
-
-					ctx.beginPath();
-					ctx.lineWidth = ratio / 2;
-          			ctx.strokeStyle = 'rgba(0,0,0,' + (ratio + 0.2) + ')';
-					ctx.moveTo(dot.x, dot.y);
-					ctx.lineTo(nowDot.x, nowDot.y);
-					ctx.stroke();//不描边看不出效果
-
-					//nowDots.splice(nowDots.indexOf(dot), 1);
-				}
-			});
-		}
-		//生成存放圆形的数组
-		var dotsArray = [];
-		function createDots(){
-			var dotLine = new Dotline();
-			dotsArray[dotsArray.length] = dotLine;
-		}
-		//生成多个点
-		function moreDots(){
-			for(var i=0; i<dotsArray.length; i++){
-				dotsArray[i].paintDot();
-			}
-		};
-		window.onload = function(){
-			var time = 0;
-			var timer = setInterval(function(){
-				time++;
-				if(time<50){
-					createDots();
-				}else{
-					clearInterval(timer);
-					console.log(dotsArray);
-					moreDots();
-					setTimeout(function(){//晚一秒启动动画
-						animate();
-					},1000);
-				}
-			},50);
-		}*/
-		/**
-		 *重写
-		***/
-		function Dotline(disMax){
-			this.c = document.getElementById('J_dotLine');//参数
+		function Dotline(option){
+			this.opt = this.extend({
+				dom:'J_dotLine',//画布id
+				cw:1000,//画布宽
+				ch:500,//画布高
+				ds:100,//点的个数
+				r:0.5,//圆点半径
+				dis:100//触发连线的距离
+			},option);
+			this.c = document.getElementById(this.opt.dom);//canvas元素id
 			this.ctx = this.c.getContext('2d');
-			this.c.width = 1000;//参数
-			this.c.height = 500;//参数
-			this.radius = 0.5;//圆点的半径
-			this.disMax = disMax?disMax:100;//点与点触发连线的间距
-
-			this.RAF = function(callback) {
-			    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
+			this.c.width = this.opt.cw;//canvas宽
+			this.c.height = this.opt.ch;//canvas高
+			this.dotSum = this.opt.ds;//点的数量
+			this.radius = this.opt.r;//圆点的半径
+			this.disMax = this.opt.dis*this.opt.dis;//点与点触发连线的间距		
+			this.dots = [];
+			//requestAnimationFrame控制canvas动画
+			var RAF = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
 			            window.setTimeout(callback, 1000 / 60);
 			        };
-			};			
-			this.dots = [];
-			// this.move = function(dot){
-			// 	dot.x += dot.ax;
-			// 	dot.y += dot.ay;
-			// 	//点碰到边缘返回
-			// 	dot.ax *= (dot.x>(this.c.width-this.radius)||dot.x<this.radius)?-1:1;
-			// 	dot.ay *= (dot.y>(this.c.height-this.radius)||dot.y<this.radius)?-1:1;
-			// 	//绘制点
-			// 	this.ctx.beginPath();
-			// 	this.ctx.arc(dot.x, dot.y, this.radius, 0, Math.PI*2, true);
-			// 	this.ctx.stroke();
-			// };
-			
+			var _self = this;
+			//增加鼠标效果
+			var mousedot = {x:null,y:null,label:'mouse'};
+			this.c.onmousemove = function(e){
+				var e = e || window.event;
+				mousedot.x = e.clientX - _self.c.offsetLeft;
+				mousedot.y = e.clientY - _self.c.offsetTop;
+			};
+			this.c.onmouseout = function(e){
+				mousedot.x = null;
+				mousedot.y = null;
+			}
+			//控制动画
+			this.animate = function(){
+				_self.ctx.clearRect(0, 0, _self.c.width, _self.c.height);
+				_self.drawLine([mousedot].concat(_self.dots));
+				RAF(_self.animate);
+			};
 		}
-		/*
-		Dotline.prototype.creatCanvas = function(){
-			var c = document.getElementById('J_dotLine');//参数
-			var ctx = c.getContext('2d');
-			c.width = 1000;//参数
-			c.height = 500;//参数
-		};*/
+		//合并配置项，es6直接使用obj.assign();
+		Dotline.prototype.extend = function(o,e){
+			for(var key in e){
+				if(e[key]){
+					o[key]=e[key]
+				}
+			}
+			return o;
+		};
+		//画点
 		Dotline.prototype.addDots = function(){
 			var dot;
-			for(var i=0; i<200; i++){//参数
+			for(var i=0; i<this.dotSum; i++){//参数
 				dot = {
 					x : Math.floor(Math.random()*this.c.width)-this.radius,
 					y : Math.floor(Math.random()*this.c.height)-this.radius,
@@ -191,6 +94,7 @@
 				this.dots.push(dot);
 			}
 		};
+		//点运动
 		Dotline.prototype.move = function(dot){
 			dot.x += dot.ax;
 			dot.y += dot.ay;
@@ -202,11 +106,12 @@
 			this.ctx.arc(dot.x, dot.y, this.radius, 0, Math.PI*2, true);
 			this.ctx.stroke();
 		};
+		//点之间画线
 		Dotline.prototype.drawLine = function(dots){
 			var nowDot;
 			var _that = this;
 			//自己的思路：遍历两次所有的点，比较点之间的距离，函数的触发放在animate里
-			dots.forEach(function(dot){
+			this.dots.forEach(function(dot){
 				
 				_that.move(dot);
 				for(var j=0; j<dots.length; j++){
@@ -215,12 +120,12 @@
 					var dx = dot.x - nowDot.x,//别的点坐标减当前点坐标
 						dy = dot.y - nowDot.y;
 					var dc = dx*dx + dy*dy;
-					if(dc>_that.disMax) continue;
+					if(Math.sqrt(dc)>Math.sqrt(_that.disMax)) continue;
 					// 如果是鼠标，则让粒子向鼠标的位置移动
-					// if (nowDot === mousedot && Math.sqrt(dc) >Math.sqrt(_that.disMax)/2) {
-					// 	dot.x -= dx * 0.01;
-					// 	dot.y -= dy * 0.01;
-					// }
+					if (nowDot.label && Math.sqrt(dc) >Math.sqrt(_that.disMax)/2) {
+						dot.x -= dx * 0.02;
+						dot.y -= dy * 0.02;
+					}
 					var ratio;
 					ratio = (_that.disMax - dc) / _that.disMax;
 
@@ -231,32 +136,21 @@
 					_that.ctx.lineTo(nowDot.x, nowDot.y);
 					_that.ctx.stroke();//不描边看不出效果
 
-					//nowDots.splice(nowDots.indexOf(dot), 1);
+					//dots.splice(dots.indexOf(dot), 1);
 				}
 			});
 		};
-		var RAF = (function(callback) {
-			    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
-			            window.setTimeout(callback, 1000 / 60);
-			        };
-			})();	
-		Dotline.prototype.animate = function(){
-			console.log(this.c.width)
-			this.ctx.clearRect(0, 0, this.c.width, this.c.height);
-			console.log(this)
-			this.drawLine(this.dots);
-			console.log(this)
-			this.RAF(this.animate);////问题卡在这里，动画没继续
-			console.log('=================')
-		};
-
+		//开始动画
+		Dotline.prototype.start = function(){
+			var _that = this;
+			this.addDots();
+			setTimeout(function() {
+			     _that.animate();
+			}, 100);
+		}
 		//调用
 		window.onload = function(){
-			var dotline = new Dotline();
-			dotline.addDots();
-			setTimeout(function() {
-			     dotline.animate();
-			}, 100);
+			var dotline = new Dotline().start();
 		}
 	</script>
 </body>
