@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>css小效果</title>
+	<style>
+		/*波纹，悬浮*/
+		.demo_ripple{
+			width: 200px;
+			height: 200px;
+			float: left;
+			position: relative;
+		}
+		.demo_ripple>div{
+			position: absolute;
+			top:50%;
+			left:50%;
+			transform: translate(-50%,-50%);
+			border-radius: 50%;
+		}
+		.demo_ripple .u-circle1{
+			width: 50px;
+			height: 50px;
+			background: #EF2929;
+			z-index: 3;
+		}
+		.demo_ripple .u-circle2{
+			width: 70px;
+			height: 70px;
+			background: #29EDEF;
+			z-index: 2;
+			animation: ripple 2s infinite 1s;
+		}
+		.demo_ripple .u-mobile{
+			position: absolute;
+			top:50%;
+			left: 50%;
+			width: 50px;
+			height: 80px;
+			margin: -40px 0 0 -25px;
+			background: #F5F333;
+			z-index: 4;
+			animation: hover 2s infinite 1s;
+		}
+		@keyframes ripple{
+			0%{
+				opacity: 1;
+				width: 70px;
+				height: 70px;
+			}
+			100%{
+				opacity: 0;
+				width: 120px;
+				height: 120px;
+			}
+		}
+		@keyframes hover{
+			0%{
+				transform:translate(0,0);
+			}
+			50%{
+				transform: translate(0,5px);
+			}
+			80%{
+				transform: translate(0,2px);
+			}
+			100%{
+				transform: translate(0,0);
+			}
+		}
+		/*翻折，炸开*/
+		.demo_boom{
+			width: 200px;
+			height: 200px;
+			float: left;
+			position: relative;
+		}
+		.demo_boom .u-mobile{
+			position: absolute;
+			top:50%;
+			left:50%;
+			margin: -40px 0 0 -25px;
+			width: 50px;
+			height: 80px;
+			background: #F71BF9;
+			z-index: 2;
+			animation: flipInY 1s both;
+		}
+		.demo_boom .u-bg{
+			position: absolute;
+			top:50%;
+			left:50%;
+			margin: -60px 0 0 -100px;
+			width: 200px;
+			height: 120px;
+			background: #4225EF;
+			z-index: 1;
+			animation: boom 1s 0.8s both;
+		}
+		@keyframes flipInY{
+			from {
+			  transform: perspective(400px) rotate3d(0, 1, 0, 90deg);
+			  animation-timing-function: ease-in;
+			  opacity: 0;
+			}
+
+			40% {
+			  transform: perspective(400px) rotate3d(0, 1, 0, -20deg);
+			  animation-timing-function: ease-in;
+			}
+
+			60% {
+			  transform: perspective(400px) rotate3d(0, 1, 0, 10deg);
+			  opacity: 1;
+			}
+
+			80% {
+			  transform: perspective(400px) rotate3d(0, 1, 0, -5deg);
+			}
+
+			to {
+			  transform: perspective(400px);
+			}
+		}
+		@keyframes boom{
+			0%{
+				transform: scale(0);
+			}
+			100%{
+				transform: scale(1);
+			}
+		}
+	</style>
+</head>
+<body style="overflow:hidden;background:#ccc;">
+	<div class="demo_ripple">
+		<div class="u-circle1"></div>
+		<div class="u-circle2"></div>
+		<b class="u-mobile"></b>
+	</div>
+	<div class="demo_boom">
+		<div class="u-mobile"></div>
+		<div class="u-bg"></div>
+	</div>
+</body>
+</html>
