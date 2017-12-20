@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>涉及作用域和执行上下文</title>
+</head>
+<body>
+	<script>
+		/*
+		function foo() {
+		  var x = 1;
+		  function bar() {
+		    console.log(x);
+		  }
+		  return bar;
+		}
+		var x = 2;
+		var f = foo();
+		f() // 1
+		*/
+		/*blog中函数整个过程的例子*/
+		var scope = "global scope";
+		function checkscope(){
+		    var scope = "local scope";
+		    function foo(){
+		        //return scope;
+		        console.log(scope)
+		    }
+		    return foo();
+		}
+		checkscope();
+		console.log(this);
+		// var value = 1;
+  //       function foo() {
+  //           console.log(value);
+  //       }
+  //       function bar() {
+  //           var value = 2;
+  //           foo();
+  //       }
+  //       bar();
+  //       console.log(this);
+        // 结果是 ???
+	</script>
+</body>
+</html>
