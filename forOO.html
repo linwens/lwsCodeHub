@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>创建对象和继承</title>
+</head>
+<body>
+	<script>
+		//工程模式
+		function Carone(engine, body, tyre){
+			var o = {};
+			o.engine = engine;
+			o.body = body;
+			o.tyre = tyre;
+			o.start = function(){
+				alert('呜呜~')
+			}
+			return o;
+		}
+		var car1 = Carone('v81','steel','Michelin');
+		console.log(car1);//{engine: "v81", body: "steel", tyre: "Michelin", start: ƒ}
+		console.log(car1 instanceof Carone);//false
+		//有了第一条车间Carone,我们传进去零件（传参），生产出来第一辆车car1,car1有引擎engine，有车身body，有轮胎tyre，可以发动start。貌似妥妥的了。但是这时候有个问题？谁知道这车是我们生产的？你看：car1 instanceof Carone;//false,这也就意味着我们生产的车没有我们的logo，这怎么行！我们要有品牌意识！于是我们优化生产线	~~~
+		
+		//构造函数模式
+		function Cartwo(engine, body, tyre){
+			this.engine = engine;
+			this.body = body;
+			this.tyre = tyre;
+			this.start = function(){
+				alert('呜呜~')
+			};
+		}
+		var car2 =new Cartwo('v82','steel','Michelin');
+		console.log(car2);//Cartwo {engine: "v82", body: "steel", tyre: "Michelin", start: ƒ}
+		console.log(car2 instanceof Cartwo);//true
+		//这下我们制造的汽车都带上我们的logo了，我们可以接单开始批量生产了。一下子造个100辆完全一样的车子妥妥的。我想啊，反正东西都是一样的，直接一体化得了，不用另外进口零件了（传参），节约成本全都自己搞。而且我们也要互联网+，我们要高大上，每辆车装个智能软件让所有车都能一起享受车载资源。继续改我们的生产线~~
+
+		//原型模式
+		function Carthree(){};//空壳，传参无效了！
+		Carthree.prototype={
+			constructor:Carthree,//logo还是要印上去的
+			engine : 'v82',
+			body : 'steel',
+			tyre : 'Michelin',
+			ai:{
+				music:'双节棍',
+				video:'XXX.avi'
+			},
+			start : function(){
+				alert('呜呜~')
+			}
+		};
+		var car31 = new Carthree();
+		var car32 = new Carthree();
+		console.log(car31);//Carthree {}
+		car31.ai.video = null;
+		console.log(car32.ai.video);//null  video被别人删啦！！！！！！！
+		console.log(car31 instanceof Carthree);//true
+		//好了，这下我们可以躺着挣钱了。但是留下了一个隐患，ai这个属性是个引用类型啊! 再加上prototype这个东西是所有小车共享ai里的资源，万一哪天有辆小车把ai里的video删了，所有的车就不能看video了！！时间的发展，大家都要定制了！不同的引擎，不同的车身,不同的轮胎，好在启动的声音还是一样的。为了生存，继续优化生产线~~
+
+		//组合使用构造函数模式和原型模式
+		function Carfour(engine, body, tyre,music,video){
+			this.engine = engine;
+			this.body = body;
+			this.tyre = tyre;
+			this.ai = {
+				music:music,
+				video:video
+			}
+		}
+		Carfour.prototype.start = function(){
+			alert('呜呜~')
+		}
+		var car41 =new Carfour('v841','steel','Michelin','成都','东京热.avi');
+		var car42 =new Carfour('v842','steel','Michelin','鹿港小镇','苍井空.avi');
+		console.log(car41);//Carfour {engine: "v841", body: "steel", tyre: "Michelin", ai: {…}}
+		console.log(car42);//Carfour {engine: "v842", body: "steel", tyre: "Michelin", ai: {…}}
+		car41.ai.video = null;
+		console.log(car41.ai.video);//null
+		console.log(car42.ai.video);//苍井空.avi
+		console.log(car41 instanceof Carfour);//true
+		car41.start();//呜呜~
+		//哈哈，现在好了，要共用有共用要定制有定制，为了不让引用类型造成篡改的烦恼，直接把引用类型属性放到构造函数里。
+
+		//寄生构造函数模式
+		function Parasitic(name){
+			var o ={};
+			o.name = name;
+			return o;
+		}
+		var para = new Parasitic('test');
+		console.log(para.name);//test
+		console.log(para instanceof Parasitic);//false
+		console.log(para.__proto__===Parasitic.prototype);//false
+
+
+		
+	</script>
+</body>
+</html>
