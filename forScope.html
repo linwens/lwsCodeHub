@@ -266,35 +266,46 @@
 			n:3
 		};
 		function showColor(x, y){
+			console.log(this.m);
 			return x * this.m + y * this.n;
 		}
 		
-
 		Function.prototype._bind = function(){
-
 			//指定作用域
 			var _this = arguments[0]?arguments[0]:window;
 			_this.fn = this;
 			//绑定参数
 			var arg=Array.prototype.slice.call(arguments,1);
 
-			//返回新函数
-			return function(){
+			var rtFn = function(){
 				//把新函数传入的参数存入调用
 				var newArg = arg.concat(Array.prototype.slice.call(arguments));
-				var rslt = /*eval('_this.fn('+newArg+')');*/_this.fn.apply(_this,newArg);
+				console.log(this.__proto__===showColor.prototype);
+				/**
+				 *1、如果是普通调用，我们需要作用域指向_bind的第一个传参
+				 *2、如果是new运算符构造实例，我们需要作用域指向调用_bind的函数本身。
+				**/
+				var rslt = _this.fn.apply(this instanceof _this.fn?_this.fn:_this,newArg);//这里的this指向rtFn
 				return rslt;
 			};
+
+			rtFn.prototype = this.prototype;//this指向showColor;
+			return rtFn;
 		};
 		var newFunc = showColor.bind(o,4);
 		var newBind = showColor._bind(o,4);
 		console.log(newBind(5));
 
-
 		var obj1 = new newFunc(6);
-		//console.log(obj1);//showColor{},即构造函数
+		//console.log(this.m);  undefined
+		console.log(obj1 instanceof showColor);//true
+		console.log(obj1.__proto__===showColor.prototype);//true
+
 		var obj2 = new newBind(6);
-		//console.log(obj2);//{}即第一层return的匿名函数
+		//console.log(this.m);  undefined
+		console.log(obj2 instanceof showColor);//true
+		console.log(obj2.__proto__===showColor.prototype);//true
+
 
 	</script>
 </body>

@@ -6,6 +6,7 @@
 </head>
 <body>
 	<script>
+		/*
 		//工程模式
 		function Carone(engine, body, tyre){
 			var o = {};
@@ -94,8 +95,206 @@
 		console.log(para instanceof Parasitic);//false
 		console.log(para.__proto__===Parasitic.prototype);//false
 
+		*/
+		//动态原型模式
+		function Carfive(engine, body, tyre,music,video){
+			this.engine = engine;
+			this.body = body;
+			this.tyre = tyre;
+			this.ai = {
+				music:music,
+				video:video
+			};
+			if(typeof this.start != 'function'){
+				Carfive.prototype.start = function(){
+					alert('呜呜~')
+				}
+			}
+		};
+		var car51 = new Carfive('v85','steel','Michelin');
+		console.log(car51);
 
+		//稳妥构造函数模式
+		function Carsix(engine, body, tyre){
+			var obj = {};
+			obj.sayEngine = function(){
+				console.log(engine)
+			}
+			return obj;
+		};
+		var car61 = Carsix('v86','steel','Michelin');
+		console.log(car61);//{sayEngine: ƒ}
+		console.log(car61.engine);//undefined
+		car61.sayEngine();//v86
+
+		/*继承*/
+		/*
+		//原型链继承
+		function Super1(name){
+			this.name = name;
+		}
+		Super1.prototype = {
+			constructor:Super1,
+			sayName:function(name){
+				console.log(name);
+			},
+			colors:['red', 'blue']
+		};
+		Sub1.prototype = new Super1();
+
+		function Sub1(age){
+			this.age = age;
+		}
+		Sub1.prototype.sayAge = function(){
+			console.log(this.age);
+		};
+		var inst11 = new Sub1('32','james');
+		console.log(inst11);
+		inst11.sayAge();//32
+		inst11.name;//undefined，子类型实例无法向超类型构造函数传参。
+		inst11.colors.push("black");
+		var inst12 = new Sub1('27');
+		console.log(inst12.colors);//引用类型属性由于共享被篡改了。["red", "blue", "black"]
 		
+
+		//借用构造函数继承
+		function Super2(name){
+			this.name = name;
+			this.colors = ['red','blue'];
+		}
+		Super2.prototype.sayName = function(){
+			console.log(this.name);
+		};
+		function Sub2(name, age){
+			Super2.call(this,name);
+			this.age = age;
+		}
+		var inst21 = new Sub2('james', 32);
+		console.log(inst21);//
+		inst21.name;//james  子类实例可以向超类构造函数传参了
+		//inst21.sayName();//报错，超类型的原型对于子类型是不可见的
+		inst21.colors.push("black");
+		inst21.colors;//["red", "blue", "black"]
+		var inst22 = new Sub2('xuxu', '27');
+		console.log(inst22.colors);["red", "blue"]; //引用类型属性不会被篡改了
+
+		//组合继承
+		function Super3(name){
+			this.name = name;
+			this.colors = ['red','blue'];
+		}
+		Super3.prototype.sayName = function(){
+			console.log(this.name);
+		};
+		function Sub3(name, age){
+			Super3.call(this,name);
+			this.age = age;
+		};
+		Sub3.prototype = new Super3();
+		Sub3.prototype.constructor = Sub3;//记住吧constructor的指向改回来，否则inst31成了Super3的实例
+		var inst31 = new Sub3('wade', 34);
+		console.log(inst31 instanceof Sub3);//true
+		inst31.sayName();//wade,这回子类实例可以调用超类原型里的方法了
+
+		//原型式继承
+		//思路：不使用构造函数，也不是用prototype = 超类的实例；而是直接把一个现成的对象赋值给prototype
+		var resourceObj = {
+			name:'lws',
+			hobby:['css','js']
+		}
+		function object(resourceObj){
+			function F(){};
+			F.prototype = resourceObj;
+			return new F();
+		}
+		//使用object方法代替prototype = 超类的实例。object返回的对象相当于一个以resourceObj对象为原型对象，空的构造函数的实例。所以如果resourceObj中存在引用类型的属性的话，一样存在共享属性被篡改的问题
+		var newObj = object(resourceObj);
+		console.log(newObj.name);//lws
+		newObj.hobby.push('fishing');
+		newObj.name = 'james';
+		var newObj2 = object(resourceObj);
+		console.log(newObj2.hobby);//["css", "js", "fishing"]
+		console.log(newObj2.name);//lws
+		//寄生式继承
+		var resourceObj = {
+			name:'lws',
+			hobby:['css','js']
+		}
+		function object(resourceObj){
+			function F(){};
+			F.prototype = resourceObj;
+			return new F();
+		}
+		//寄生式继承就是在object外再包一层函数
+		function parasitic(resourceObj){
+			var newObj = object(resourceObj);
+			//新对象的改动也直接在函数里进行，而不是写在全局
+			newObj.hobby.push('fishing');
+			newObj.name = 'james';
+			return newObj; 
+		}
+		var newObj3 = parasitic(resourceObj);
+		console.log(newObj3.hobby);//["css", "js", "fishing"]
+		console.log(newObj3.name);//james
+
+		//组合式继承的问题
+		var count = 0;
+		function Super4(name){
+			count++;
+			this.name = name;
+			this.colors = ['red','blue'];
+		}
+		Super4.prototype.sayName = function(){
+			console.log(this.name);
+		};
+		function Sub4(name, age){
+			Super4.call(this,name);//第二次调用
+			this.age = age;
+		};
+		Sub4.prototype = new Super4();//第一次调用
+		Sub4.prototype.constructor = Sub4;
+		console.log(count);//1
+		var inst41 = new Sub4('wade', 34);
+		console.log(count);//2
+		console.log(inst41);//
+
+		//寄生组合式继承
+		function parasitic2(resourceObj,targetObj){
+			targetObj.prototype = Object.create(resourceObj);
+			targetObj.prototype.constructor = targetObj;
+			return targetObj;
+		}
+
+		function Super5(name){
+			this.name = name;
+			this.colors = ['red','blue'];
+		}
+		Super5.prototype.sayName = function(){
+			console.log(this.name);
+		};
+		function Sub5(name, age){
+			Super5.call(this,name);//
+			this.age = age;
+		};
+		parasitic2(Super5.prototype,Sub5);
+		//Sub5.prototype = new Super5();//
+		//Sub5.prototype.constructor = Sub5;
+		var inst51 = new Sub5('bosh', 34);
+		console.log(inst51);//Sub5 {name: "bosh", colors: Array(2), age: 34}
+		console.log(inst51 instanceof Sub5);//true
+		*/
+		
+
+
+
+
+
+
+
+
+
+
+
 	</script>
 </body>
 </html>
