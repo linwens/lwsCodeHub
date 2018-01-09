@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>for ES6</title>
+</head>
+<body>
+	<script>
+		/*
+		var a = [];
+		for (let i = 0; i < 10; i++) {
+		  a[i] = function () {
+		    console.log(i);
+		  };
+		}
+		a[6]();
+		console.log(a);
+		
+		
+
+		//从js的错误处理机制切入，理解es6的promise
+		try{
+			console.log(fdsafds);
+		}catch(error){
+			alert(error.message);
+			//错误被放进这里打印出来，而不是在浏览器的开发者工具里红字显示。我们应该把所有可能会抛出错误的代码都放在 try 语句块中，而把那些用于错误处理的代码放在 catch 块中
+			if (error instanceof TypeError){
+				//处理类型错误
+				alert(error.constructor.name);
+			} else if (error instanceof ReferenceError){
+				//处理引用错误
+				alert(error.constructor.name);
+			} else {
+				//处理其他类型的错误
+				alert(error.constructor.name);
+			}
+		}
+		
+		// throw 操作符，用于随时抛出自定义错误。抛出错误时，必须要给 throw 操作符指定一个值，这个值是什么类型，没有要求
+		//比如：我们写bind函数模拟，如果调用_bind()的不是一个函数，那就可以主动抛出一个错误，像浏览器一样显示红字报错：
+		function testThrow(val){
+			if(typeof val !== 'string'){
+				throw new Error('testThrow():arguments need string')
+			}
+		};
+		try{
+			testThrow({});
+		}catch(error){
+			console.log('err_msg=='+error.message);
+		}
+		
+		console.log('错误被捕获了，代码可以继执行');
+		//try-catch用于捕获错误，throw用于主动抛出错误
+		*/
+		//回调函数
+		
+		// function main(cb){
+		// 	var obj = {};
+		// 	cb(obj);
+		// }
+		// function branch(val){
+		// 	if(typeof val !=='number'){
+		// 		throw new Error('branch(): argument need number');
+		// 	}
+		// 	var rslt = 0;
+		// 	for(var i = 0;i<1000000000;i++){
+		// 		rslt+=i;
+		// 	}
+		// };
+		// try{
+		// 	main(branch);
+		// }catch(error){
+		// 	console.log('err_msg=='+error.message);
+		// };
+
+
+		function main(cb){
+			var obj = {};
+			setTimeout(function(){
+				cb(obj);
+			}, 0);
+			
+		}
+		function branch(val){
+			if(typeof val !=='number'){
+				throw new Error('branch(): argument need number');
+			}
+			var rslt = 0;
+			for(var i = 0;i<1000000000;i++){
+				rslt+=i;
+			}
+		};
+		try{
+			main(branch);
+		}catch(error){
+			console.log('err_msg=='+error.message);
+		};
+
+		/*
+		//Promise
+		function timeout(ms){
+			return new Promise((resolve,reject)=>{
+				setTimeout(resolve, ms, 'done');//done是对应then里的value
+			});
+		};
+		timeout(100).then((value)=>{
+			console.log(value);
+		});
+
+		let promise = new Promise(function(resolve, reject) {
+		  console.log('Promise');
+		  reject('reject传参');//后面的异步是执行resolved还是rejected，依据这里的主动触发
+		});
+
+		promise.then(function() {
+		  console.log('resolved.');
+		},function(err){
+			console.log(err); //reject传参
+			console.log('rejected.');
+		});
+
+		console.log('Hi!');
+		
+		
+		function imgAsync(url){
+			return new Promise((resolve,reject)=>{
+				let image = new Image();
+				image.onload = function(){
+					resolve(image);
+				}
+				image.onerror = function(){
+					reject(new Error('Could not load image at ' + url));
+				}
+				image.src = url;
+			})
+		}
+		imgAsync('');
+
+
+		//resolve的传参是另一个Promise的实例
+		console.log(parseInt(new Date().getTime()/1000));
+		const p1 = new Promise(function (resolve, reject) {
+		  setTimeout(() => {
+		  	console.log(parseInt(new Date().getTime()/1000));
+		  	console.log('p1开始reject');
+		  	reject(new Error('fail'));
+		  	//resolve('p1现在的状态是resolve了');
+		  	console.log('p1完成reject');
+		  }, 0)
+		})
+
+		const p2 = new Promise(function (resolve, reject) {
+		  setTimeout(() => {
+		  	console.log(parseInt(new Date().getTime()/1000));
+		  	console.log('p2开始resolve');
+		  	resolve(p1);
+		  	console.log('p2完成resolve');
+		  }, 1000)
+		})
+
+		p2.then(result => {
+			console.log('进来的状态是resolve');
+			console.log(result)}
+		).catch(error => {
+			console.log('进来的状态是reject');
+		  	console.log(error)}
+		);
+		//1515464452
+		//1515464453
+		//p2开始resolve
+		//p2完成resolve
+		//1515464455
+		//p1开始reject
+		//p1完成reject
+		//进来的状态是reject
+		//Error: fail
+
+		//一个异步操作的结果是返回(resolve)另一个异步操作。这时p1的状态决定了p2的状态。如果p1的状态是pending，那么p2的回调函数就会等待p1的状态改变；如果p1的状态已经是resolved或者rejected，那么p2的回调函数将会立刻执行。而且p2最后执行哪个状态的回调也以p1为准
+		
+		let b = new Promise(
+		  function(resolve, reject) {
+		    console.log(5)
+		    setTimeout(() => {
+		    	resolve('b is done');
+		    	console.log(6)
+		    }, 0)
+		  }
+		)
+		let a = new Promise(
+		  function(resolve, reject) {
+		    console.log(1)
+		    setTimeout(() => console.log(2), 0)
+		    console.log(3)
+		    console.log(4)
+		    resolve(b);
+		  }
+		)
+		
+		a.then(v => {
+			console.log(v)
+		  	console.log(8)
+		})
+
+		console.log(7);
+		
+		//5,1,3,4,7,6,b is done,8,2
+		//任务执行顺序还是先同步，打印5,1,3,4,7;再异步，这里有个坎，异步a返回的是另一个异步b，所以a.then()要等到作为参数的异步b完成才能执行。同时异步b的resolve是写在定时器里的，那只能等定时器操作完才能走进a.then(),所以先打印6，再打印b is done,8,到这里异步才算执行完;最后打印定时器里的东西 2
+		
+		//当采用采用链式的then()语句时，Promise.prototype.catch如何捕获错误
+		let testCatch = function(state,goon){
+			return new Promise((resolve, reject)=>{
+				if(state==='ok'){
+					resolve(goon);
+				}else{
+					reject('stop1');
+				}
+			});
+		};
+		function test(a,b){
+			testCatch(a,b).then((v)=>{
+				if(v==='ok'){
+					console.log(v);
+				}else{
+					console.log(x);//x未定义
+				}
+			}).catch((err)=>{
+				console.log(err);
+			});
+		};
+		test('ok','no');//x is not defined
+		test('no','no');//stop1
+		//catch可以捕获来自最初Promise实例的错误，也可以捕获来自then方法的错误。
+		
+		//Promise 对象的错误具有“冒泡”性质，会一直向后传递，直到被catch捕获为止。如果没有使用catch方法指定错误处理的回调函数，Promise 对象抛出的错误不会传递到外层代码，而是默默地被promise吃掉了。从而不会阻塞脚本的继续进行。
+
+		//错误无法捕获的情况
+		const promise = new Promise(function (resolve, reject) {
+		  resolve('ok');
+		  setTimeout(function () { throw new Error('test') }, 0);//定时器等异步执行完了才调用，这是Promise运行已经结束，错误就无法捕获了。
+		});
+		promise.then(function (value) { console.log(value) }).catch((err)=>{
+			console.log(err);
+		});
+		setTimeout(function () { console.log('抛错到外部，外部代码继续执行'); }, 0);
+
+		//如果catch里也抛出一个错误，那就再写个catch去捕获
+		
+
+		const p1 = new Promise((resolve, reject) => {
+		  resolve('hello');
+		})
+		.then(result => result)
+		.catch(e => e);
+
+		const p2 = new Promise((resolve, reject) => {
+		  throw new Error('报错了');
+		})
+		.then(result => result)
+		.catch(e => {
+			e;
+			x
+		});
+
+		Promise.all([p1, p2])
+		.then(result => console.log(result))
+		.catch(e => console.log(e));
+		// ["hello", Error: 报错了]
+		*/
+
+
+
+
+
+
+	</script>
+</body>
+</html>
