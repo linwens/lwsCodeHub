@@ -51,7 +51,6 @@
 		
 		console.log('错误被捕获了，代码可以继执行');
 		//try-catch用于捕获错误，throw用于主动抛出错误
-		*/
 		//回调函数
 		
 		// function main(cb){
@@ -96,7 +95,6 @@
 			console.log('err_msg=='+error.message);
 		};
 
-		/*
 		//Promise
 		function timeout(ms){
 			return new Promise((resolve,reject)=>{
@@ -267,11 +265,26 @@
 		// ["hello", Error: 报错了]
 		*/
 
+		//Generator
+		function* helloWorldGenerator() {
+		  yield 'hello';
+		  yield 'world';
+		  return 'ending';
+		}
 
+		var hw = helloWorldGenerator();
+		console.log(hw);
+		console.log(hw.next());//{value: "hello", done: false}
+		console.log(hw.next());//{value: "world", done: false}
+		console.log(hw.next());//{value: "ending", done: true}
+		console.log(hw.next());//{value: undefined, done: true}
 
-
-
-
+		function* gen() {
+			yield  123 + 456;
+		}
+		var hw2 = gen();
+		console.log(hw2.next());
+		console.log(hw2.next());
 	</script>
 </body>
 </html>
