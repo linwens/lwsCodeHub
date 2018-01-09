@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>for ES6</title>
+	<title>for Async</title>
 </head>
 <body>
 	<script>
@@ -283,8 +283,10 @@
 			yield  123 + 456;
 		}
 		var hw2 = gen();
-		console.log(hw2.next());
-		console.log(hw2.next());
+		console.log(hw2.next());//{value: 579, done: false}
+		console.log(hw2.next());//{value: undefined, done: true}
+
+
 	</script>
 </body>
 </html>
