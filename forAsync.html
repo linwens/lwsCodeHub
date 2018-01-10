@@ -263,7 +263,7 @@
 		.then(result => console.log(result))
 		.catch(e => console.log(e));
 		// ["hello", Error: 报错了]
-		*/
+		
 
 		//Generator
 		function* helloWorldGenerator() {
@@ -278,6 +278,9 @@
 		console.log(hw.next());//{value: "world", done: false}
 		console.log(hw.next());//{value: "ending", done: true}
 		console.log(hw.next());//{value: undefined, done: true}
+		//Generator 函数开始执行，直到遇到第一个yield表达式为止,如果最后一句不是return而是yield，那要等第四次next()才会让done变为true。
+
+
 
 		function* gen() {
 			yield  123 + 456;
@@ -286,6 +289,172 @@
 		console.log(hw2.next());//{value: 579, done: false}
 		console.log(hw2.next());//{value: undefined, done: true}
 
+		function* f2() {
+		  console.log('执行了！')
+		}
+
+		var generator = f2();
+
+		setTimeout(function () {
+		  generator.next()
+		}, 2000);
+		
+		
+		//next()传参
+		function* demo() {
+			console.log('执行了demo');
+		  	let input = yield 1; // yield表达式本身没有返回值，或者说总是返回undefined
+		  	console.log(input);
+		  
+		}
+		var hw3 = demo();
+		//第一步
+		hw3.next(); //'执行了demo'
+		//第二步(不传参)
+		//hw3.next(); //undefined
+		//console.log(hw3.next()); //{value: undefined, done: true}
+		//第二步(传参)
+		//next方法可以带一个参数，该参数就会被当作上一个yield表达式的返回值。所以input= true;
+		//hw3.next(true); //true
+		//console.log(hw3.next(true)); //{value: undefined, done: true}
+
+		function* f() {
+		  	for(var i = 0; true; i++) {
+		    	var reset = yield i;
+		    	if(reset) { i = -1; }
+		  	}
+		}
+
+		var g = f();
+		//第一步从函数顶部到第一个yield
+		console.log(g.next()); // { value: 0, done: false }
+		//第二步从上一个yield（第一个）到新的yield（第二个）
+		console.log(g.next()); // { value: 1, done: false }
+		console.log(g.next());
+		//第三步，如果不传true；应该是{ value: 2, done: false }，因为上一个yield的返回值是1，依据for循环，当前yield后作为next()执行后对象value值的值应该是2；但是因为传了个true，使得yield i的返回值是true，所以reset是true，所以上一个yield的返回值i= -1，所以当前yield后作为next()执行后对象value值的值变成了-1+1=0。
+		console.log(g.next(true)); // { value: 0, done: false }
+		
+		function* foo1(x) {
+			console.log(x);
+		  	var y = 2 * (yield (x + 1));
+		  	console.log(y);
+		  	var z = yield (y / 3);
+		  	console.log(z);
+		  	return (x + y + z);
+		}
+
+		var a = foo1(5);
+		//第一步，从函数顶部到第一个yield表达式结束为止，5+1=6；
+		a.next() // Object{value:6, done:false}
+		//第二步，从第一个yield开始到第二个yield表达式结束，因为yield表达式本身只返回undefined，所以y=2*undefined=NaN;同时，第二个yield表达式后面的值NaN/3 =NaN
+		a.next() // Object{value:NaN, done:false}
+		//第三步，从第二个yield开始到return语句结束，因为yield表达式本身只返回undefined，所以z=undefined，同时return返回5+NaN+undefined=NaN，结束！done:true
+		a.next() // Object{value:NaN, done:true}
+
+		var b = foo1(5);
+		//第一步，从函数顶部到第一个yield表达式结束为止，5+1=6;
+		b.next() // { value:6, done:false }
+		//第二步，从第一个yield开始到第二个yield表达式结束，因为yield表达式本身只返回undefined，但是由于next()传参12，所以(yield (x + 1))的返回值是12，y=2*12=24;同时，第二个yield表达式后面的值24/3 =8；
+		b.next(12) // { value:8, done:false }
+		//第三步，从第二个yield开始到return语句结束，因为yield表达式本身只返回undefined，所以yield (y / 3)的返回值是13，z=13，同时return返回5+24+13=42，结束！done:true
+		b.next(13) // { value:42, done:true }
+
+		//值得注意的是：V8 引擎直接忽略第一次使用next方法时的参数，只有从第二次使用next方法开始，参数才是有效的
+
+		function* dataConsumer() {
+		  console.log('Started');
+		  console.log(`1. ${yield}`);
+		  console.log(`2. ${yield}`);
+		  return 'result';
+		}
+
+		let genObj = dataConsumer();
+		// Started
+		console.log(genObj.next());// { value:'undefined', done:false }
+		//----- 1. a
+		console.log(genObj.next('a'));// { value:'undefined', done:false }
+		//----- 2. b
+		console.log(genObj.next('b'));// { value:'result', done:true }
+		
+		//Generator 函数开始执行，直到遇到第一个yield表达式为止,而不是yield所在那行代码执行完。所以console.log()打印出1. a是在第二次next()之前。
+		
+
+		//Generator.prototype.throw()
+		var gen1 = function* gen1(){
+		  try {
+		    yield console.log('a');
+		  } catch (e) {
+		    // ...
+		  }
+		  yield console.log('b');
+		  yield console.log('c');
+		}
+
+		var g = gen1();
+		// a
+		g.next() // {value: undefined, done: false}
+		// b
+		g.throw() // {value: undefined, done: false}
+		// c
+		g.next() // {value: undefined, done: false}
+		g.next() // {value: undefined, done: true}
+		//throw方法被捕获以后，自动执行了一次next方法
+		
+		function* gen3() {
+		  var x = yield 3;
+		  var y = x.toUpperCase();
+		  yield y;
+		}
+
+		var g3 = gen3();
+
+		g3.next(); // { value:3, done:false }
+
+		try {
+		    g3.next(42);
+		} catch (err) {
+		  console.log(err);
+		}
+		console.log(g3.next());
+		//Generator 函数体内抛出的错误未被内部try-catch捕获（不是通过Generator.prototype.throw()抛出的错误），会使得Generator 函数执行提前结束。
+
+		//Generator.prototype.return()
+		function* numbers () {
+		  yield 1;
+		  try {
+		    yield 2;
+		    yield 3;
+		  } finally {
+		    yield 4;
+		    yield 5;
+		  }
+		  yield 6;
+		}
+		var g = numbers();
+		g.next() // { value: 1, done: false }
+		g.next() // { value: 2, done: false }
+		g.return(7) // { value: 4, done: false }
+		g.next() // { value: 5, done: false }
+		g.next() // { value: 7, done: true }
+		//调用return()后，在跳过yield 3;进入finally代码块内执行，执行完了立马生效刚才调用的return方法并结束掉generator。所以打印了 { value: 7, done: true }而不是 { value: 6, done: false }
+*/
+		//yield*表达式
+		function* item1(){
+			yield 'a';
+			return 'b';
+		}
+		function* gen4(){
+			yield 1;
+			var v = yield* item1();
+			console.log( "v: " + v );
+			yield 2;
+			return 3;
+		}
+		var g4 = gen4();
+		console.log(g4.next());//{value: 1, done: false}
+		console.log(g4.next());//{value: a, done: false}
+		//v: b
+		console.log(g4.next()); //{value: 2, done: false}
 
 	</script>
 </body>
