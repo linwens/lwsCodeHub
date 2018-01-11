@@ -484,6 +484,28 @@
 		obj.c // 3
 
 		console.log(obj.__proto__===Object.prototype);//true
+
+		//generator 与状态机
+		var clock = function* () {
+		  while (true) {
+		    console.log('Tick!');
+		    yield;
+		    console.log('Tock!');
+		    yield;
+		  }
+		};
+		var c = clock();
+		console.log(c.value);
+		c.next();
+		c.next();
+		c.next();
+		c.next();
+		//whild(true){代码块会无限执行下去}，就好比函数体内有N多个console和yield。由于generator是遍历器，执行靠next,所以不会让浏览器崩溃，
+
+
+
+
+
 	</script>
 </body>
 </html>
