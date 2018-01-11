@@ -455,7 +455,35 @@
 		console.log(g4.next());//{value: a, done: false}
 		//v: b
 		console.log(g4.next()); //{value: 2, done: false}
+		console.log(g4.next()); //{value: 3, done: true}
+		//如果有return语句，相当于只取yield表达式内容，然后next()只顺序执行两个generator里的yield。return返回的东西可以被用来赋值。
 
+		function* gen5(){
+		  yield* ["a", "b", "c"];
+		}
+		var g5 = gen5();
+		console.log(g5.next()); // { value:"a", done:false }
+		console.log(g5.next()); // { value:"b", done:false }
+		console.log(g5.next()); // { value:"c", done:false }
+		console.log(g5.next()); // { value:undefined, done:true }
+
+		function* F() {
+		  this.a = 1;
+		  yield this.b = 2;
+		  yield this.c = 3;
+		}
+		var obj = {};
+		var f = F.call(obj);
+
+		f.next();  // Object {value: 2, done: false}
+		f.next();  // Object {value: 3, done: false}
+		f.next();  // Object {value: undefined, done: true}
+
+		obj.a // 1
+		obj.b // 2
+		obj.c // 3
+
+		console.log(obj.__proto__===Object.prototype);//true
 	</script>
 </body>
 </html>
