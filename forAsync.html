@@ -437,7 +437,7 @@
 		g.next() // { value: 5, done: false }
 		g.next() // { value: 7, done: true }
 		//调用return()后，在跳过yield 3;进入finally代码块内执行，执行完了立马生效刚才调用的return方法并结束掉generator。所以打印了 { value: 7, done: true }而不是 { value: 6, done: false }
-*/
+
 		//yield*表达式
 		function* item1(){
 			yield 'a';
@@ -501,6 +501,114 @@
 		c.next();
 		c.next();
 		//whild(true){代码块会无限执行下去}，就好比函数体内有N多个console和yield。由于generator是遍历器，执行靠next,所以不会让浏览器崩溃，
+
+		console.log(1);
+		var p1 = new Promise((resolve,reject)=>{
+			console.log(2);
+			resolve(3);
+		});
+		function doSth(){
+			console.log(4)
+		}
+		p1.then((v)=>{
+			console.log(v);
+			doSth();
+			return 5
+		}).then((v)=>{
+			(function(){
+				console.log(5)
+			})()
+		})
+		console.log(6);
+
+		console.log(1);
+		function step2(cb){
+			console.log(2);
+			setTimeout(cb,0)
+		}
+		function step3(cb){
+			console.log(3);
+			setTimeout(cb,0)
+		}
+		function step4(cb){
+			console.log(4);
+			setTimeout(cb,0)
+		}
+		function step5(){
+			console.log(5);
+		}
+
+		step2(function(){
+			step3(function(){
+				step4(function(){
+					step5()
+				})
+			})
+		})
+		console.log(6)
+*/
+		let rslt =0;
+		//先命名个任务
+		function misson(num, cb){
+			let p = new Promise((resolve,reject)=>{
+				if(typeof num ==='number'){
+					resolve(num)
+				}else{
+					reject('我是一个计算器任务')
+				}
+			})
+			//再写一堆小方法
+			p.then((v)=>{
+				console.log(v)
+				return v+1
+			})
+			.then((v)=>{
+				console.log(v)
+				return v-2
+			})
+			.then((v)=>{
+				console.log(v)
+				return v*3
+			})
+			.then((v)=>{
+				console.log(v)
+				return v/4
+			})
+			.then((v)=>{
+				console.log('结果就是：'+ v)
+				cb(v)
+			})
+			.catch((err)=>{
+				console.log(err)
+			})
+		}
+		//让这个任务按照逻辑跑起来，同时不能阻塞别的任务
+		console.log('让我们开始我们的app吧')
+		misson(2,function(v){
+			rslt = v;
+			console.log(rslt)
+		})
+		console.log('别的任务也在执行')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
