@@ -5,6 +5,57 @@
 	<title>interview</title>
 </head>
 <body>
+	<p id="J_dom1" style="color:#eee;font-size: 18px;" onclick="alert('被点了')">DOM元素e的e.getAttribute(propName)和e.propName有什么区别和联系</p>
+	<div id="J_dom2" style="width:200px;height:50px;padding:0 10px;border:3px solid #333;margin: 0 14px;word-break:keep-all; ">测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth</div>
+	<script>
+		//-------------//*js概念部分*//---------------//
+	//1、DOM元素e的e.getAttribute(propName)和e.propName有什么区别和联系
+		/**
+		 *e.getAttribute(propName)可以获取元素的指定属性propName,这个属性可以标准属性也可以是自定义的属性。
+		 *e.propName只能获取元素的标准属性，如id/title/lang/dir/calssName等。
+		 *补充1：style属性，前者获取的是style值的字符串；后者获取的是一个CSSStyleDeclaration对象
+		 *补充2：事件处理程序，如onclick；前者返回相应代码的字符串；后者返回一个js函数。
+		 *由于存在这些差别，在通过 JavaScript 以编程方式操作 DOM 时，开发人员经常不使用 getAttribute()，而是只使用对象的属性。只有在取得自定义特性值的情况下，才会使用 getAttribute()方法。
+		**/
+
+	//2、offsetWidth/offsetHeight,clientWidth/clientHeight与scrollWidth/scrollHeight的区别
+		/**
+		 *元素.offsetWidth：元素在水平方向上占用的空间大小，以像素计。包括元素的内容宽度；（可见的）垂直滚动条的宽度；左右内边距宽度；左边框宽度；不包括外边距。把垂直滚动条跨度看成是绝对定位元素，好理解些。
+		 *元素.clientWidth:显示的是元素内可视区的宽度，它包括1、元素的内容宽度(width属性)，2、左右内边距宽度；如果元素包含垂直滚动条，就要在1、2的基础上减去滚动条的宽度。
+		 *元素.scrollWidth:显示的是元素内实际内容的宽度，如果是一大串文字内容并且不换行，就能看出效果
+		 *window.screen对象反应的是终端屏幕的信息，比如screen.width指的是屏幕的像素宽度；screen.availWidth指的是屏幕的像素宽度减系统部件宽度之后的值，比如Windows系统把底部任务栏设置为右边显示，就能看到screen.availWidth的变化。
+		 *window.innerWidth:浏览器页面视图区的宽度
+		 *window.outerWidth:浏览器整个窗口的宽度
+		 *《js高程》12.2.3
+		**/
 	
+	//XMLHttpRequest通用属性和方法
+		/**
+		 *属性：
+		 *responseText:作为响应主体被返回的文本。
+		 *responseXML:如果响应的内容类型是"text/xml"或"application/xml"，这个属性中将保存包含着响应数据的 XML DOM 文档。
+		 *status:响应接收完成后，响应的http状态
+		 *statusText:对应不同status状态的文字说明。
+		 *readyState:表示请求/响应整个过程的当前阶段，分为：0未初始化、1启动未发送、2发送未接收、3开始接收、4接收完成。
+		 *方法：
+		 *xhr.open(type,url,async):启动一个请求以备发送；第一个参数是请求类型GET/POST;第二个参数请求接口URL；第三个是否异步，默认为true
+		 *xhr.send(作为请求主体的数据):发送请求，为了做到兼容，如果不需要通过请求主体发送数据就传null，而不是不传。
+		 *只用open()/send()就可以实现一次ajax请求，但是想对获取到的数据进一步处理就需要监听onreadystatechange
+		 *xhr.setRequestHeader(key,value):用于设置自定义的请求头部信息。必须在调用 open()方法之后且调用 send()方法之前调用
+		 *xhr.getResponseHeader(key):取得key相应的响应头部信息
+		 *xhr.abort():如果该请求已被发出，在接收到响应之前可以调用该方法终止请求。当一个请求被终止，它的 readyState 属性将被置为0
+		 *xhr.getAllResponseHeaders():取得一个包含所有头部信息的长字符串
+		 *事件：
+		 *onreadystatechange:用于监听请求/响应整个过程中每次阶段变化后readyState的值。
+		 *--------------------
+		 *XHR2级
+		 *属性：
+		 *timeout
+		 *事件：
+		 *ontimeout
+		 *方法：
+		 *overrideMimeType
+		**/
+	</script>
 </body>
 </html>
