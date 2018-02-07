@@ -66,8 +66,8 @@
 	//6、sessionStorage,localStorage,cookie区别
 		/**
 		 *sessionStorage:不能跨标签，随浏览器关闭清除，5MB
-		 *localStorage:无存储时间限制，除非用户清缓存。5MB
-		 *cookie:Cookie是不可跨域名的，随浏览器关闭清除，4KB。验证是否能跨标签
+		 *localStorage:无存储时间限制，除非用户清缓存或者通过js清除。5MB
+		 *cookie:Cookie是不可跨域名的，随浏览器关闭清除，4KB。只要符合同源策略都可以访问cookie。
 		 *
 		 *sessionStorage和localStorage都是storage的实例，无论是 localStorage 还是 sessionStorage 中保存的数据都仅限于该页面的协议
 		 *补充：
