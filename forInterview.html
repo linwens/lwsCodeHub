@@ -74,6 +74,21 @@
 		 *session：标签打开也是不共享的
 		**/
 
+	//8、javascript有哪几种方法定义函数
+		/**
+		 *1、function命令：function fnName(){}可以不加分号
+		 *2、函数表达式(等式)：var fn = function(){};要加分号等号后面也可以是具名函数，var fn= function x(){};加了名字方便函数内部调用自身，有个名字也方便调试。
+		 *3、Function构造函数，var fn = new Function(arguments,...,函数体字符串);最后一个参数就是函数体。没人用这个
+		**/
+
+
+	//13、javascript有哪些方法定义对象
+		/**
+		 *1、对象字面量：var obj = {};
+		 *2、构造函数：var obj = new Object();
+		 *3、ES6的Object.create()：var obj = Object.create(Object.prototype);使用Object.create()方法，直接以某个实例对象作为模板，生成一个新的实例对象。
+		**/
+
 	//14、15 ===和==运算符
 		/**
 		 *相等运算符在比较之前会转换运算符前后的操作数，然后再比较它们的相等性。
@@ -93,6 +108,7 @@
 		 *5、如果一个操作数是对象，则调用这个对象的 valueOf()方法，用得到的结果按照前面的规则执行比较。如果对象没有 valueOf()方法，则调用 toString()方法，并用得到的结果根据前面的规则执行比较。
 		 *
 		**/
+
 	//19、+运算符工作流程
 		/**
 		 *1、数值直接进行相加运算；字符串直接拼接；
