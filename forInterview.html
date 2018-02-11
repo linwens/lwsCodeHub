@@ -9,11 +9,50 @@
 
 	<p id="J_dom1" style="color:#eee;font-size: 18px;" onclick="alert('被点了')">DOM元素e的e.getAttribute(propName)和e.propName有什么区别和联系</p>
 	<div id="J_dom2" style="width:200px;height:50px;padding:0 10px;border:3px solid #333;margin: 0 14px;word-break:keep-all; ">测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth</div>
+	<div id="J_time"></div>
 	<script>
-		window.onload =function(){
-			var beArr = Array.prototype.slice.call(arguments,0);
-			console.log(beArr);
+
+		var yearEnd = new Date(Date.UTC(2019,0)).getTime();
+		var year2019 = Date.parse('Jan 1, 2019');//'2019/1/1 00:00:00'
+
+		function countDown(){
+			var now = new Date().getTime();
+			var esp = (year2019-now)/1000;
+			var dd = Math.floor(esp/60/60/24),
+				hh = Math.floor(esp/60/60%24)<10?'0'+Math.floor(esp/60/60%24):Math.floor(esp/60/60%24),
+				mm = Math.floor(esp/60%60)<10?'0'+Math.floor(esp/60%60):Math.floor(esp/60%60),
+				ss = Math.floor(esp%60)<10?'0'+Math.floor(esp%60):Math.floor(esp%60);
+			document.getElementById('J_time').innerText = '距离2019年还剩：'+dd+'天'+hh+'小时'+mm+'分钟'+ss+'秒';
+			setTimeout(function(){
+				countDown()
+			}, 1000);
 		}
+		window.onload = function(){
+			countDown();
+			var obj = {
+	            value: 1,
+	            arr:['jame','wade','paul'],
+	            o:{
+	            	a:1,
+	            	b:2
+	            },
+	            fn:function(){
+	            	console.log('你Deep Copy啊');
+	            }
+	        };
+	        function foo(o) {
+	        	console.log(o);  //{value:1}
+	        	o = JSON.parse(JSON.stringify(o)); //切断联系 
+	        	console.log(o);  //{value:1}
+	            o.value = 2;
+	            o.arr[2] = 'bosh';
+	            o.o.a = 11;
+	            console.log(o.value); //2
+	        }
+	        foo(obj);
+	        console.log(obj) //
+		}
+		
 //-------------//*js概念部分*//---------------//
 	//1、DOM元素e的e.getAttribute(propName)和e.propName有什么区别和联系
 		/**
@@ -183,7 +222,19 @@
 		 *一开始就构建站点的最完整的功能，然后针对低浏览器测试和修复bug
 		**/
 
-
+//-------------//*javascript编程部分*//---------------//
+	//2、写一个倒计时
+		/**
+		 *1、Date.parse('Jan 1, 2019')获取指定时间距离1970年1月1号午夜毫秒数；要注意传参的格式
+		 *2、使用Date.UTC(2019,0)指的是指定时间到格林威治时间的1970年1月1号午夜,所以该方法还会自动 ± 当地时差。
+		 *3、算小时、分钟、秒要用余数
+		 *4、setTimeout每隔一秒递归。
+		**/
+	//6、编写javascript深度克隆函数deepClone
+		/**
+		 *《高程--4.1.2：复制变量值》
+		 *
+		**/
 	</script>
 </body>
 </html>
