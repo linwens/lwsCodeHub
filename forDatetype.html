@@ -31,7 +31,62 @@
 		console.log(obj1.b[1]);
 	//------//
 	*/
+	var obj = {
+		a:1,
+		arr: [2,3],
+		fn:function(){
+			console.log('函数');
+		},
+		uf:undefined
+	};
+	var dObj = es6Copy(obj);
+	function sCopy(obj,target) {
+	  	var newOne = target||{};
+	  	for (var prop in obj) {
+	    	newOne[prop] = obj[prop];
+	  	}
+	  	return newOne;
+	}
+	function dCopy(obj,target) {
+	  	var newOne = target||{};
 
+	  	for (var prop in obj) {
+	    	if(typeof obj[prop] === 'object'){
+	    		newOne[prop] = (obj[prop].constructor === Array)?[]:{};
+	    		dCopy(obj[prop],newOne[prop]);
+	    	}else{
+	    		newOne[prop] = obj[prop];
+	    	}
+	  	}
+	  	return newOne;
+	}
+	function es6Copy(obj){
+		return {...newOne} = obj
+	}
+	dObj.a = 2;
+	console.log(dObj);//1
+	console.log(obj.arr[1]);//3
+	console.log(obj.arr===dObj.arr);
+	console.log(typeof []);//object
+	console.log(typeof {});//object typeof只会返回基本类型(string,number,...)或者对象object或者函数function
+	console.log([] instanceof Array);//true
+	console.log([] instanceof Object);//true ；因为instanceof 根据原型链来识别
+	console.log([].constructor);//Array构造函数
+	console.log({}.constructor);//Object构造函数
+	//--------//
+	/*
+	var obj = {
+		a:1,
+		arr: [2,3],
+		uf:undefined,
+		fn:function(){
+			console.log('function');
+		}
+	};
+	var obj1 = JSON.parse(JSON.stringify(obj));
+	console.log(JSON.stringify(obj));//'{"a":1,"arr":[2,3]}'
+	console.log(obj1);//{a: 1, arr: Array(2)}
+	*/
 	</script>
 </body>
 </html>
