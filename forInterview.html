@@ -65,11 +65,11 @@
 
 	//2、offsetWidth/offsetHeight,clientWidth/clientHeight与scrollWidth/scrollHeight的区别
 		/**
-		 *元素.offsetWidth：元素在水平方向上占用的空间大小，以像素计。包括元素的内容宽度；（可见的）垂直滚动条的宽度；左右内边距宽度；左边框宽度；不包括外边距。把垂直滚动条跨度看成是绝对定位元素，好理解些。
+		 *元素.offsetWidth：元素在水平方向上占用的空间大小，以像素计。包括元素的内容宽度；（可见的）垂直滚动条的宽度；左右内边距宽度；左右边框宽度；不包括外边距。把垂直滚动条宽度看成是绝对定位元素，好理解些。
 		 *元素.clientWidth:显示的是元素内可视区的宽度，它包括1、元素的内容宽度(width属性)，2、左右内边距宽度；如果元素包含垂直滚动条，就要在1、2的基础上减去滚动条的宽度。
 		 *元素.scrollWidth:显示的是元素内实际内容的宽度，如果是一大串文字内容并且不换行，就能看出效果
 		 *window.screen对象反应的是终端屏幕的信息，比如screen.width指的是屏幕的像素宽度；screen.availWidth指的是屏幕的像素宽度减系统部件宽度之后的值，比如Windows系统把底部任务栏设置为右边显示，就能看到screen.availWidth的变化。
-		 *window.innerWidth:浏览器页面视图区的宽度
+		 *window.innerWidth:浏览器页面视图区的宽度，包含滚动条，如果有的话。
 		 *window.outerWidth:浏览器整个窗口的宽度
 		 *《js高程》12.2.3
 		**/
