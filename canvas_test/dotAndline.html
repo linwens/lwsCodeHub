@@ -154,7 +154,7 @@
 						ratio = (_that.disMax - dc) / _that.disMax;
 						_that.ctx.beginPath();
 						_that.ctx.lineWidth = ratio / 2;
-	          			_that.ctx.strokeStyle = 'rgba('+_that.color+',' + (ratio + 0.2) + ')';
+	          			_that.ctx.strokeStyle = 'rgba('+_that.color+',' + parseFloat(ratio + 0.2).toFixed(1) + ')';
 						_that.ctx.moveTo(dot.x, dot.y);
 						_that.ctx.lineTo(nowDot.x, nowDot.y);
 						_that.ctx.stroke();//不描边看不出效果
@@ -181,7 +181,7 @@
 				ch:500,//画布高
 				ds:100,//点的个数
 				r:0.5,//圆点半径
-				cl:'#9F9F9F',//粒子线颜色
+				cl:'#12FC41',//粒子线颜色
 				dis:100//触发连线的距离
 			}).start();
 		}
