@@ -52,7 +52,7 @@
     }
 
     docEl.setAttribute('data-dpr', dpr);
-    //不处女座meta，就生成meta
+    //不存在meta，就生成meta
     if (!metaEl) {
         metaEl = doc.createElement('meta');
         metaEl.setAttribute('name', 'viewport');
@@ -67,8 +67,10 @@
     }
 
     function refreshRem(){
+        //Element.getBoundingClientRect()方法返回元素的大小(width,height)及其相对于视口的位置(top,right,bottom,left)。
     	//getBoundingClientRect().width获取整个页面的物理像素宽度
         var width = docEl.getBoundingClientRect().width;
+        console.log(width);
         //这个判断针对平板等大屏幕，限制了最大宽度
         if (width / dpr > 540) {
             width = 540 * dpr;
