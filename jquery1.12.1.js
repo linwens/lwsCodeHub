@@ -11,6 +11,8 @@
  *
  * Date: 2016-02-22T19:07Z
  */
+//+?/  表示有疑问后续再学习
+//+/   表示现阶段的理解的注释
 
 (function( global, factory ) {
 
@@ -87,7 +89,7 @@ var
 	fcamelCase = function( all, letter ) {
 		return letter.toUpperCase();
 	};
-
+//+/jQuery.fn指向jQuery的原型
 jQuery.fn = jQuery.prototype = {
 
 	// The current version of jQuery being used
@@ -173,32 +175,33 @@ jQuery.fn = jQuery.prototype = {
 };
 
 jQuery.extend = jQuery.fn.extend = function() {
+	//+/src存储target,copyIsArray作为flag保存options[name]的数据类似是否是数组,copy存储来源对象options的数据,name作为options的key,options就是来源对象,clone用作轮询时的target
 	var src, copyIsArray, copy, name, options, clone,
-		target = arguments[ 0 ] || {},
+		target = arguments[ 0 ] || {},//+/target为第一个传参，默认是个对象，作为被扩展的目标对象
 		i = 1,
-		length = arguments.length,
-		deep = false;
+		length = arguments.length,//+/参数数量
+		deep = false;//+/默认不进行深拷贝
 
 	// Handle a deep copy situation
-	if ( typeof target === "boolean" ) {
+	if ( typeof target === "boolean" ) {//+/target是布尔值，就进行deep设置
 		deep = target;
 
 		// skip the boolean and the target
 		target = arguments[ i ] || {};
-		i++;
+		i++;//+/target参数后移
 	}
 
 	// Handle case when target is a string or something (possible in deep copy)
-	if ( typeof target !== "object" && !jQuery.isFunction( target ) ) {
+	if ( typeof target !== "object" && !jQuery.isFunction( target ) ) {//+/不是对象或函数就转成空对象
 		target = {};
 	}
 
 	// extend jQuery itself if only one argument is passed
-	if ( i === length ) {
+	if ( i === length ) {//+/如果只传一个参数那就扩展jQuery自身
 		target = this;
 		i--;
 	}
-
+	//+/开始遍历参数了
 	for ( ; i < length; i++ ) {
 
 		// Only deal with non-null/undefined values
@@ -215,8 +218,9 @@ jQuery.extend = jQuery.fn.extend = function() {
 				}
 
 				// Recurse if we're merging plain objects or arrays
+				//+/纯粹的对象或者数组就会进入轮询继续进行拷贝
 				if ( deep && copy && ( jQuery.isPlainObject( copy ) ||
-					( copyIsArray = jQuery.isArray( copy ) ) ) ) {
+					( copyIsArray = jQuery.isArray( copy ) ) ) ) {//+/取=右边的值
 
 					if ( copyIsArray ) {
 						copyIsArray = false;
@@ -230,6 +234,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 					target[ name ] = jQuery.extend( deep, clone, copy );
 
 				// Don't bring in undefined values
+				//+/如果不是纯粹的对象（如自定义构造函数的实例）就会被直接复制
 				} else if ( copy !== undefined ) {
 					target[ name ] = copy;
 				}
@@ -262,7 +267,7 @@ jQuery.extend( {
 		return jQuery.type( obj ) === "function";
 	},
 
-	isArray: Array.isArray || function( obj ) {
+	isArray: Array.isArray || function( obj ) {//+/判断是不是数组，返回Boolean。支持原生isArray就用原生，否则就用type方法
 		return jQuery.type( obj ) === "array";
 	},
 
@@ -291,11 +296,13 @@ jQuery.extend( {
 	},
 
 	isPlainObject: function( obj ) {
-		var key;
+		var key;//+/用于存放obj的属性名
 
 		// Must be an Object.
 		// Because of IE, we also have to check the presence of the constructor property.
 		// Make sure that DOM nodes and window objects don't pass through, as well
+		//+/nodeType 属性返回以数字值返回指定节点的节点类型,所以obj.nodeType可以理解为是否dom节点
+		//+/排除非对象，dom，window
 		if ( !obj || jQuery.type( obj ) !== "object" || obj.nodeType || jQuery.isWindow( obj ) ) {
 			return false;
 		}
@@ -316,6 +323,7 @@ jQuery.extend( {
 
 		// Support: IE<9
 		// Handle iteration over inherited properties before own properties.
+		//+?/support 属性包含表示不同浏览器特性或漏洞的属性集。support是jquery设置的特性检测，较复杂，先放着。
 		if ( !support.ownFirst ) {
 			for ( key in obj ) {
 				return hasOwn.call( obj, key );
@@ -324,8 +332,8 @@ jQuery.extend( {
 
 		// Own properties are enumerated firstly, so to speed up,
 		// if last one is own, then all properties are own.
-		for ( key in obj ) {}
-
+		//+/这里利用属性的propertyIsEnumerable，即obj.propertyIsEnumerable("属性名")，是自身的属性返回true，继承来的属性返回false
+		for ( key in obj ) {}//+/for in循环结束后，key被赋值obj参数的最后一个属性
 		return key === undefined || hasOwn.call( obj, key );
 	},
 
