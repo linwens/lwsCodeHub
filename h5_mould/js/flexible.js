@@ -1,4 +1,6 @@
 ;(function(win, lib) {
+    //dpr概念：设备物理像素/设备逻辑像素
+    //scale概念：缩放大小，idealviewport/visualviewport
     var doc = win.document;
     var docEl = doc.documentElement;
     var metaEl = doc.querySelector('meta[name="viewport"]');
@@ -121,3 +123,4 @@
     }
 
 })(window, window['lib'] || (window['lib'] = {}));
+//设置lib属性的意义是：
