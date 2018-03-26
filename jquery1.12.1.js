@@ -463,18 +463,19 @@ jQuery.extend( {
 	},
 
 	grep: function( elems, callback, invert ) {
-		var callbackInverse,
-			matches = [],
+		var callbackInverse,//+/保存回调函数的返回值
+			matches = [],//+/返回的新数组
 			i = 0,
-			length = elems.length,
-			callbackExpect = !invert;
+			length = elems.length,//+/数组参数长度
+			callbackExpect = !invert;//+/设置是否反选
 
 		// Go through the array, only saving the items
 		// that pass the validator function
 		for ( ; i < length; i++ ) {
+			//+/取反用于与callbackExpect作比较
 			callbackInverse = !callback( elems[ i ], i );
 			if ( callbackInverse !== callbackExpect ) {
-				matches.push( elems[ i ] );
+				matches.push( elems[ i ] );//+/如果不等往新数组内push值
 			}
 		}
 
