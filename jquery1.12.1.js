@@ -402,18 +402,17 @@ jQuery.extend( {
 	// results is for internal usage only
 	makeArray: function( arr, results ) {
 		var ret = results || [];
-
 		if ( arr != null ) {
+			//+/Object()将任意值转为对象。这个方法常用于保证某个值一定是对象。如果参数是基本类型，返回基本类型的包装对象（Number，String）；如果是引用类型，不做转换。
 			if ( isArrayLike( Object( arr ) ) ) {
 				jQuery.merge( ret,
 					typeof arr === "string" ?
 					[ arr ] : arr
 				);
 			} else {
-				push.call( ret, arr );
+				push.call( ret, arr );//+/arr是基本类型就直接push
 			}
 		}
-
 		return ret;
 	},
 
@@ -441,10 +440,10 @@ jQuery.extend( {
 	},
 
 	merge: function( first, second ) {
-		var len = +second.length,
+		var len = +second.length,//+/变量前一个加号相当于Number(value)，把变量转化为数值或NaN
 			j = 0,
 			i = first.length;
-
+		//+/
 		while ( j < len ) {
 			first[ i++ ] = second[ j++ ];
 		}
