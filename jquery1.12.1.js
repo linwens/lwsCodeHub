@@ -404,7 +404,8 @@ jQuery.extend( {
 		var ret = results || [];
 
 		if ( arr != null ) {
-			if ( isArrayLike( Object( arr ) ) ) {
+			if ( isArrayLike( Object( arr ) ) ) {//+/
+				//+/Object( 'linwens' ),是一个string的包装对象，属于类数组,所以在merge的时候要追加string的判断
 				jQuery.merge( ret,
 					typeof arr === "string" ?
 					[ arr ] : arr
@@ -441,25 +442,26 @@ jQuery.extend( {
 	},
 
 	merge: function( first, second ) {
-		var len = +second.length,
+		var len = +second.length,//+/
 			j = 0,
 			i = first.length;
 
+		//+/while循环，把++操作放到循环体内执行
 		while ( j < len ) {
-			first[ i++ ] = second[ j++ ];
+			first[ i++ ] = second[ j++ ];//+/遍历第二个数组的值，添加到第一个数组后面
 		}
 
 		// Support: IE<9
 		// Workaround casting of .length to NaN on otherwise arraylike objects (e.g., NodeLists)
-		if ( len !== len ) {
+		if ( len !== len ) {//+/ +undefined=NaN。只有NaN!==NaN
+			//+/第二个参数没有length属性，但也可能通过索引值获取值，如：{0:'a',1:'b'}
 			while ( second[ j ] !== undefined ) {
 				first[ i++ ] = second[ j++ ];
 			}
 		}
+		first.length = i;//+/如果first是个类数组：{0:'a',1:'b',length:2}，那么first.length不会自动增加
 
-		first.length = i;
-
-		return first;
+		return first;//+/返回新数组
 	},
 
 	grep: function( elems, callback, invert ) {
