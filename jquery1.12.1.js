@@ -13,6 +13,7 @@
  */
 //+?/  表示有疑问后续再学习
 //+/   表示现阶段的理解的注释
+//!+/  表示注释的同时，学习该方法
 
 (function( global, factory ) {
 
@@ -420,16 +421,18 @@ jQuery.extend( {
 		var len;
 
 		if ( arr ) {
-			if ( indexOf ) {
-				return indexOf.call( arr, elem, i );
+			if ( indexOf ) {//+/[].indexOf
+				return indexOf.call( arr, elem, i );//+/array.indexOf(检索的字符串值,检索起始位置)
 			}
 
 			len = arr.length;
+			//+/第三个参数i默认取0，如果有指定就进入下一级三元判断；如果i<0就去0或len+i大着，如果i>0就取i
 			i = i ? i < 0 ? Math.max( 0, len + i ) : i : 0;
 
 			for ( ; i < len; i++ ) {
 
 				// Skip accessing in sparse arrays
+				//!+/i in arr这里直接跳过数组中的空元素如arr = ['a', ,'c'],那么1 in arr 就会返回false
 				if ( i in arr && arr[ i ] === elem ) {
 					return i;
 				}
@@ -513,7 +516,7 @@ jQuery.extend( {
 
 		// Flatten any nested arrays
 		//+/数组降维https://blog.csdn.net/qq_31164127/article/details/72832416
-		//+/同样是合并数组，concat+apply等同于for+concat的效果，但是优雅很多
+		//!+/同样是合并数组，concat+apply等同于for+concat的效果，但是优雅很多
 		return concat.apply( [], ret );
 	},
 
