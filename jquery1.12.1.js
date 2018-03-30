@@ -403,8 +403,8 @@ jQuery.extend( {
 	makeArray: function( arr, results ) {
 		var ret = results || [];
 		if ( arr != null ) {
-			//+/Object()将任意值转为对象。这个方法常用于保证某个值一定是对象。如果参数是基本类型，返回基本类型的包装对象（Number，String）；如果是引用类型，不做转换。
-			if ( isArrayLike( Object( arr ) ) ) {
+			if ( isArrayLike( Object( arr ) ) ) {//+/Object()将任意值转为对象。这个方法常用于保证某个值一定是对象。如果参数是基本类型，返回基本类型的包装对象（Number，String）；如果是引用类型，不做转换。
+				//+/Object( 'linwens' ),是一个string的包装对象，属于类数组,所以在merge的时候要追加string的判断
 				jQuery.merge( ret,
 					typeof arr === "string" ?
 					[ arr ] : arr
@@ -443,22 +443,23 @@ jQuery.extend( {
 		var len = +second.length,//+/变量前一个加号相当于Number(value)，把变量转化为数值或NaN
 			j = 0,
 			i = first.length;
-		//+/
+
+		//+/while循环，把++操作放到循环体内执行
 		while ( j < len ) {
-			first[ i++ ] = second[ j++ ];
+			first[ i++ ] = second[ j++ ];//+/遍历第二个数组的值，添加到第一个数组后面
 		}
 
 		// Support: IE<9
 		// Workaround casting of .length to NaN on otherwise arraylike objects (e.g., NodeLists)
-		if ( len !== len ) {
+		if ( len !== len ) {//+/ +undefined=NaN。只有NaN!==NaN
+			//+/第二个参数没有length属性，但也可能通过索引值获取值，如：{0:'a',1:'b'}
 			while ( second[ j ] !== undefined ) {
 				first[ i++ ] = second[ j++ ];
 			}
 		}
+		first.length = i;//+/如果first是个类数组：{0:'a',1:'b',length:2}，那么first.length不会自动增加
 
-		first.length = i;
-
-		return first;
+		return first;//+/返回新数组
 	},
 
 	grep: function( elems, callback, invert ) {
