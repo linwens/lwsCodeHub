@@ -484,10 +484,11 @@ jQuery.extend( {
 
 	// arg is for internal usage only
 	map: function( elems, callback, arg ) {
+		//+/value预存函数处理后的新值
 		var length, value,
 			i = 0,
-			ret = [];
-
+			ret = [];//+/存储返回的新数组
+		//+/判断数组(类数组)还是对象，分别执行for循环与for...in循环
 		// Go through the array, translating each of the items to their new values
 		if ( isArrayLike( elems ) ) {
 			length = elems.length;
@@ -511,6 +512,8 @@ jQuery.extend( {
 		}
 
 		// Flatten any nested arrays
+		//+/数组降维https://blog.csdn.net/qq_31164127/article/details/72832416
+		//+/同样是合并数组，concat+apply等同于for+concat的效果，但是优雅很多
 		return concat.apply( [], ret );
 	},
 
