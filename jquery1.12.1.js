@@ -105,6 +105,7 @@ jQuery.fn = jQuery.prototype = {
 	length: 0,
 
 	toArray: function() {
+		//+/slice即[].slice();不传参数默认选定全部
 		return slice.call( this );
 	},
 
@@ -608,6 +609,7 @@ var Sizzle =
  *
  * Date: 2015-10-17
  */
+//+/Sizzle是一款CSS选择器引擎，跟jQuery是同一个作者。
 (function( window ) {
 
 var i,
