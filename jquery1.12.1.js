@@ -80,7 +80,9 @@ var
 
 	// Support: Android<4.1, IE<9
 	// Make sure we trim BOM and NBSP
-	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,
+	//+/ \uFEFF：字节次序标记字符;
+	//+/ \xA0：禁止自动换行空格符，也就是html中的&nbsp;
+	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,//+/全局搜索空白开头或者空白结尾
 
 	// Matches dashed string for camelizing
 	rmsPrefix = /^-ms-/,
@@ -259,7 +261,7 @@ jQuery.extend( {
 	error: function( msg ) {
 		throw new Error( msg );
 	},
-
+	//+/比如当插件提供了一个可选的回调函数接口，那么如果调用的时候没有传递这个回调函数，就用$.noop来代替执行。
 	noop: function() {},
 
 	// See test/unit/core.js for details concerning isFunction.
@@ -291,6 +293,7 @@ jQuery.extend( {
 
 	isEmptyObject: function( obj ) {
 		var name;
+		//+/for in循环判断obj是否存在属性
 		for ( name in obj ) {
 			return false;
 		}
@@ -528,8 +531,8 @@ jQuery.extend( {
 	// arguments.
 	proxy: function( fn, context ) {
 		var args, proxy, tmp;
-
-		if ( typeof context === "string" ) {
+		//+/另一种操作：jQuery.proxy( scope, name )。第一个参数是要设定的作用域对象。第二个参数是将要设置作用域的函数名（必须是第一个作用域对象的一个属性）
+		if ( typeof context === "string" ) {//+/把fn和context做个互换
 			tmp = fn[ context ];
 			context = fn;
 			fn = tmp;
@@ -537,17 +540,19 @@ jQuery.extend( {
 
 		// Quick check to determine if target is callable, in the spec
 		// this throws a TypeError, but we will just return undefined.
-		if ( !jQuery.isFunction( fn ) ) {
+		if ( !jQuery.isFunction( fn ) ) {//+/不是函数返回undefined
 			return undefined;
 		}
 
 		// Simulated bind
-		args = slice.call( arguments, 2 );
-		proxy = function() {
+		args = slice.call( arguments, 2 );//+/获取剩余参数
+		proxy = function() {//+/返回一个新函数，如果context不存在直接把fn绑到window上
 			return fn.apply( context || this, args.concat( slice.call( arguments ) ) );
 		};
 
 		// Set the guid of unique handler to the same of original handler, so it can be removed
+		//+/为代理函数proxy设置与原始函数fn相同的唯一标识guid。如果原始函数没有，则重新分配一个
+		//+?/guid的作用就是
 		proxy.guid = fn.guid = fn.guid || jQuery.guid++;
 
 		return proxy;
@@ -9023,6 +9028,7 @@ var rvalidtokens = /(,)|(\[|{)|(}|])|"(?:[^"\\\r\n]|\\["\\\/bfnrt]|\\u[\da-fA-F]
 jQuery.parseJSON = function( data ) {
 
 	// Attempt to parse using the native JSON parser first
+	//+/IE7及以下不支持JSON.parse
 	if ( window.JSON && window.JSON.parse ) {
 
 		// Support: Android 2.3
@@ -10045,7 +10051,7 @@ function buildParams( prefix, obj, traditional, add ) {
 
 		// Serialize array item.
 		jQuery.each( obj, function( i, v ) {
-			if ( traditional || rbracket.test( prefix ) ) {
+			if ( traditional || rbracket.test( prefix ) ) {//+/遍历直到prefix是个空数组[]
 
 				// Treat each array item as a scalar.
 				add( prefix, v );
@@ -10085,6 +10091,7 @@ jQuery.param = function( a, traditional ) {
 
 			// If value is a function, invoke it and return its value
 			value = jQuery.isFunction( value ) ? value() : ( value == null ? "" : value );
+			//+/生成编码后的key=value字符串传入数组s
 			s[ s.length ] = encodeURIComponent( key ) + "=" + encodeURIComponent( value );
 		};
 
@@ -10092,12 +10099,12 @@ jQuery.param = function( a, traditional ) {
 	if ( traditional === undefined ) {
 		traditional = jQuery.ajaxSettings && jQuery.ajaxSettings.traditional;
 	}
-
 	// If an array was passed in, assume that it is an array of form elements.
+	//+?/如果是个数组或者是jquery对象且不是个纯对象
 	if ( jQuery.isArray( a ) || ( a.jquery && !jQuery.isPlainObject( a ) ) ) {
 
 		// Serialize the form elements
-		jQuery.each( a, function() {
+		jQuery.each( a, function() {//+/遍历a,执行add
 			add( this.name, this.value );
 		} );
 
@@ -10105,12 +10112,14 @@ jQuery.param = function( a, traditional ) {
 
 		// If traditional, encode the "old" way (the way 1.3.2 or older
 		// did it), otherwise encode params recursively.
-		for ( prefix in a ) {
+		//+/traditional是false采用深拷贝，为true采用浅拷贝
+		for ( prefix in a ) {//+/属性名，属性值，拷贝方式，add函数
 			buildParams( prefix, a[ prefix ], traditional, add );
 		}
 	}
 
 	// Return the resulting serialization
+	//+/r20：/%20/g 带有空格的值被转为+号
 	return s.join( "&" ).replace( r20, "+" );
 };
 
