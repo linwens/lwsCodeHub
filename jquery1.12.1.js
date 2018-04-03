@@ -98,7 +98,7 @@ jQuery.fn = jQuery.prototype = {
 	// The current version of jQuery being used
 	jquery: version,
 
-	constructor: jQuery,
+	constructor: jQuery,//+/给原型赋值到一个新的对象，一定要改constructor，否则默认指向Object了。
 
 	// Start with an empty selector
 	selector: "",
@@ -399,6 +399,7 @@ jQuery.extend( {
 
 	// Support: Android<4.1, IE<9
 	trim: function( text ) {
+		//+/去除字符串中的空字符
 		return text == null ?
 			"" :
 			( text + "" ).replace( rtrim, "" );
@@ -3007,7 +3008,8 @@ var rootjQuery,
 	};
 
 // Give the init function the jQuery prototype for later instantiation
-init.prototype = jQuery.fn;
+//+/调用$()返回init的实例，为了使得返回的这个实例可以调用jQuery的原型方法，就对init的原型进行了修改
+init.prototype = jQuery.fn;//+/jQuery.fn = jQuery.prototype
 
 // Initialize central reference
 rootjQuery = jQuery( document );
@@ -9042,6 +9044,7 @@ jQuery.parseJSON = function( data ) {
 
 	// Guard against invalid (and possibly dangerous) input by ensuring that nothing remains
 	// after removing valid tokens
+	//+/replace的第二个参数如果是函数，那该函数的传参：第一个参数是匹配模式的字符串。接下来的参数是与模式中的子表达式匹配的字符串，如果正则使用了分组匹配就为多个否则无此参数。接下来的参数是一个整数，声明了匹配在 stringObject 中第一次出现的位置。最后一个参数是 stringObject 本身。
 	return str && !jQuery.trim( str.replace( rvalidtokens, function( token, comma, open, close ) {
 
 		// Force termination if we see a misplaced comma
