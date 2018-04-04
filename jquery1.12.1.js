@@ -2783,8 +2783,9 @@ var siblings = function( n, elem ) {
 
 
 var rneedsContext = jQuery.expr.match.needsContext;
-
-var rsingleTag = ( /^<([\w-]+)\s*\/?>(?:<\/\1>|)$/ );
+//+/ <([\w-]+)\s*\/?>匹配<tag>标签（单标签或开始标签）
+//+/ 元字符\num：num是正整数，即对编号为num的获取组的匹配的引用；如(?:<\/\1>|)中的\1指向第一个捕获组([\w-]+)的内容，即[\w-]+
+var rsingleTag = ( /^<([\w-]+)\s*\/?>(?:<\/\1>|)$/ );//+/匹配HTML标签，只是标签
 
 
 
@@ -2890,34 +2891,42 @@ var rootjQuery,
 	// A simple way to check for HTML strings
 	// Prioritize #id over <tag> to avoid XSS via location.hash (#9521)
 	// Strict HTML recognition (#11290: must start with <)
-	rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/,
 
+	rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/,//+/用来匹配html代码字符串或#id选择器
+	//+/ \s*(<[\w\W]+>)[^>]*匹配复制html标签字符串，其中[\w\W]+匹配任意字符，.通配符不能匹配\n换行符;
+	//+/ #([\w-]*)匹配#id值；其中[\w-]:\w匹配字母或数字或下划线或汉字；可能有人会用短横命名，所以加了个-
 	init = jQuery.fn.init = function( selector, context, root ) {
+		//+/
 		var match, elem;
 
 		// HANDLE: $(""), $(null), $(undefined), $(false)
 		if ( !selector ) {
-			return this;
+			return this;//+/this指向jQuery.fn.init
 		}
 
 		// init accepts an alternate rootjQuery
 		// so migrate can support jQuery.sub (gh-2101)
+		//+?/root用于
 		root = root || rootjQuery;
 
 		// Handle HTML strings
+		//+/常规操作，如果selector是一个字符串
 		if ( typeof selector === "string" ) {
+			//+/charAt方法可返回指定位置的字符
 			if ( selector.charAt( 0 ) === "<" &&
 				selector.charAt( selector.length - 1 ) === ">" &&
-				selector.length >= 3 ) {
+				selector.length >= 3 ) {//+/如果传入的是HTML标签字符串，如：<p>
 
 				// Assume that strings that start and end with <> are HTML and skip the regex check
 				match = [ null, selector, null ];
 
 			} else {
+				//+/exec()方法返回一个数组，包含0：正则表达式匹配到的第一个文本;1-N：如果正则里存在所以捕获组且有匹配的话，那1-N就是0中文本内匹配捕获组的子文本;index:0中匹配文本在传入字符串中的索引值;input：传入exec()的字符串。
 				match = rquickExpr.exec( selector );
 			}
 
 			// Match html or make sure no context is specified for #id
+			//+/match存在说明匹配到html或者id选择器，不能直接 match && !context,因为匹配到html会使用到context
 			if ( match && ( match[ 1 ] || !context ) ) {
 
 				// HANDLE: $(html) -> $(array)
@@ -2926,6 +2935,7 @@ var rootjQuery,
 
 					// scripts is true for back-compat
 					// Intentionally let the error be thrown if parseHTML is not present
+					//+/jQuery里填充dom节点
 					jQuery.merge( this, jQuery.parseHTML(
 						match[ 1 ],
 						context && context.nodeType ? context.ownerDocument || context : document,
@@ -2933,8 +2943,9 @@ var rootjQuery,
 					) );
 
 					// HANDLE: $(html, props)
+					//+/jQuery(html,props),其中props:包含用于附加到新创建元素html上的属性、事件和方法
 					if ( rsingleTag.test( match[ 1 ] ) && jQuery.isPlainObject( context ) ) {
-						for ( match in context ) {
+						for ( match in context ) {//+/注意，这里的match已经是context的属性名了，不是原来的match
 
 							// Properties of context are called as methods if possible
 							if ( jQuery.isFunction( this[ match ] ) ) {
@@ -2951,11 +2962,11 @@ var rootjQuery,
 
 				// HANDLE: $(#id)
 				} else {
-					elem = document.getElementById( match[ 2 ] );
+					elem = document.getElementById( match[ 2 ] );//+/id值取过来
 
 					// Check parentNode to catch when Blackberry 4.6 returns
 					// nodes that are no longer in the document #6963
-					if ( elem && elem.parentNode ) {
+					if ( elem && elem.parentNode ) {//+/parentNode 属性以 Node 对象的形式返回指定节点的父节点
 
 						// Handle the case where IE and Opera return items
 						// by name instead of ID
@@ -2974,23 +2985,30 @@ var rootjQuery,
 				}
 
 			// HANDLE: $(expr, $(...))
+			//+/context不存在或者存在context参数但context是个jQuery对象，前者从jQuery(document)里在找selector，后者从context里找selector
 			} else if ( !context || context.jquery ) {
 				return ( context || root ).find( selector );
 
 			// HANDLE: $(expr, context)
 			// (which is just equivalent to: $(context).find(expr)
+			//+/context存在且不是jQuery对象
 			} else {
 				return this.constructor( context ).find( selector );
 			}
 
 		// HANDLE: $(DOMElement)
+		//+/如果传入的是一个HTML元素对象,那就把这个对象做个jQuery的封装，再返回，以便使用jQuery的方法。
+		//+/nodeType 属性返回指定节点的节点类型,以数字表示
 		} else if ( selector.nodeType ) {
+			//+/this指向jQuery.fn.init
+			//+?/为什么要插入context属性？估计后面链式操作有用
 			this.context = this[ 0 ] = selector;
 			this.length = 1;
 			return this;
 
 		// HANDLE: $(function)
 		// Shortcut for document ready
+		//+/如果selector是个函数且ready函数存在，那么直接放在$(document).ready()中等待执行，如果没有ready函数那么直接执行selector并传入jQuery对象
 		} else if ( jQuery.isFunction( selector ) ) {
 			return typeof root.ready !== "undefined" ?
 				root.ready( selector ) :
@@ -2998,12 +3016,12 @@ var rootjQuery,
 				// Execute immediately if ready is not present
 				selector( jQuery );
 		}
-
+		//+/如果传入的是jQuery对象
 		if ( selector.selector !== undefined ) {
 			this.selector = selector.selector;
 			this.context = selector.context;
 		}
-
+		//+/最后把selector存入jQuery.fn.init
 		return jQuery.makeArray( selector, this );
 	};
 
@@ -3012,7 +3030,7 @@ var rootjQuery,
 init.prototype = jQuery.fn;//+/jQuery.fn = jQuery.prototype
 
 // Initialize central reference
-rootjQuery = jQuery( document );
+rootjQuery = jQuery( document );//+/document:window.document
 
 
 var rparentsprev = /^(?:parents|prev(?:Until|All))/,
