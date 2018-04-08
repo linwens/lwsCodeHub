@@ -117,9 +117,11 @@ jQuery.fn = jQuery.prototype = {
 		return num != null ?
 
 			// Return just the one element from the set
+			//+/如果传入的索引值<0;从后往前取
 			( num < 0 ? this[ num + this.length ] : this[ num ] ) :
 
 			// Return all the elements in a clean array
+			//+/如果未传索引值直接返回整个jQuery对象，this指向jQuery.fn.init；数组的slice方法返回一个数组，所以通过slice.call()将类数组转换为数组
 			slice.call( this );
 	},
 
@@ -421,7 +423,7 @@ jQuery.extend( {
 		}
 		return ret;
 	},
-
+	//+/确定elem在数组arr中的位置，可以指定从i开始计数(如果没有找到则返回 -1 )。
 	inArray: function( elem, arr, i ) {
 		var len;
 
@@ -3090,18 +3092,21 @@ jQuery.fn.extend( {
 	// Determine the position of an element within
 	// the matched set of elements
 	index: function( elem ) {
-
+		
 		// No argument, return index in parent
+		//+/如果未传参，返回当前dom元素在同辈中的索引位置
 		if ( !elem ) {
 			return ( this[ 0 ] && this[ 0 ].parentNode ) ? this.first().prevAll().length : -1;
 		}
 
 		// index in selector
+		//+/直接传选择器字符串,那就是在选择器里找当前dom元素的位置
 		if ( typeof elem === "string" ) {
 			return jQuery.inArray( this[ 0 ], jQuery( elem ) );
 		}
 
 		// Locate the position of the desired element
+		//+/其他情况通过inArray()获取作为参数的元素的索引值。
 		return jQuery.inArray(
 
 			// If it receives a jQuery object, the first element is used
