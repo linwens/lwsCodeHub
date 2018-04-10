@@ -11054,22 +11054,24 @@ if ( typeof define === "function" && define.amd ) {
 
 
 var
-
+	//+/在jQuery加载前，如果已经存在jQuery和$变量，那就先把当前window下的jQuery和$对应的内容保存起来(_jQuery、_$)
 	// Map over jQuery in case of overwrite
 	_jQuery = window.jQuery,
 
 	// Map over the $ in case of overwrite
 	_$ = window.$;
-
+//+/确保jQuery库已经引入后，如果调用jQuery.noConflict
 jQuery.noConflict = function( deep ) {
+	//+/如果window.$ === jQuery，说明jQuery载入前window.$的值被jQuery载入后覆盖掉了
 	if ( window.$ === jQuery ) {
+		//+/交出$的控制权，把$重新指回jQuery载入前window.$指向的内容，该内容之前已经存在_$里了
 		window.$ = _$;
 	}
-
+	//+/deep是布尔值，为true，就说明对jQuery变量的控制权也放弃。
 	if ( deep && window.jQuery === jQuery ) {
 		window.jQuery = _jQuery;
 	}
-
+	//+/jQuery交出控制权后，jquery库还得用，所以返回完整的jQuery对象
 	return jQuery;
 };
 
