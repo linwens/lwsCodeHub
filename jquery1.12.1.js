@@ -4423,33 +4423,34 @@ function adjustCSS( elem, prop, valueParts, tween ) {
 }
 
 
-// Multifunctional method to get and set values of a collection
-// The value/s can optionally be executed if it's a function
+// Multifunctional method to get and set values of a collection获取和设置集合值的多功能方法
+// The value/s can optionally be executed if it's a function 如果值是一个函数，可以有选择的执行
 var access = function( elems, fn, key, value, chainable, emptyGet, raw ) {
+	//+?/参数的含义：elems就是jQuery对象,fn要执行的函数,key属性名或对象,value属性值(当key是对象时，value是undefined),chainable是否链式调用,emptyGet该参数一般是不传的，如果jQuery没有选中到元素则返回undefined,raw用于判断value是否为函数，一般也不传，在方法里赋值
 	var i = 0,
 		length = elems.length,
-		bulk = key == null;
+		bulk = key == null;//+/注意等号，如果key值不存在，bulk为true
 
 	// Sets many values
 	if ( jQuery.type( key ) === "object" ) {
 		chainable = true;
-		for ( i in key ) {
+		for ( i in key ) {//+/如果key是一个对象那就递归每个值
 			access( elems, fn, i, key[ i ], true, emptyGet, raw );
 		}
 
 	// Sets one value
-	} else if ( value !== undefined ) {
+	} else if ( value !== undefined ) {//+/如果value的值定义了，说明是个set操作，而不是get操作。回忆attr()方法，一个参数是获取属性，两个参数是设置属性
 		chainable = true;
 
 		if ( !jQuery.isFunction( value ) ) {
-			raw = true;
+			raw = true;//+/如果value不是函数，raw为true
 		}
 
-		if ( bulk ) {
+		if ( bulk ) {//+/当bulk为真，也就是key为空
 
 			// Bulk operations run against the entire set
-			if ( raw ) {
-				fn.call( elems, value );
+			if ( raw ) {//+/同时value不是函数
+				fn.call( elems, value );//调用函数
 				fn = null;
 
 			// ...except when executing function values
@@ -4471,14 +4472,15 @@ var access = function( elems, fn, key, value, chainable, emptyGet, raw ) {
 			}
 		}
 	}
-
+	//+/chainable为true代表链式操作，也就是执行set，那就返回jQuery，否则就是get操作
 	return chainable ?
 		elems :
 
 		// Gets
+		//+/如果是get操作，判断是否有key值
 		bulk ?
-			fn.call( elems ) :
-			length ? fn( elems[ 0 ], key ) : emptyGet;
+			fn.call( elems ) ://+/key值也是空就执行回调函数,$('dom').attr(null)会报错
+			length ? fn( elems[ 0 ], key ) : emptyGet;//+/key值不为空，判断jQuery是否选择到了元素，没有就是emptyGet=undefined，返回undefined
 };
 var rcheckableType = ( /^(?:checkbox|radio)$/i );
 
@@ -8443,6 +8445,7 @@ var nodeHook, boolHook,
 
 jQuery.fn.extend( {
 	attr: function( name, value ) {
+		//+/arguments.length > 1
 		return access( this, jQuery.attr, name, value, arguments.length > 1 );
 	},
 
