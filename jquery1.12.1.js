@@ -3204,7 +3204,7 @@ jQuery.each( {
 		return this.pushStack( ret );
 	};
 } );
-var rnotwhite = ( /\S+/g );
+var rnotwhite = ( /\S+/g );//+/匹配至少一个任何可见字符，等价于[^ \f\n\r\t\v]。不可见字符包括：空格符 、制表符\t、回车符\r、换行符\n、垂直制表符\v、换页符\f
 
 
 
@@ -8850,8 +8850,8 @@ if ( !support.enctype ) {
 
 
 
-var rclass = /[\t\r\n\f]/g;
-
+var rclass = /[\t\r\n\f]/g;//+/匹配制表符、回车符、换行符、换页符，没有空格符和垂直制表符
+//+/获取元素Class属性值
 function getClass( elem ) {
 	return jQuery.attr( elem, "class" ) || "";
 }
@@ -8860,15 +8860,18 @@ jQuery.fn.extend( {
 	addClass: function( value ) {
 		var classes, elem, cur, curValue, clazz, j, finalValue,
 			i = 0;
-
+		//+/如果传参是函数，遍历获取的的所有元素并做递归调用，函数的执行作为传参，所以要求函数必须return一个值
 		if ( jQuery.isFunction( value ) ) {
 			return this.each( function( j ) {
-				jQuery( this ).addClass( value.call( this, j, getClass( this ) ) );
+				console.log(this);//+?/为什么打印的dom已经包含要添加的class值？
+				console.log(getClass( this ));//+?/这里却是空？
+				console.log('--==-'+j+'-==--')
+				jQuery( this ).addClass( value.call( this, j, getClass( this ) ) );//+/函数接受两个值：当前元素索引，当前元素原有class值
 			} );
 		}
-
+		//+/value是字符串且不为空
 		if ( typeof value === "string" && value ) {
-			classes = value.match( rnotwhite ) || [];
+			classes = value.match( rnotwhite ) || [];//+/匹配到有效的class名
 
 			while ( ( elem = this[ i++ ] ) ) {
 				curValue = getClass( elem );
