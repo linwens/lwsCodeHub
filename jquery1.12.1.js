@@ -80,6 +80,7 @@ var
 
 	// Support: Android<4.1, IE<9
 	// Make sure we trim BOM and NBSP
+	//+/ \s匹配任何不可见字符;包括空格、制表符、换页符等等。等价于[ \f\n\r\t\v]。
 	//+/ \uFEFF：字节次序标记字符;
 	//+/ \xA0：禁止自动换行空格符，也就是html中的&nbsp;
 	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,//+/全局搜索空白开头或者空白结尾
@@ -401,7 +402,7 @@ jQuery.extend( {
 
 	// Support: Android<4.1, IE<9
 	trim: function( text ) {
-		//+/去除字符串中的空字符
+		//+/去除字符串两端的空白字符(如：制表符、回车符、换行符、换页符，空格符和垂直制表符)
 		return text == null ?
 			"" :
 			( text + "" ).replace( rtrim, "" );
@@ -8872,30 +8873,32 @@ jQuery.fn.extend( {
 		//+/value是字符串且不为空
 		if ( typeof value === "string" && value ) {
 			classes = value.match( rnotwhite ) || [];//+/匹配到有效的class名
-
-			while ( ( elem = this[ i++ ] ) ) {
-				curValue = getClass( elem );
+			console.log(classes)
+			while ( ( elem = this[ i++ ] ) ) {//+/this指向jquery对象，这里遍历匹配到的元素
+				
+				curValue = getClass( elem );//+/取到已有类名
+				
 				cur = elem.nodeType === 1 &&
-					( " " + curValue + " " ).replace( rclass, " " );
-
-				if ( cur ) {
+					( " " + curValue + " " ).replace( rclass, " " );//+/rclass = /[\t\r\n\f]/g;把制表符、回车符、换行符、换页符替换成空格
+				
+				if ( cur ) {//+/任何非空字符串转换为布尔值都是true，空格也是非空。" "->true;""->false
 					j = 0;
-					while ( ( clazz = classes[ j++ ] ) ) {
-						if ( cur.indexOf( " " + clazz + " " ) < 0 ) {
+					while ( ( clazz = classes[ j++ ] ) ) {//+/遍历新增的类名
+						if ( cur.indexOf( " " + clazz + " " ) < 0 ) {//+/原类名值中不存在将要新增的类名时才增加新类名
 							cur += clazz + " ";
 						}
 					}
 
 					// only assign if different to avoid unneeded rendering.
-					finalValue = jQuery.trim( cur );
-					if ( curValue !== finalValue ) {
-						jQuery.attr( elem, "class", finalValue );
+					finalValue = jQuery.trim( cur );//+/去除字符串两端的空字符
+					if ( curValue !== finalValue ) {//+/如果新增类名后与原类名相同，就不去修改class属性。比如参数是个空格
+						jQuery.attr( elem, "class", finalValue );//+/通过attr添加属性值
 					}
 				}
 			}
 		}
 
-		return this;
+		return this;//+/最后返回jquery对象，方便链式调用
 	},
 
 	removeClass: function( value ) {
