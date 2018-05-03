@@ -8873,7 +8873,7 @@ jQuery.fn.extend( {
 		//+/value是字符串且不为空
 		if ( typeof value === "string" && value ) {
 			classes = value.match( rnotwhite ) || [];//+/匹配到有效的class名
-			console.log(classes)
+
 			while ( ( elem = this[ i++ ] ) ) {//+/this指向jquery对象，这里遍历匹配到的元素
 				
 				curValue = getClass( elem );//+/取到已有类名
@@ -8905,12 +8905,12 @@ jQuery.fn.extend( {
 		var classes, elem, cur, curValue, clazz, j, finalValue,
 			i = 0;
 
-		if ( jQuery.isFunction( value ) ) {
+		if ( jQuery.isFunction( value ) ) {//+/如果是函数，遍历所有匹配元素，并通过函数的返回值递归removeClass
 			return this.each( function( j ) {
 				jQuery( this ).removeClass( value.call( this, j, getClass( this ) ) );
 			} );
 		}
-
+		//+/如果不传参，清除匹配元素所有class类名
 		if ( !arguments.length ) {
 			return this.attr( "class", "" );
 		}
@@ -8930,21 +8930,22 @@ jQuery.fn.extend( {
 					while ( ( clazz = classes[ j++ ] ) ) {
 
 						// Remove *all* instances
+						//+/如果参数中给到的类名在原有类名中存在则删除
 						while ( cur.indexOf( " " + clazz + " " ) > -1 ) {
-							cur = cur.replace( " " + clazz + " ", " " );
+							cur = cur.replace( " " + clazz + " ", " " );//+/通过replace把类名替换成空格实现删除
 						}
 					}
 
 					// Only assign if different to avoid unneeded rendering.
 					finalValue = jQuery.trim( cur );
-					if ( curValue !== finalValue ) {
+					if ( curValue !== finalValue ) {//+/如果删除类名后与原类名相同，就不去修改class属性。比如参数是个空格
 						jQuery.attr( elem, "class", finalValue );
 					}
 				}
 			}
 		}
 
-		return this;
+		return this;//+/最后返回jquery对象，方便链式调用
 	},
 
 	toggleClass: function( value, stateVal ) {
