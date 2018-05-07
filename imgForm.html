@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>图片上传插件</title>
+	<style>
+		#droptarget{
+			width: 300px;
+			height: 300px;
+			background: #1BEC89;
+		}
+		#files-list{
+			width: 300px;
+			height: 200px;
+			background: #6158EC;
+		}
+		#output{
+			width: 300px;
+			height: 300px;
+		}
+		#output img{
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+	<div id="droptarget"></div>
+	<div id="output"></div>
+	<div id="progress"></div>
+	<input type='file' id="files-list" multiple="multiple" /><!-- 表单元素 -->
+	<script>
+		//跨浏览器通用事件处理程序(抄袭)
+		var EventUtil={
+			
+		   addHandler:function(element,type,handler){ //添加事件
+		      if(element.addEventListener){ 
+		         element.addEventListener(type,handler,false);  //使用DOM2级方法添加事件
+		      }else if(element.attachEvent){                    //使用IE方法添加事件
+		         element.attachEvent("on"+type,handler);
+		      }else{
+		         element["on"+type]=handler;          //使用DOM0级方法添加事件
+		      }
+		   },  
+
+		   removeHandler:function(element,type,handler){  //取消事件
+		      if(element.removeEventListener){
+		         element.removeEventListener(type,handler,false);
+		      }else if(element.detachEvent){
+		         element.detachEvent("on"+type,handler);
+		      }else{
+		         element["on"+type]=null;
+		      }
+		   },
+
+		   getEvent:function(event){  //使用这个方法跨浏览器取得event对象
+		      return event?event:window.event;
+		   },
+			
+		   getTarget:function(event){  //返回事件的实际目标
+		      return event.target||event.srcElement;
+		   },
+			
+		   preventDefault:function(event){   //阻止事件的默认行为
+		      if(event.preventDefault){
+		         event.preventDefault(); 
+		      }else{
+		         event.returnValue=false;
+		      }
+		   },
+
+		   stopPropagation:function(event){  //立即停止事件在DOM中的传播
+		                                     //避免触发注册在document.body上面的事件处理程序
+		      if(event.stopPropagation){
+		         event.stopPropagation();
+		      }else{
+		         event.cancelBubble=true;
+		      }
+		   },
+				
+		   getRelatedTarget:function(event){  //获取mouseover和mouseout相关元素
+		      if(event.relatedTarget){
+		         return event.relatedTarget;
+		      }else if(event.toElement){      //兼容IE8-
+		         return event.toElement;
+		      }else if(event.formElement){
+		         return event.formElement;
+		      }else{
+		         return null;
+		      }
+		   },
+				
+		   getButton:function(event){    //获取mousedown或mouseup按下或释放的按钮是鼠标中的哪一个
+		      if(document.implementation.hasFeature("MouseEvents","2.0")){
+		         return event.button;
+		      }else{
+		         switch(event.button){   //将IE模型下的button属性映射为DOM模型下的button属性
+		            case 0:
+		            case 1:
+		            case 3:
+		            case 5:
+		            case 7:
+		               return 0;  //按下的是鼠标主按钮（一般是左键）
+		            case 2:
+		            case 6:
+		               return 2;  //按下的是中间的鼠标按钮
+		            case 4:
+		               return 1;  //鼠标次按钮（一般是右键）
+		         }
+		      }
+		   },
+				
+		   getWheelDelta:function(event){ //获取表示鼠标滚轮滚动方向的数值
+		      if(event.wheelDelta){
+		         return event.wheelDelta;
+		      }else{
+		         return -event.detail*40;
+		      }
+		   },
+				
+		   getCharCode:function(event){   //以跨浏览器取得相同的字符编码，需在keypress事件中使用
+		      if(typeof event.charCode=="number"){
+		         return event.charCode;
+		      }else{
+		         return event.keyCode;
+		      }
+		   }			
+		};
+		//file API
+		var filesList = document.getElementById('files-list');
+		EventUtil.addHandler(filesList, 'change', function(event){
+			// var files = EventUtil.getTarget(event).files,i=0,len=files.length;
+			// while(i<len){
+			// 	console.log(files[i].name + " ("+files[i].type + ", "+files[i].size+" bytes) ");
+			// 	i++;
+			// }
+			var info = "",
+				output = document.getElementById("output"),
+				progress = document.getElementById("progress"),
+				files = EventUtil.getTarget(event).files,
+				type = "default",
+				reader = new FileReader();
+			if (/image/.test(files[0].type)){
+				reader.readAsDataURL(files[0]);//读取文件并将文件以数据 URI 的形式保存在 reader.result属性中
+				type = "image";
+			} else {
+				reader.readAsText(files[0]);//以纯文本形式读取文件，将读取到的文本保存在 reader.result属性中
+				type = "text";
+			}
+			reader.onerror = function(){//读取出错
+				output.innerHTML = "Could not read file, error code is " +
+				reader.error.code;
+			};
+			reader.onprogress = function(event){//读取进度(每过50ms左右，就会触发一次progress事件)
+				if (event.lengthComputable){
+					progress.innerHTML = event.loaded + "/" + event.total;
+				}
+			};
+			reader.onload = function(){//读取完成
+				var html = "";
+				switch(type){
+					case "image":
+						html = "<img src=\"" + reader.result + "\">";
+						break;
+					case "text":
+						html = reader.result;
+						break;
+				}
+				output.innerHTML = html;
+			};
+		})
+		//读取拖放到页面指定区域的文件
+		var droptarget = document.getElementById( "droptarget");
+		function handleEvent(event){
+			var info = "",
+			output = document.getElementById("output"),
+			files, i, len;
+			EventUtil.preventDefault(event);
+			if (event.type == "drop"){
+				console.log(event.dataTransfer)
+				//event.dataTransfer是事件对象的一个属性，它存储了被拖放元素的数据信息及用于操作这些数据的方法。因为它是事件对象的属性，所以只能在拖放事件的事件处理程序中访问
+				files = event.dataTransfer.files;
+				console.log(files)
+				i = 0;
+				len = files.length;
+				while (i < len){
+					info += files[i].name + " (" + files[i].type + ", " + files[i].size +
+					" bytes)<br>";
+					i++;
+				}
+				output.innerHTML = info;
+			}
+		}
+		EventUtil.addHandler(droptarget, "dragenter", handleEvent);
+		EventUtil.addHandler(droptarget, "dragover", handleEvent);
+		EventUtil.addHandler(droptarget, "drop", handleEvent);
+
+
+		//js高程25章4节：File API
+		/**
+		 *这个插件想实现的功能：
+		 *1、绑定一个dom就可以生成一个文件提交元素，提交要用到的各种参数可配
+		 *2、点击增加文件，如果是图片可以预览
+		 *3、提交的时候显示进度条，不同状态会有不同提示
+		 *4、
+		 *
+		 *****
+		**/
+		;(function(window,document){
+			var fileUpload = function(){};
+
+			fileUpload.prototype = {
+				constructor: fileUpload,
+				dropFileRead:function(){
+					
+				}
+			}
+
+			window.fileUpload = fileUpload;
+
+		})(window,document);
+	</script>
+</body>
+</html>
