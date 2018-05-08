@@ -173,9 +173,11 @@
 		function handleEvent(event){
 			var info = "",
 			output = document.getElementById("output"),
+			data, xhr,
 			files, i, len;
 			EventUtil.preventDefault(event);
 			if (event.type == "drop"){
+				data = new FormData();//建一个 FormData对象
 				console.log(event.dataTransfer)
 				//event.dataTransfer是事件对象的一个属性，它存储了被拖放元素的数据信息及用于操作这些数据的方法。因为它是事件对象的属性，所以只能在拖放事件的事件处理程序中访问
 				files = event.dataTransfer.files;
@@ -183,11 +185,20 @@
 				i = 0;
 				len = files.length;
 				while (i < len){
+					data.append("file"+i, files[i]);//通过它调用 append()方法并传入相应的File 对象作为参数。
 					info += files[i].name + " (" + files[i].type + ", " + files[i].size +
 					" bytes)<br>";
 					i++;
 				}
 				output.innerHTML = info;
+				xhr = new XMLHttpRequest();
+				xhr.open("post", "FileAPIExample06Upload.php", true);
+				xhr.onreadystatechange = function(){
+					if (xhr.readyState == 4){
+						alert(xhr.responseText);
+					}
+				};
+				xhr.send(data);//然后，再把 FormData 对象传递给 XHR 的 send()方法，结果与通过表单上传一模一样。
 			}
 		}
 		EventUtil.addHandler(droptarget, "dragenter", handleEvent);
@@ -201,12 +212,15 @@
 		 *1、绑定一个dom就可以生成一个文件提交元素，提交要用到的各种参数可配
 		 *2、点击增加文件，如果是图片可以预览
 		 *3、提交的时候显示进度条，不同状态会有不同提示
-		 *4、
+		 *4、拖动上传文件
 		 *
 		 *****
 		**/
 		;(function(window,document){
-			var fileUpload = function(){};
+			var fileUpload = function(dom){
+				this.filesList = [];//文件列表
+				this.dom = dom;//容器
+			};
 
 			fileUpload.prototype = {
 				constructor: fileUpload,
