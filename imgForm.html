@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>图片上传插件</title>
+	<script src="./jquery1.12.1.js"></script>
 	<style>
 		#droptarget{
 			width: 300px;
@@ -103,14 +104,20 @@
 				preview:function(obj,files){//预览
 					var fr = new FileReader(),
 						output = obj.opt,
-						progress = obj.prg;
+						progress = obj.prg,
+						url = obj.createObjectURL(files[0]);
 					//预览
+					/*
+					if(url){//如果支持createObjectURL，那就直接生成url，就不需要经过js存储这一步
+						if(/image/.test(files[0].type)){
+							output.innerHTML = "<img src=\"" + url + "\">"
+						}
+					}
+					*/
 					if (/image/.test(files[0].type)){
+						//只有读取文件了，后面不同阶段的函数执行才可继续
 						fr.readAsDataURL(files[0]);//读取文件并将文件以数据 URI 的形式保存在 reader.result属性中
 						type = "image";
-					} else {
-						fr.readAsText(files[0]);//以纯文本形式读取文件，将读取到的文本保存在 reader.result属性中
-						type = "text";
 					}
 					fr.onerror = function(){//读取出错
 						output.innerHTML = "Could not read file, error code is " +
@@ -127,14 +134,20 @@
 							case "image":
 								html = "<img src=\"" + fr.result + "\">";
 								break;
-							case "text":
-								html = fr.result;
-								break;
 						}
 						output.innerHTML = html;
 						
 					};
-					return fr;
+
+				},
+				createObjectURL:function(bolb){
+					if(window.URL){
+						return window.URL.createObjectURL(bolb);
+					}else if(window.webkitURL){
+						return window.webkitURL.createObjectURL(bolb);
+					}else{
+						return null;
+					}
 				}
 			}
 			var Init = Ful.prototype.init = function(ipt,opt,prg,cb){
@@ -257,13 +270,19 @@
 			};
 			//绑定input修改文件事件
 			window.Ful = Ful;
-
-
 		})(window,document);
 		var ful = Ful('droptarget','output','progress',function(rslt){
 			//可以在这里执行ajax操作
 			console.log(rslt);
 			console.log(rslt.get('file0'));
+			var xhr = new XMLHttpRequest();
+			xhr.open("post", "/ajax/uploadImg", true);
+			xhr.onreadystatechange = function(){
+			    if (xhr.readyState == 4){
+			        alert(xhr.responseText);
+			    }
+			};
+			xhr.send(rslt);
 		});
 	</script>
 </body>
