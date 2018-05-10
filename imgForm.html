@@ -1,289 +1,376 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>图片上传插件</title>
-	<script src="./jquery1.12.1.js"></script>
-	<style>
-		#droptarget{
-			width: 300px;
-			height: 300px;
-			background: #1BEC89;
-		}
-		#files-list{
-			width: 300px;
-			height: 200px;
-			background: #6158EC;
-		}
-		#output{
-			width: 300px;
-			height: 300px;
-		}
-		#output img{
-			width: 100%;
-		}
-	</style>
+    <meta charset="UTF-8">
+    <title>图片上传插件</title>
+    <script src="/javascripts/jquery.js"></script>
+    <style>
+        #droptarget{
+            width: 300px;
+            height: 300px;
+            background: #1BEC89;
+        }
+        #files-list{
+            width: 300px;
+            height: 200px;
+            background: #6158EC;
+        }
+        #output{
+            width: 300px;
+            height: 300px;
+        }
+        #output img{
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-	<div id="droptarget"></div>
-	<div id="output"></div>
-	<div id="progress"></div>
-	<script>
-		//js高程25章4节：File API
-		/**
-		 *这个插件想实现的功能：
-		 *1、绑定一个dom就可以生成一个文件提交元素，提交要用到的各种参数可配
-		 *2、点击增加文件，如果是图片可以预览
-		 *3、提交的时候显示进度条，不同状态会有不同提示
-		 *4、拖动上传文件
-		 *5、拖动上传多个文件的话，如何预览？
-		 ***思路
-		 *1、看看elementui里的上传组件是如何实现的
-		 *****
-		**/
-		;(function(window,document){
-			var Ful = function(ipt,opt,prg,cb){
-				return new Ful.prototype.init(ipt,opt,prg,cb);
-			};
-			/*
-			var fileUpload = function(ipt,opt,prg,cb){
-				this.filesList = [];//文件列表
-				this.ipt = ipt;//上传的容器
-				this.opt = opt;//显示数据的容器
-				this.prg = prg;//显示进度条
-				this.callback = cb;//文件提交后进行的操作，这里我们把提交所需要的必要参数传入回调函数，给使用者使用
+    <div id="droptarget"></div>
+    <div id="output"></div>
+    <div id="progress"></div>
+    <script>
+        //js高程25章4节：File API
+        /**
+         *这个插件想实现的功能：
+         *1、绑定一个dom就可以生成一个文件提交元素，提交要用到的各种参数可配
+         *2、点击增加文件，如果是图片可以预览
+         *3、提交的时候显示进度条，不同状态会有不同提示
+         *4、拖动上传文件
+         *5、拖动上传多个文件的话，如何预览？以及如何指定文件名？
+         ***思路
+         *1、看看elementui里的上传组件是如何实现的
+         *****
+        **/
+        ;(function(window,document){
+            // var support = {};
+            // (function(){
+            //     // Tests for enctype support on a form (#6743)
+            //     // support.enctype = !!document.createElement( "form" ).enctype;
+            //     form = document.createElement( "form" );
+            //     form.setAttribute( "encoding", "formData" );
+            //     support.enctype = form.getAttribute( "enctype" ) === "formData";
+            // })();
+            var Ful = function(ipt,opt,prg,cb){
+                return new Ful.prototype.init(ipt,opt,prg,cb);
+            };
+            Ful.prototype = {
+                constructor: Ful,
+                filename:'imgFiles',//上传的文件字段名，跟后端协商好
+                ipt:'',
+                opt:'',
+                prg:'',
+                readFile:function(obj,cb){//读取文件操作
+                    //图片上传到前端进行读取
+                    function handleFiles(event){
+                        var type, files;
+                        console.log(event.type);
+                        //拖拽上传
+                        EventUtil.preventDefault(event);
+                        if (event.type == "drop"){
+                            //event.dataTransfer是事件对象的一个属性，它存储了被拖放元素的数据信息及用于操作这些数据的方法。因为它是事件对象的属性，所以只能在拖放事件的事件处理程序中访问
+                            files = event.dataTransfer.files;//拖拽上传，只能通过event.dataTransfer去获取files
+                        }else if(event.type == "change"){
+                            //files  IE下取不到值
+                            files = EventUtil.getTarget(event).files;
+                            console.log(files);
+                        }
+                        //预览
+                        if(!files){
+                            obj.doConnect(obj, null, cb);
+                        }else if(files.length<=0){//用户取消的情况
+                            alert('canceled')
+                        }else{
+                            obj.preview(obj,files);
+                            //请求服务器
+                            obj.doConnect(obj, files, cb);
+                        }
+                    }
+                    function doneGap(event){
+                        //拖动上传，鼠标放掉之前
+                        console.log(event.type);
+                    }
+                    EventUtil.addHandler(obj.dom, 'change', handleFiles);
+                    EventUtil.addHandler(obj.dom, "dragenter", doneGap);
+                    EventUtil.addHandler(obj.dom, "dragover", doneGap);
+                    EventUtil.addHandler(obj.dom, "drop", handleFiles);
+                },
+                syncFn:function(obj,cb){
+                    console.log(obj);
+                    var syncIpt = document.getElementById('J_upload');
+                    var syncIfr = document.getElementById('J_iframe');
+                    var imgURL = syncIpt.value;
 
-				this.dom = new Init(this.ipt);//用于操作的容器
-			};
-			*/
-			Ful.prototype = {
-				constructor: Ful,
-				ipt:'',
-				opt:'',
-				prg:'',
-				readFile:function(obj,cb){//读取文件操作
-					//图片上传到前端进行读取
-					function handleFiles(event){
-						var i, len, type, files, 
-						data= new FormData();//建一个 FormData对象，用于异步请求传输数据
-						console.log(event.type);
-						//拖拽上传
-						EventUtil.preventDefault(event);
-						if (event.type == "drop"){
-							//event.dataTransfer是事件对象的一个属性，它存储了被拖放元素的数据信息及用于操作这些数据的方法。因为它是事件对象的属性，所以只能在拖放事件的事件处理程序中访问
-							files = event.dataTransfer.files;//拖拽上传，只能通过event.dataTransfer去获取files
-						}else if(event.type == "change"){
-							files = EventUtil.getTarget(event).files;
-						}
-						i = 0;
-						len = files.length;
-						while (i < len){
-							data.append("file"+i, files[i]);//通过它调用 append()方法并传入相应的File 对象作为参数。
-							i++;
-						}
-						//如果想查看formData的值,直接查看formData会发现是个空对象,可以通过get方法去获取指定key的value，但后端是能接收到的。
-						console.log(data.get('file0'));
-						//预览
-						if(files.length<=0){//用户取消的情况
-							alert('canceled')
-						}else{
-							obj.preview(obj,files);
-							//提交给回调
-							cb.call(obj,data);
-						}
-					}
-					function doneGap(event){
-						//拖动上传，鼠标放掉之前
-						console.log(event.type);
-					}
-					EventUtil.addHandler(obj.dom, 'change', handleFiles);
-					EventUtil.addHandler(obj.dom, "dragenter", doneGap);
-					EventUtil.addHandler(obj.dom, "dragover", doneGap);
-					EventUtil.addHandler(obj.dom, "drop", handleFiles);
-				},
-				preview:function(obj,files){//预览
-					var fr = new FileReader(),
-						output = obj.opt,
-						progress = obj.prg,
-						url = obj.createObjectURL(files[0]);
-					//预览
-					/*
-					if(url){//如果支持createObjectURL，那就直接生成url，就不需要经过js存储这一步
-						if(/image/.test(files[0].type)){
-							output.innerHTML = "<img src=\"" + url + "\">"
-						}
-					}
-					*/
-					if (/image/.test(files[0].type)){
-						//只有读取文件了，后面不同阶段的函数执行才可继续
-						fr.readAsDataURL(files[0]);//读取文件并将文件以数据 URI 的形式保存在 reader.result属性中
-						type = "image";
-					}
-					fr.onerror = function(){//读取出错
-						output.innerHTML = "Could not read file, error code is " +
-						fr.error.code;
-					};
-					fr.onprogress = function(event){//读取进度(每过50ms左右，就会触发一次progress事件)
-						if (event.lengthComputable){
-							progress.innerHTML = event.loaded + "/" + event.total;
-						}
-					};
-					fr.onload = function(){//读取完成
-						var html = "";
-						switch(type){
-							case "image":
-								html = "<img src=\"" + fr.result + "\">";
-								break;
-						}
-						output.innerHTML = html;
-						
-					};
+                    console.log(obj.opt);
+                    EventUtil.addHandler(syncIpt,'change',function(){
+                        console.log('syncIpt change');
+                        var fulForm = document.getElementById('J_Fulform');
+                        console.log(syncIpt);
+                        console.log(syncIpt.value);
+                        var img = new Image();
+                        img.src = syncIpt.value;
+                        //显示预览，失败
+                        obj.opt.appendChild(img);
+                        //obj.opt.innerHTML = '<img src="'+syncIpt.value+'">';
+                        fulForm.submit();
+                    });
+                    //iframe加载完返回数据
+                    syncIfr.onload = function(){
+                        //这里后端如果返回的是json，那旧的IE会提示下载文件；所以后端可以直接返回纯文本。
+                        //通过this.contentDocument获取到iframe里的document
+                        var resData = this.contentDocument.body.textContent;
+                        cb.call(obj,resData);
+                        //删除iframe
+                        setTimeout(function(dom){
+                            dom.parentNode.removeChild(dom);
+                        }, 100, syncIfr);
+                    }
 
-				},
-				createObjectURL:function(bolb){
-					if(window.URL){
-						return window.URL.createObjectURL(bolb);
-					}else if(window.webkitURL){
-						return window.webkitURL.createObjectURL(bolb);
-					}else{
-						return null;
-					}
-				}
-			}
-			var Init = Ful.prototype.init = function(ipt,opt,prg,cb){
-				
-				this.dom = '';
-				this.opt = document.getElementById(opt);//显示数据的容器
-				this.prg = document.getElementById(prg);//显示进度条
-				var domProto = document.getElementById(ipt);
-				//初始化获取到input元素，如果不是input元素就生成一个覆盖上去
-				if(domProto.tagName==='INPUT'){
-					this.dom = domProto;
-				}else{
-					var iptdom = document.createElement('input');
-					iptdom.type='file';
-					iptdom.id = 'J_upload';
-					iptdom.style = 'width:100%;height:100%;opacity:0; filter:alpha(opacity=0);'
-					domProto.appendChild(iptdom);
-					this.dom = iptdom;
-				}
-				//cb.call(this,this.dom);
-				this.readFile(this,cb);
-				return this;
-			};
-			Init.prototype = Ful.prototype;
-			//跨浏览器通用事件处理程序(抄袭)
-			var EventUtil={
-				
-			   addHandler:function(element,type,handler){ //添加事件
-			      if(element.addEventListener){ 
-			         element.addEventListener(type,handler,false);  //使用DOM2级方法添加事件
-			      }else if(element.attachEvent){                    //使用IE方法添加事件
-			         element.attachEvent("on"+type,handler);
-			      }else{
-			         element["on"+type]=handler;          //使用DOM0级方法添加事件
-			      }
-			   },  
+                },
+                preview:function(obj,files){//预览
+                    var //fr = new FileReader(),
+                        output = obj.opt,
+                        progress = obj.prg,
+                        url = obj.createObjectURL(files[0]);
+                    //预览
+                    if(/image/.test(files[0].type)){//如果是图片提供预览功能
+                        if(url){//如果支持createObjectURL，那就直接生成url，就不需要new FileReader去使用js存储这一步
+                            output.innerHTML = "<img src=\"" + url + "\">"
+                        }else{
+                            output.innerHTML = "你的浏览器不支持createObjectURL"
+                        }
+                    }
+                    /*
+                    if (/image/.test(files[0].type)){
+                        //只有读取文件了，后面不同阶段的函数执行才可继续
+                        fr.readAsDataURL(files[0]);//读取文件并将文件以数据 URI 的形式保存在 reader.result属性中
+                        type = "image";
+                    }
+                    fr.onerror = function(){//读取出错
+                        output.innerHTML = "Could not read file, error code is " +
+                        fr.error.code;
+                    };
+                    fr.onprogress = function(event){//本地读取进度(每过50ms左右，就会触发一次progress事件)
+                        if (event.lengthComputable){
+                            //progress.innerHTML = event.loaded + "/" + event.total;
+                        }
+                    };
+                    fr.onload = function(){//读取完成
+                        var html = "";
+                        switch(type){
+                            case "image":
+                                html = "<img src=\"" + fr.result + "\">";
+                                break;
+                        }
+                        output.innerHTML = html;
+                    };
+                    */
+                },
+                createObjectURL:function(bolb){
+                    if(window.URL){
+                        return window.URL.createObjectURL(bolb);
+                    }else if(window.webkitURL){
+                        return window.webkitURL.createObjectURL(bolb);
+                    }else{
+                        return null;
+                    }
+                },
+                doConnect:function(obj, files, cb){
+                    var i,len,xhr;
+                    var data= new FormData();//建一个 FormData对象，用于异步请求传输数据
+                    i = 0;
+                    len = files.length;
+                    console.log(obj.filename);
+                    while (i < len){
+                        //文件上传的时候，key值就是对应的文件name
+                        data.append(obj.filename, files[i]);//通过它调用 append()方法并传入相应的File 对象作为参数。
+                        i++;
+                    }
+                    //如果想查看formData的值,直接查看formData会发现是个空对象,可以通过get方法去获取指定key的value，但后端是能接收到的。
+                    //console.log(data.get(obj.filename));
+                    xhr = new XMLHttpRequest();
+                    //监听进度
+                    xhr.upload.onprogress = function(e){
+                        if(e.lengthComputable){
+                            obj.prg.innerHTML = ((e.loaded/e.total)*100).toFixed(2)+'%';
+                        }
+                    }
+                    xhr.open("post", "/ajax/uploadImg", true);
+                    xhr.onreadystatechange = function(){
+                        if (xhr.readyState == 4){
+                            if((xhr.status>=200 && xhr.status<300)||xhr.status == 304){
+                                console.log(xhr.responseXML);
+                                console.log(xhr.getAllResponseHeaders());
+                                console.log(xhr.responseText);
+                                //提交后回调
+                                cb.call(obj,xhr.responseText);
+                            }else{
+                                alert('响应失败状态码'+xhr.status);
+                            }
+                        }
+                    };
 
-			   removeHandler:function(element,type,handler){  //取消事件
-			      if(element.removeEventListener){
-			         element.removeEventListener(type,handler,false);
-			      }else if(element.detachEvent){
-			         element.detachEvent("on"+type,handler);
-			      }else{
-			         element["on"+type]=null;
-			      }
-			   },
+                    xhr.send(data);
+                }
+            }
+            var Init = Ful.prototype.init = function(ipt,opt,prg,cb){
+                
+                this.dom = '';
+                this.opt = document.getElementById(opt);//显示数据的容器
+                this.prg = document.getElementById(prg);//显示进度条
+                var domProto = document.getElementById(ipt);
+                //初始化获取到input元素，如果不是input元素就生成一个覆盖上去
+                //先判断元素是否支持FormData
+                if(!window.FormData){
+                    /**
+                     *思路：当前页面的一个form表单通过submit提交到一个看不见的iframe，然后通过iframe返回数据给当前页面
+                     *
+                    **/
+                    console.log('FormData不行');
+                    //生成iframe
+                    var ifrName = 'iframe11';
+                    var ifr = document.createElement('iframe');
+                        ifr.id = 'J_iframe';
+                        ifr.name = ifrName;
+                    //生成form表单
+                    var fileForm = document.createElement('form');
+                    fileForm.id = 'J_Fulform';
+                    fileForm.style.cssText = 'width:100%;height:100%;'
+                    fileForm.action = '/ajax/uploadImg';
+                    fileForm.method = 'post';
 
-			   getEvent:function(event){  //使用这个方法跨浏览器取得event对象
-			      return event?event:window.event;
-			   },
-				
-			   getTarget:function(event){  //返回事件的实际目标
-			      return event.target||event.srcElement;
-			   },
-				
-			   preventDefault:function(event){   //阻止事件的默认行为
-			      if(event.preventDefault){
-			         event.preventDefault(); 
-			      }else{
-			         event.returnValue=false;
-			      }
-			   },
+                    // <IE8 无法通过enctype直接修改值，只能用encoding
+                    fileForm.encoding = 'multipart/form-data';//enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码
+                    fileForm.target = ifrName;
+                    fileForm.innerHTML = '<input type="file" id="J_upload" style="width:100%;height:100%;opacity:0; filter:alpha(opacity=0);" name="imgFiles"/>'
+                    domProto.appendChild(fileForm);
+                    document.body.appendChild(ifr);
+                    /**
+                     *这里有个坑，IE8下png图片的Content-Type: image/x-png，标准应该是image/png，所以后端要是只考虑了png的话，IE8下传png图片会失败
+                    **/
+                    this.syncFn(this,cb);
+                }else{
+                    if(domProto.tagName==='INPUT'){
+                        this.dom = domProto;
+                    }else{
+                        var iptdom = document.createElement('input');
+                        iptdom.type='file';
+                        iptdom.id = 'J_upload';
+                        //直接使用style会导致页面reflow，消耗性能；而且在IE8下，直接style会报错；
+                        iptdom.style.cssText = 'width:100%;height:100%;opacity:0; filter:alpha(opacity=0);'
+                        domProto.appendChild(iptdom);
+                        this.dom = iptdom;
+                    }
+                    //cb.call(this,this.dom);
+                    this.readFile(this,cb);
+                }
+                
+                return this;
+            };
+            Init.prototype = Ful.prototype;
+            //跨浏览器通用事件处理程序(抄袭)
+            var EventUtil={
+                
+               addHandler:function(element,type,handler){ //添加事件
+                  if(element.addEventListener){ 
+                     element.addEventListener(type,handler,false);  //使用DOM2级方法添加事件
+                  }else if(element.attachEvent){                    //使用IE方法添加事件
+                     element.attachEvent("on"+type,handler);
+                  }else{
+                     element["on"+type]=handler;          //使用DOM0级方法添加事件
+                  }
+               },  
 
-			   stopPropagation:function(event){  //立即停止事件在DOM中的传播
-			                                     //避免触发注册在document.body上面的事件处理程序
-			      if(event.stopPropagation){
-			         event.stopPropagation();
-			      }else{
-			         event.cancelBubble=true;
-			      }
-			   },
-					
-			   getRelatedTarget:function(event){  //获取mouseover和mouseout相关元素
-			      if(event.relatedTarget){
-			         return event.relatedTarget;
-			      }else if(event.toElement){      //兼容IE8-
-			         return event.toElement;
-			      }else if(event.formElement){
-			         return event.formElement;
-			      }else{
-			         return null;
-			      }
-			   },
-					
-			   getButton:function(event){    //获取mousedown或mouseup按下或释放的按钮是鼠标中的哪一个
-			      if(document.implementation.hasFeature("MouseEvents","2.0")){
-			         return event.button;
-			      }else{
-			         switch(event.button){   //将IE模型下的button属性映射为DOM模型下的button属性
-			            case 0:
-			            case 1:
-			            case 3:
-			            case 5:
-			            case 7:
-			               return 0;  //按下的是鼠标主按钮（一般是左键）
-			            case 2:
-			            case 6:
-			               return 2;  //按下的是中间的鼠标按钮
-			            case 4:
-			               return 1;  //鼠标次按钮（一般是右键）
-			         }
-			      }
-			   },
-					
-			   getWheelDelta:function(event){ //获取表示鼠标滚轮滚动方向的数值
-			      if(event.wheelDelta){
-			         return event.wheelDelta;
-			      }else{
-			         return -event.detail*40;
-			      }
-			   },
-					
-			   getCharCode:function(event){   //以跨浏览器取得相同的字符编码，需在keypress事件中使用
-			      if(typeof event.charCode=="number"){
-			         return event.charCode;
-			      }else{
-			         return event.keyCode;
-			      }
-			   }			
-			};
-			//绑定input修改文件事件
-			window.Ful = Ful;
-		})(window,document);
-		var ful = Ful('droptarget','output','progress',function(rslt){
-			//可以在这里执行ajax操作
-			console.log(rslt);
-			console.log(rslt.get('file0'));
-			var xhr = new XMLHttpRequest();
-			xhr.open("post", "/ajax/uploadImg", true);
-			xhr.onreadystatechange = function(){
-			    if (xhr.readyState == 4){
-			        alert(xhr.responseText);
-			    }
-			};
-			xhr.send(rslt);
-		});
-	</script>
+               removeHandler:function(element,type,handler){  //取消事件
+                  if(element.removeEventListener){
+                     element.removeEventListener(type,handler,false);
+                  }else if(element.detachEvent){
+                     element.detachEvent("on"+type,handler);
+                  }else{
+                     element["on"+type]=null;
+                  }
+               },
+
+               getEvent:function(event){  //使用这个方法跨浏览器取得event对象
+                  return event?event:window.event;
+               },
+                
+               getTarget:function(event){  //返回事件的实际目标
+                  return event.target||event.srcElement;
+               },
+                
+               preventDefault:function(event){   //阻止事件的默认行为
+                  if(event.preventDefault){
+                     event.preventDefault(); 
+                  }else{
+                     event.returnValue=false;
+                  }
+               },
+
+               stopPropagation:function(event){  //立即停止事件在DOM中的传播
+                                                 //避免触发注册在document.body上面的事件处理程序
+                  if(event.stopPropagation){
+                     event.stopPropagation();
+                  }else{
+                     event.cancelBubble=true;
+                  }
+               },
+                    
+               getRelatedTarget:function(event){  //获取mouseover和mouseout相关元素
+                  if(event.relatedTarget){
+                     return event.relatedTarget;
+                  }else if(event.toElement){      //兼容IE8-
+                     return event.toElement;
+                  }else if(event.formElement){
+                     return event.formElement;
+                  }else{
+                     return null;
+                  }
+               },
+                    
+               getButton:function(event){    //获取mousedown或mouseup按下或释放的按钮是鼠标中的哪一个
+                  if(document.implementation.hasFeature("MouseEvents","2.0")){
+                     return event.button;
+                  }else{
+                     switch(event.button){   //将IE模型下的button属性映射为DOM模型下的button属性
+                        case 0:
+                        case 1:
+                        case 3:
+                        case 5:
+                        case 7:
+                           return 0;  //按下的是鼠标主按钮（一般是左键）
+                        case 2:
+                        case 6:
+                           return 2;  //按下的是中间的鼠标按钮
+                        case 4:
+                           return 1;  //鼠标次按钮（一般是右键）
+                     }
+                  }
+               },
+                    
+               getWheelDelta:function(event){ //获取表示鼠标滚轮滚动方向的数值
+                  if(event.wheelDelta){
+                     return event.wheelDelta;
+                  }else{
+                     return -event.detail*40;
+                  }
+               },
+                    
+               getCharCode:function(event){   //以跨浏览器取得相同的字符编码，需在keypress事件中使用
+                  if(typeof event.charCode=="number"){
+                     return event.charCode;
+                  }else{
+                     return event.keyCode;
+                  }
+               }            
+            };
+            //绑定input修改文件事件
+            window.Ful = Ful;
+        })(window,document);
+        var ful = Ful('droptarget','output','progress',function(rslt){
+            //可以在这里可以获得到后端给过来的数据
+            console.log('最终获取到数据啦-----------------');
+            console.log(rslt);
+        });
+    </script>
 </body>
 </html>
