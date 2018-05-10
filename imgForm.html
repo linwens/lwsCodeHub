@@ -42,23 +42,12 @@
          *****
         **/
         ;(function(window,document){
-            // var support = {};
-            // (function(){
-            //     // Tests for enctype support on a form (#6743)
-            //     // support.enctype = !!document.createElement( "form" ).enctype;
-            //     form = document.createElement( "form" );
-            //     form.setAttribute( "encoding", "formData" );
-            //     support.enctype = form.getAttribute( "enctype" ) === "formData";
-            // })();
-            var Ful = function(ipt,opt,prg,cb){
-                return new Ful.prototype.init(ipt,opt,prg,cb);
+        	var Fuc = function(){};
+            var Ful = function(option){
+                return new Ful.prototype.init(option);
             };
             Ful.prototype = {
                 constructor: Ful,
-                filename:'imgFiles',//上传的文件字段名，跟后端协商好
-                ipt:'',
-                opt:'',
-                prg:'',
                 readFile:function(obj,cb){//读取文件操作
                     //图片上传到前端进行读取
                     function handleFiles(event){
@@ -118,13 +107,16 @@
                         //这里后端如果返回的是json，那旧的IE会提示下载文件；所以后端可以直接返回纯文本。
                         //通过this.contentDocument获取到iframe里的document
                         var resData = this.contentDocument.body.textContent;
-                        cb.call(obj,resData);
-                        //删除iframe
-                        setTimeout(function(dom){
-                            dom.parentNode.removeChild(dom);
-                        }, 100, syncIfr);
+                        if(resData&&resData!=''){//只有有数据的时候才执行回调函数
+                        	cb.call(obj,resData);
+                        	//删除iframe
+                        	var dom = syncIfr;
+                        	setTimeout(function(){
+                        	    dom.parentNode.removeChild(dom);
+                        	}, 100);//可以将syncIfr作为参数传入，但是IE9及以下不支持
+                        }
+                        
                     }
-
                 },
                 preview:function(obj,files){//预览
                     var //fr = new FileReader(),
@@ -198,9 +190,7 @@
                     xhr.onreadystatechange = function(){
                         if (xhr.readyState == 4){
                             if((xhr.status>=200 && xhr.status<300)||xhr.status == 304){
-                                console.log(xhr.responseXML);
-                                console.log(xhr.getAllResponseHeaders());
-                                console.log(xhr.responseText);
+                                
                                 //提交后回调
                                 cb.call(obj,xhr.responseText);
                             }else{
@@ -212,12 +202,18 @@
                     xhr.send(data);
                 }
             }
-            var Init = Ful.prototype.init = function(ipt,opt,prg,cb){
-                
+            var Init = Ful.prototype.init = function(option){
+            	this.option = utils.extend({
+            		filename:'',
+                	ipt:'',
+                	opt:'',
+                	prg:'',	
+            		cb:Fuc
+            	},option);
                 this.dom = '';
-                this.opt = document.getElementById(opt);//显示数据的容器
-                this.prg = document.getElementById(prg);//显示进度条
-                var domProto = document.getElementById(ipt);
+                this.opt = document.getElementById(this.option.opt);//显示数据的容器
+                this.prg = document.getElementById(this.option.prg);//显示进度条
+                var domProto = document.getElementById(this.option.ipt);
                 //初始化获取到input元素，如果不是input元素就生成一个覆盖上去
                 //先判断元素是否支持FormData
                 if(!window.FormData){
@@ -231,23 +227,24 @@
                     var ifr = document.createElement('iframe');
                         ifr.id = 'J_iframe';
                         ifr.name = ifrName;
+                        ifr.style.cssText = 'width:0;height:0;'
                     //生成form表单
                     var fileForm = document.createElement('form');
-                    fileForm.id = 'J_Fulform';
-                    fileForm.style.cssText = 'width:100%;height:100%;'
-                    fileForm.action = '/ajax/uploadImg';
-                    fileForm.method = 'post';
+	                    fileForm.id = 'J_Fulform';
+	                    fileForm.style.cssText = 'width:100%;height:100%;';
+	                    fileForm.action = '/ajax/uploadImg';
+	                    fileForm.method = 'post';
 
-                    // <IE8 无法通过enctype直接修改值，只能用encoding
-                    fileForm.encoding = 'multipart/form-data';//enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码
-                    fileForm.target = ifrName;
-                    fileForm.innerHTML = '<input type="file" id="J_upload" style="width:100%;height:100%;opacity:0; filter:alpha(opacity=0);" name="imgFiles"/>'
-                    domProto.appendChild(fileForm);
+	                    // <IE8 无法通过enctype直接修改值，只能用encoding
+	                    fileForm.encoding = 'multipart/form-data';//enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码
+	                    fileForm.target = ifrName;
+	                    fileForm.innerHTML = '<input type="file" id="J_upload" style="width:100%;height:100%;opacity:0; filter:alpha(opacity=0);" name="imgFiles"/>'
+	                    domProto.appendChild(fileForm);
                     document.body.appendChild(ifr);
                     /**
                      *这里有个坑，IE8下png图片的Content-Type: image/x-png，标准应该是image/png，所以后端要是只考虑了png的话，IE8下传png图片会失败
                     **/
-                    this.syncFn(this,cb);
+                    this.syncFn(this,this.option.cb);
                 }else{
                     if(domProto.tagName==='INPUT'){
                         this.dom = domProto;
@@ -256,12 +253,12 @@
                         iptdom.type='file';
                         iptdom.id = 'J_upload';
                         //直接使用style会导致页面reflow，消耗性能；而且在IE8下，直接style会报错；
-                        iptdom.style.cssText = 'width:100%;height:100%;opacity:0; filter:alpha(opacity=0);'
+                        iptdom.style.cssText = 'width:100%;height:100%;opacity:0;'
                         domProto.appendChild(iptdom);
                         this.dom = iptdom;
                     }
                     //cb.call(this,this.dom);
-                    this.readFile(this,cb);
+                    this.readFile(this,this.option.cb);
                 }
                 
                 return this;
@@ -363,13 +360,30 @@
                   }
                }            
             };
+            //一些工具方法
+            var utils = {
+            	extend:function(o,e){
+            		for(var key in e){
+            			if(e[key]){
+            				o[key]=e[key]
+            			}
+            		}
+            		return o;
+            	}
+            }
             //绑定input修改文件事件
             window.Ful = Ful;
         })(window,document);
-        var ful = Ful('droptarget','output','progress',function(rslt){
-            //可以在这里可以获得到后端给过来的数据
-            console.log('最终获取到数据啦-----------------');
-            console.log(rslt);
+        var ful = Ful({
+        	filename:'imgFiles',//上传的文件字段名，跟后端协商好
+        	ipt:'droptarget',
+        	opt:'output',
+        	prg:'progress',
+        	cb:function(rslt){
+        		//可以在这里可以获得到后端给过来的数据
+        		console.log('最终获取到数据啦-----------------');
+        		console.log(rslt);
+        	}
         });
     </script>
 </body>
