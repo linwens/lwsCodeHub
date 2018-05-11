@@ -42,7 +42,7 @@
          *****
         **/
         ;(function(window,document){
-        	var Fuc = function(){};
+            var Fuc = function(){};
             var Ful = function(option){
                 return new Ful.prototype.init(option);
             };
@@ -108,12 +108,12 @@
                         //通过this.contentDocument获取到iframe里的document
                         var resData = this.contentDocument.body.textContent;
                         if(resData&&resData!=''){//只有有数据的时候才执行回调函数
-                        	cb.call(obj,resData);
-                        	//删除iframe
-                        	var dom = syncIfr;
-                        	setTimeout(function(){
-                        	    dom.parentNode.removeChild(dom);
-                        	}, 100);//可以将syncIfr作为参数传入，但是IE9及以下不支持
+                            cb.call(obj,resData);
+                            //删除iframe
+                            var dom = syncIfr;
+                            setTimeout(function(){
+                                dom.parentNode.removeChild(dom);
+                            }, 100);//可以将syncIfr作为参数传入，但是IE9及以下不支持
                         }
                         
                     }
@@ -171,14 +171,14 @@
                     var data= new FormData();//建一个 FormData对象，用于异步请求传输数据
                     i = 0;
                     len = files.length;
-                    console.log(obj.filename);
+                    console.log(obj.option.filename);
                     while (i < len){
                         //文件上传的时候，key值就是对应的文件name
-                        data.append(obj.filename, files[i]);//通过它调用 append()方法并传入相应的File 对象作为参数。
+                        data.append(obj.option.filename, files[i]);//通过它调用 append()方法并传入相应的File 对象作为参数。
                         i++;
                     }
                     //如果想查看formData的值,直接查看formData会发现是个空对象,可以通过get方法去获取指定key的value，但后端是能接收到的。
-                    //console.log(data.get(obj.filename));
+                    //console.log(data.get(obj.option.filename));
                     xhr = new XMLHttpRequest();
                     //监听进度
                     xhr.upload.onprogress = function(e){
@@ -186,7 +186,7 @@
                             obj.prg.innerHTML = ((e.loaded/e.total)*100).toFixed(2)+'%';
                         }
                     }
-                    xhr.open("post", "/ajax/uploadImg", true);
+                    xhr.open("post", obj.option.url, true);
                     xhr.onreadystatechange = function(){
                         if (xhr.readyState == 4){
                             if((xhr.status>=200 && xhr.status<300)||xhr.status == 304){
@@ -203,13 +203,14 @@
                 }
             }
             var Init = Ful.prototype.init = function(option){
-            	this.option = utils.extend({
-            		filename:'',
-                	ipt:'',
-                	opt:'',
-                	prg:'',	
-            		cb:Fuc
-            	},option);
+                this.option = utils.extend({
+                    filename:'',
+                    ipt:'',
+                    opt:'',
+                    prg:'',
+                    url:'',
+                    cb:Fuc
+                },option);
                 this.dom = '';
                 this.opt = document.getElementById(this.option.opt);//显示数据的容器
                 this.prg = document.getElementById(this.option.prg);//显示进度条
@@ -230,16 +231,16 @@
                         ifr.style.cssText = 'width:0;height:0;'
                     //生成form表单
                     var fileForm = document.createElement('form');
-	                    fileForm.id = 'J_Fulform';
-	                    fileForm.style.cssText = 'width:100%;height:100%;';
-	                    fileForm.action = '/ajax/uploadImg';
-	                    fileForm.method = 'post';
+                        fileForm.id = 'J_Fulform';
+                        fileForm.style.cssText = 'width:100%;height:100%;';
+                        fileForm.action = this.option.url;
+                        fileForm.method = 'post';
 
-	                    // <IE8 无法通过enctype直接修改值，只能用encoding
-	                    fileForm.encoding = 'multipart/form-data';//enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码
-	                    fileForm.target = ifrName;
-	                    fileForm.innerHTML = '<input type="file" id="J_upload" style="width:100%;height:100%;opacity:0; filter:alpha(opacity=0);" name="imgFiles"/>'
-	                    domProto.appendChild(fileForm);
+                        // <IE8 无法通过enctype直接修改值，只能用encoding
+                        fileForm.encoding = 'multipart/form-data';//enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码
+                        fileForm.target = ifrName;
+                        fileForm.innerHTML = '<input type="file" id="J_upload" style="width:100%;height:100%;opacity:0; filter:alpha(opacity=0);" name="imgFiles"/>'
+                        domProto.appendChild(fileForm);
                     document.body.appendChild(ifr);
                     /**
                      *这里有个坑，IE8下png图片的Content-Type: image/x-png，标准应该是image/png，所以后端要是只考虑了png的话，IE8下传png图片会失败
@@ -258,6 +259,7 @@
                         this.dom = iptdom;
                     }
                     //cb.call(this,this.dom);
+                    console.log(this);
                     this.readFile(this,this.option.cb);
                 }
                 
@@ -362,28 +364,29 @@
             };
             //一些工具方法
             var utils = {
-            	extend:function(o,e){
-            		for(var key in e){
-            			if(e[key]){
-            				o[key]=e[key]
-            			}
-            		}
-            		return o;
-            	}
+                extend:function(o,e){
+                    for(var key in e){
+                        if(e[key]){
+                            o[key]=e[key]
+                        }
+                    }
+                    return o;
+                }
             }
             //绑定input修改文件事件
             window.Ful = Ful;
         })(window,document);
         var ful = Ful({
-        	filename:'imgFiles',//上传的文件字段名，跟后端协商好
-        	ipt:'droptarget',
-        	opt:'output',
-        	prg:'progress',
-        	cb:function(rslt){
-        		//可以在这里可以获得到后端给过来的数据
-        		console.log('最终获取到数据啦-----------------');
-        		console.log(rslt);
-        	}
+            filename:'imgFiles',//上传的文件字段名，跟后端协商好
+            ipt:'droptarget',
+            opt:'output',
+            prg:'progress',
+            url:'/ajax/uploadImg',
+            cb:function(rslt){
+                //可以在这里可以获得到后端给过来的数据
+                console.log('最终获取到数据啦-----------------');
+                console.log(rslt);
+            }
         });
     </script>
 </body>
