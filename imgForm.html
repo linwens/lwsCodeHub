@@ -32,13 +32,14 @@
         //js高程25章4节：File API
         /**
          *这个插件想实现的功能：
-         *1、绑定一个dom就可以生成一个文件提交元素，提交要用到的各种参数可配
-         *2、点击增加文件，如果是图片可以预览
+         *1、绑定一个dom就可以生成一个文件提交元素，提交要用到的各种参数可配------ok
+         *2、点击增加文件，如果是图片可以预览-----IE9及以下不行
          *3、提交的时候显示进度条，不同状态会有不同提示
-         *4、拖动上传文件
-         *5、拖动上传多个文件的话，如何预览？以及如何指定文件名？
+         *4、拖动上传文件-----IE9及以下不行
+         *5、拖动上传多个文件的话-----IE9及以下不行
          ***思路
          *1、看看elementui里的上传组件是如何实现的
+         *2、多文件上传使用的是多个ajax请求传输，为的是能独立每个文件的进度条
          *****
         **/
         ;(function(window,document){
@@ -58,6 +59,7 @@
                         if (event.type == "drop"){
                             //event.dataTransfer是事件对象的一个属性，它存储了被拖放元素的数据信息及用于操作这些数据的方法。因为它是事件对象的属性，所以只能在拖放事件的事件处理程序中访问
                             files = event.dataTransfer.files;//拖拽上传，只能通过event.dataTransfer去获取files
+                            console.log(files);
                         }else if(event.type == "change"){
                             //files  IE下取不到值
                             files = EventUtil.getTarget(event).files;
@@ -83,35 +85,39 @@
                     EventUtil.addHandler(obj.dom, "dragover", doneGap);
                     EventUtil.addHandler(obj.dom, "drop", handleFiles);
                 },
-                syncFn:function(obj,cb){
+                syncFn:function(obj,cb){//老浏览器form表单提交
                     console.log(obj);
                     var syncIpt = document.getElementById('J_upload');
                     var syncIfr = document.getElementById('J_iframe');
                     var imgURL = syncIpt.value;
-
-                    console.log(obj.opt);
+                    //监听input值变化，上传数据，同时在浏览器显示图片
                     EventUtil.addHandler(syncIpt,'change',function(){
-                        console.log('syncIpt change');
                         var fulForm = document.getElementById('J_Fulform');
-                        console.log(syncIpt);
-                        console.log(syncIpt.value);
+                        
                         var img = new Image();
                         img.src = syncIpt.value;
-                        //显示预览，失败
+                        //dom插入没问题，但是本地图片路径无法显示
                         obj.opt.appendChild(img);
                         //obj.opt.innerHTML = '<img src="'+syncIpt.value+'">';
+                        //obj.opt.innerHTML = "<img src='http://otvt0q8hg.bkt.clouddn.com/smile.png'>";
                         fulForm.submit();
                     });
                     //iframe加载完返回数据
                     syncIfr.onload = function(){
                         //这里后端如果返回的是json，那旧的IE会提示下载文件；所以后端可以直接返回纯文本。
                         //通过this.contentDocument获取到iframe里的document
-                        var resData = this.contentDocument.body.textContent;
+                        console.log('-----');
+                        console.log(this.contentDocument.body);
+                        var resData = this.contentDocument.body.outerText;
+                        console.log(resData);
                         if(resData&&resData!=''){//只有有数据的时候才执行回调函数
                             cb.call(obj,resData);
                             //删除iframe
                             var dom = syncIfr;
                             setTimeout(function(){
+                                console.log('该删除iframe了');
+                                console.log(dom.parentNode);
+                                console.log(dom.parentNode.removeChild);
                                 dom.parentNode.removeChild(dom);
                             }, 100);//可以将syncIfr作为参数传入，但是IE9及以下不支持
                         }
@@ -121,41 +127,24 @@
                 preview:function(obj,files){//预览
                     var //fr = new FileReader(),
                         output = obj.opt,
-                        progress = obj.prg,
-                        url = obj.createObjectURL(files[0]);
+                        progress = obj.prg;
+                        //url = obj.createObjectURL(files[0]);
                     //预览
-                    if(/image/.test(files[0].type)){//如果是图片提供预览功能
-                        if(url){//如果支持createObjectURL，那就直接生成url，就不需要new FileReader去使用js存储这一步
-                            output.innerHTML = "<img src=\"" + url + "\">"
-                        }else{
-                            output.innerHTML = "你的浏览器不支持createObjectURL"
+                    console.log(files.length);
+                    var j = 0,len = files.length;
+                    while(j<len){
+                        if(/image/.test(files[j].type)){//如果是图片提供预览功能
+                            if(obj.createObjectURL(files[j])){//如果支持createObjectURL，那就直接生成url，就不需要new FileReader去使用js存储这一步
+                                var img = new Image();
+                                    img.id = 'J_pv_img'+j;
+                                    img.src = obj.createObjectURL(files[j]);
+                                output.appendChild(img);
+                            }else{
+                                output.innerHTML = "你的浏览器不支持createObjectURL"
+                            }
                         }
+                        j++;
                     }
-                    /*
-                    if (/image/.test(files[0].type)){
-                        //只有读取文件了，后面不同阶段的函数执行才可继续
-                        fr.readAsDataURL(files[0]);//读取文件并将文件以数据 URI 的形式保存在 reader.result属性中
-                        type = "image";
-                    }
-                    fr.onerror = function(){//读取出错
-                        output.innerHTML = "Could not read file, error code is " +
-                        fr.error.code;
-                    };
-                    fr.onprogress = function(event){//本地读取进度(每过50ms左右，就会触发一次progress事件)
-                        if (event.lengthComputable){
-                            //progress.innerHTML = event.loaded + "/" + event.total;
-                        }
-                    };
-                    fr.onload = function(){//读取完成
-                        var html = "";
-                        switch(type){
-                            case "image":
-                                html = "<img src=\"" + fr.result + "\">";
-                                break;
-                        }
-                        output.innerHTML = html;
-                    };
-                    */
                 },
                 createObjectURL:function(bolb){
                     if(window.URL){
@@ -167,39 +156,50 @@
                     }
                 },
                 doConnect:function(obj, files, cb){
-                    var i,len,xhr;
-                    var data= new FormData();//建一个 FormData对象，用于异步请求传输数据
+                    var i,len,xhr,data;
                     i = 0;
                     len = files.length;
                     console.log(obj.option.filename);
-                    while (i < len){
-                        //文件上传的时候，key值就是对应的文件name
-                        data.append(obj.option.filename, files[i]);//通过它调用 append()方法并传入相应的File 对象作为参数。
+                    while (i < len){//多文件上传就走多个ajax请求
+                        var prgDIV = document.createElement('div');
+                            prgDIV.id = 'J_prg_'+i;
+                        obj.prg.appendChild(prgDIV);
+
+                        data = new FormData();//建一个 FormData对象，用于异步请求传输数据
+                        //文件上传的时候，key值就是对应的文件name;第三个参数，当多文件上传的时候指定每个文件的名称，那么第一个参数就是此次提交的表单名称，方便后台使用
+                        data.append(obj.option.filename, files[i], files[i].name);//通过它调用 append()方法并传入相应的File 对象作为参数。
+                        console.log(files[i].name);
+                        //如果想查看formData的值,直接查看formData会发现是个空对象,可以通过get方法去获取指定key的value，但后端是能接收到的。
+                        //console.log(data.get(obj.option.filename));
+                        xhr = new XMLHttpRequest();
+                        //监听进度
+                        EventUtil.addHandler(xhr.upload,'progress',function(index){
+                            var div = document.getElementById('J_prg_'+index);
+                            return function(e){
+                                if(e.lengthComputable){
+                                    
+                                    div.innerHTML = ((e.loaded/e.total)*100).toFixed(2)+'%';
+                                    
+                                }
+                            }
+                        }(i));//闭包存储索引值
+                        xhr.open("post", obj.option.url, true);
+                        xhr.onreadystatechange = function(){
+                            if (xhr.readyState == 4){
+                                if((xhr.status>=200 && xhr.status<300)||xhr.status == 304){
+                                    
+                                    //提交后回调
+                                    cb.call(obj,xhr.responseText);
+                                }else{
+                                    alert('响应失败状态码'+xhr.status);
+                                }
+                            }
+                        };
+
+                        xhr.send(data);
+                        data=null;
                         i++;
                     }
-                    //如果想查看formData的值,直接查看formData会发现是个空对象,可以通过get方法去获取指定key的value，但后端是能接收到的。
-                    //console.log(data.get(obj.option.filename));
-                    xhr = new XMLHttpRequest();
-                    //监听进度
-                    xhr.upload.onprogress = function(e){
-                        if(e.lengthComputable){
-                            obj.prg.innerHTML = ((e.loaded/e.total)*100).toFixed(2)+'%';
-                        }
-                    }
-                    xhr.open("post", obj.option.url, true);
-                    xhr.onreadystatechange = function(){
-                        if (xhr.readyState == 4){
-                            if((xhr.status>=200 && xhr.status<300)||xhr.status == 304){
-                                
-                                //提交后回调
-                                cb.call(obj,xhr.responseText);
-                            }else{
-                                alert('响应失败状态码'+xhr.status);
-                            }
-                        }
-                    };
-
-                    xhr.send(data);
                 }
             }
             var Init = Ful.prototype.init = function(option){
@@ -253,6 +253,7 @@
                         var iptdom = document.createElement('input');
                         iptdom.type='file';
                         iptdom.id = 'J_upload';
+                        iptdom.multiple = 'multiple';
                         //直接使用style会导致页面reflow，消耗性能；而且在IE8下，直接style会报错；
                         iptdom.style.cssText = 'width:100%;height:100%;opacity:0;'
                         domProto.appendChild(iptdom);
@@ -262,7 +263,6 @@
                     console.log(this);
                     this.readFile(this,this.option.cb);
                 }
-                
                 return this;
             };
             Init.prototype = Ful.prototype;
@@ -303,64 +303,7 @@
                   }else{
                      event.returnValue=false;
                   }
-               },
-
-               stopPropagation:function(event){  //立即停止事件在DOM中的传播
-                                                 //避免触发注册在document.body上面的事件处理程序
-                  if(event.stopPropagation){
-                     event.stopPropagation();
-                  }else{
-                     event.cancelBubble=true;
-                  }
-               },
-                    
-               getRelatedTarget:function(event){  //获取mouseover和mouseout相关元素
-                  if(event.relatedTarget){
-                     return event.relatedTarget;
-                  }else if(event.toElement){      //兼容IE8-
-                     return event.toElement;
-                  }else if(event.formElement){
-                     return event.formElement;
-                  }else{
-                     return null;
-                  }
-               },
-                    
-               getButton:function(event){    //获取mousedown或mouseup按下或释放的按钮是鼠标中的哪一个
-                  if(document.implementation.hasFeature("MouseEvents","2.0")){
-                     return event.button;
-                  }else{
-                     switch(event.button){   //将IE模型下的button属性映射为DOM模型下的button属性
-                        case 0:
-                        case 1:
-                        case 3:
-                        case 5:
-                        case 7:
-                           return 0;  //按下的是鼠标主按钮（一般是左键）
-                        case 2:
-                        case 6:
-                           return 2;  //按下的是中间的鼠标按钮
-                        case 4:
-                           return 1;  //鼠标次按钮（一般是右键）
-                     }
-                  }
-               },
-                    
-               getWheelDelta:function(event){ //获取表示鼠标滚轮滚动方向的数值
-                  if(event.wheelDelta){
-                     return event.wheelDelta;
-                  }else{
-                     return -event.detail*40;
-                  }
-               },
-                    
-               getCharCode:function(event){   //以跨浏览器取得相同的字符编码，需在keypress事件中使用
-                  if(typeof event.charCode=="number"){
-                     return event.charCode;
-                  }else{
-                     return event.keyCode;
-                  }
-               }            
+               }
             };
             //一些工具方法
             var utils = {
@@ -372,10 +315,10 @@
                     }
                     return o;
                 }
-            }
-            //绑定input修改文件事件
+            };
             window.Ful = Ful;
         })(window,document);
+        //插件调用
         var ful = Ful({
             filename:'imgFiles',//上传的文件字段名，跟后端协商好
             ipt:'droptarget',
@@ -383,7 +326,7 @@
             prg:'progress',
             url:'/ajax/uploadImg',
             cb:function(rslt){
-                //可以在这里可以获得到后端给过来的数据
+                //可以在这里获得到后端给过来的数据
                 console.log('最终获取到数据啦-----------------');
                 console.log(rslt);
             }
