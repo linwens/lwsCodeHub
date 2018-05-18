@@ -8947,18 +8947,18 @@ jQuery.fn.extend( {
 
 		return this;//+/最后返回jquery对象，方便链式调用
 	},
-
+	//+/toggleClass方法：如果存在（不存在）就删除（添加）一个类。
 	toggleClass: function( value, stateVal ) {
 		var type = typeof value;
-
+		//+/stateVal是个布尔值，决定元素是添加还是移除class类名，stateVal可以把toggleClass直接改成addClass和removeClass
 		if ( typeof stateVal === "boolean" && type === "string" ) {
 			return stateVal ? this.addClass( value ) : this.removeClass( value );
 		}
 
-		if ( jQuery.isFunction( value ) ) {
-			return this.each( function( i ) {
+		if ( jQuery.isFunction( value ) ) {//+/如果是函数
+			return this.each( function( i ) {//每个匹配元素再调用toggleClass,所以传入的函数得返回一个string
 				jQuery( this ).toggleClass(
-					value.call( this, i, getClass( this ), stateVal ),
+					value.call( this, i, getClass( this ), stateVal ),//+/接收元素的索引位置,元素旧的样式类,判断样式类添加还是移除的 boolean 值
 					stateVal
 				);
 			} );
@@ -8972,12 +8972,14 @@ jQuery.fn.extend( {
 				// Toggle individual class names
 				i = 0;
 				self = jQuery( this );
-				classNames = value.match( rnotwhite ) || [];
+				//+/如果value是这样"aa bb cc dd ee";那match就返回数组['aa','bb','cc','dd','ee']
+				classNames = value.match( rnotwhite ) || [];//+/rnotwhite = ( /\S+/g )
 
 				while ( ( className = classNames[ i++ ] ) ) {
 
 					// Check each className given, space separated list
-					if ( self.hasClass( className ) ) {
+					//+/检查给定的每个类名，空间分隔列表
+					if ( self.hasClass( className ) ) {//+/存在类名就删除
 						self.removeClass( className );
 					} else {
 						self.addClass( className );
@@ -8985,18 +8987,21 @@ jQuery.fn.extend( {
 				}
 
 			// Toggle whole class name
+			//+/如果不传值或者传一个布尔值,先判断当前元素有没有class值，有就暂存起来，没有就取暂存的值,暂存值也没有那就设置空
+			//+/这层判断针对一种情况，当你要连续来回切换某一元素的class值，并且不传值，就会进到这里来，但是调用toggleClass的选择器不能使用class选择器
 			} else if ( value === undefined || type === "boolean" ) {
 				className = getClass( this );
 				if ( className ) {
 
 					// store className if set
+					//+/如果当前元素有class值，就存起来，然后后面执行清空操作
 					jQuery._data( this, "__className__", className );
 				}
-
 				// If the element has a class name or if we're passed "false",
 				// then remove the whole classname (if there was one, the above saved it).
 				// Otherwise bring back whatever was previously saved (if anything),
 				// falling back to the empty string if nothing was stored.
+				//+/如果当前元素没有class值，或者toggleClass传入的值是不是false就会读取保存的值，值若没有保存值就设置空
 				jQuery.attr( this, "class",
 					className || value === false ?
 					"" :
@@ -9012,8 +9017,9 @@ jQuery.fn.extend( {
 
 		className = " " + selector + " ";
 		while ( ( elem = this[ i++ ] ) ) {
+			//+/整理元素现有class类名，从中查找className是否存在
 			if ( elem.nodeType === 1 &&
-				( " " + getClass( elem ) + " " ).replace( rclass, " " )
+				( " " + getClass( elem ) + " " ).replace( rclass, " " )//+/var rclass = /[\t\r\n\f]/g;
 					.indexOf( className ) > -1
 			) {
 				return true;
