@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>原型与原型链</title>
+</head>
+<body>
+	<script>
+	/*
+		var Vehicle = function () {
+		    this.price = 1000;
+		    return 1000;
+		};
+		(new Vehicle()) === 1000;  //false
+		(new Vehicle()).price === 1000;  //true
+
+		console.log((new Vehicle()) === 1000);  //false
+		console.log((new Vehicle()).price === 1000);  //true
+
+		function B(name){
+			this.name = name;
+		}
+		var A = new B('james');
+		console.log(A instanceof B); //true
+
+		function C(){};
+		var d = new C();
+		console.log(C.prototype.isPrototypeOf(d));//
+		function E(){};
+		console.log(Object.getPrototypeOf(E)===Function.prototype);//
+		console.log(Object.getPrototypeOf(Function.prototype)===Object.prototype);//
+		console.log(Object.getPrototypeOf(Object.prototype));//null
+
+		function Person(){};
+		var friend = new Person();
+
+		Person.prototype ={
+			constructor:Person,
+			name:'james'
+		}
+		console.log(friend.name);//
+		console.log(Person.prototype.name);//
+		var person2 = new Person();
+		console.log(person2.name);//
+		*/
+		var data = [];
+
+		for (var i = 0; i < 3; i++) {
+		  data[i] = (function (i) {
+		    return function(){
+		    	console.log(i)
+		    };
+		  })(i);
+		}
+		console.log(i);//3
+		console.log(data);
+		data[0]();
+		data[1]();
+		data[2]();
+	</script>
+</body>
+</html>

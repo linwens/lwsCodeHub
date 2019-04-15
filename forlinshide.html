@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<input type="text" value="0" id="J_input">
+	<div id="showVal" style="margin-top:20px;"></div>
+	<script>
+		//双向数据绑定
+		//https://www.cnblogs.com/littlesummer/p/6428116.html
+		var ipt = document.getElementById('J_input');
+		var box = document.getElementById('showVal');
+
+		// ipt.oninput = function(){
+		// 	box.innerText = ipt.value ;
+		// }
+		
+		console.log(ipt.value)
+		Object.defineProperty(ipt,'value',{
+			get:function(val){
+				console.log('旧值=='+val)
+				return val
+			},
+			set:function(newVal){
+				console.log('新值=='+newVal)
+				box.innerText = newVal;
+			}
+		});
+		ipt.value = 2222;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		/*
+		function main(cb){
+			cb();
+			console.log('主函数执行完毕');
+		}
+		function branch(){
+			var rslt = 0;
+			for(var i =0;i<1000000000;i++){
+				rslt += i
+			}
+			console.log(rslt);
+			console.log('分函数执行完毕');
+		}
+		main(branch);//499999999067109000、、分支函数执行完毕、、主函数执行完毕
+
+		var obj = {bar:'F...'}
+		obj.foo = 1;
+		Object.defineProperty(obj,'foo',{});
+		// console.log(obj.foo);
+		// obj.foo = 2;
+		// console.log(obj.foo);
+		// delete obj.foo;
+		// console.log(obj.foo);
+		Object.defineProperty(obj,'bar',{
+			value:'fuck'
+		});
+		var desc = Object.getOwnPropertyDescriptor(obj, 'bar');
+		console.log(desc.configurable);
+		console.log(desc.enumerable);
+		console.log(desc.writable);
+		console.log(desc.value);
+		console.log(obj.bar);
+		
+		*/
+
+	</script>
+</body>
+</html>
