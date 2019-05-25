@@ -84,7 +84,7 @@ window.onload = function() {
    * DOMContentLoaded、readystatechange或load事件发生时会触发注册函数
    * 一旦文档准备就绪，所有函数都会被调用，任何传递给whenReady()的函数都将立即调用
    */
-  var whenReady = (function() {
+var whenReady = (function() {
   var funcs = []; //当获得事件时，要运行的函数
   var ready = false; // 当触发事件处理程序时，切换到true
   
@@ -217,5 +217,105 @@ function drag(elementToDrag, event) {
     } else {
       event.cancelBubble = true;
     }
+  }
+}
+/**
+ * 17.6
+ */
+// 把内容元素装入(50 x 50)的窗体或者视口内
+// 可选参数contentX/contentY指定内容相对于窗体的初始偏移量 (如指定，必须 <=0)
+function enclose(content, framewidth, frameheight, contentX, contentY) {
+  framewidth = Math.max(framewidth, 50);
+  frameheight = Math.max(frameheight, 50);
+  contentX = Math.min(contentX, 0) || 0;
+  contentY = Math.min(contentY, 0) || 0;
+
+  // 创建一个frame元素
+  var frame = document.createElement("div");
+  frame.className = "enclosure";
+  frame.style.width = framewidth + "px";
+  frame.style.height = frameheight + "px";
+  frame.style.overflow = "hidden";
+  frame.style.boxSizing = "border-box";
+  frame.style.webkitBoxSizing = "border-box";
+  frame.style.MozBoxSizing = "border-box";
+  // 把frame放入文档中，并把内容移入frame中
+  content.parentNode.insertBefore(frame, content); // 第二个参数是已有的节点，新元素会插在这个元素之前
+  frame.appendChild(content);
+
+  content.style.position = "relative";
+  content.style.left = contentX + "px";
+  content.style.top = contentY + "px";
+
+  // 兼容不同浏览器
+  var isMacWebkit = (navigator.userAgent.indexOf("Macintosh") !== -1 && navigator.userAgent.indexOf("WebKit") !== -1);
+  var isFirefox = (navigator.userAgent.indexOf("Gecko") !== -1);
+
+  // 注册mousewheel事件处理程序
+  frame.onwheel = wheelHandler; // 未来浏览器
+  frame.onmousewheel = wheelHandler; // 大多数当前浏览器
+  if (isFirefox) {
+    frame.addEventListener("DOMMouseScroll", wheelHandler, false);
+  }
+
+  function wheelHandler(event) {
+    var e = event || window.event;
+    // 控制滚轮滚动一次， 对应移动的距离，可以用来控制滚轮的灵敏度
+    var deltaX = e.deltaX*-10 || // 针对wheel事件
+                 e.wheelDeltaX/4 || // 针对mousewheel事件
+                 0;
+    var deltaY = e.deltaY*-10 ||
+                 e.wheelDeltaY/4 ||
+                 (e.wheelDeltaY ===undefined && e.wheelDelta/4) || // 如果没有2D的属性，就有1D的滚轮
+                 e.detail*-10 || // firefox的DOMMouseScroll事件
+                 0;
+    
+    if (isMacWebkit) {
+      deltaX /= 30; // deltaX = deltaX / 30
+      deltaY /= 30;
+    }
+    // 如果Firefox支持mousewheel和wheel，就不需要DOMMouseScroll
+    if (isFirefox & e.type !== "DOMMouseScroll") {
+      frame.removeEventListener("DOMMouseScroll", wheelHandler, false);
+    }
+    // 获取内容元素的当前尺寸
+    var contentbox = content.getBoundingClientRect(); //getBoundingClientRect返回元素的大小及其相对于视口的位置
+    var contentwidth = contentbox.right - contentbox.left;
+    var contentheight = contentbox.bottom - contentbox.top;
+
+    if (e.altKey) { //按下alt键， 可调整frame大小
+      if (deltaX) {
+        framewidth -= deltaX;
+        framewidth = Math.min(framewidth, contentwidth);
+        framewidth = Math.max(framewidth, 50);
+        frame.style.width = framewidth + "px";
+      }
+      if (deltaY) {
+        frameheight -= deltaY;
+        frameheight = Math.min(frameheight, contentheight);
+        frameheight = Math.max(frameheight-deltaY, 50);
+        frame.style.height = frameheight + "px";
+      }
+    } else {
+      if (deltaX) {
+        var minoffset = Math.min(framewidth-contentwidth, 0);
+        contentX = Math.max(contentX + deltaX, minoffset);
+        contentX = Math.min(contentX, 0);
+        content.style.left = contentX + "px"
+      }
+      if (deltaY) {
+        var minoffset = Math.min(frameheight-contentheight, 0);
+        contentY = Math.max(contentY + deltaY, minoffset);
+        contentY = Math.min(contentY, 0);
+        content.style.top = contentY + "px"
+      }
+    }
+
+    // 阻止事件冒泡，阻止任何默认操作
+    if (e.preventDefault) e.preventDefault();
+    if (e.stopPropagation) e.stopPropagation();
+    e.cancelBubble = true;
+    e.returnValue = false;
+    return false;
   }
 }
