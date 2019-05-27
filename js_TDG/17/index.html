@@ -11,6 +11,14 @@
         border: solid black 10px;
         margin: 10px;
       }
+      /* 17.7 一 */
+      #clock {
+        font: bold 24pt sans;
+        background: #ddf;
+        padding: 10px;
+        border: solid black 2px;
+        border-radius: 10px;
+      }
     </style>
 </head>
 <body>
@@ -30,13 +38,145 @@
     </div>
     <!-- 17.6 -->
     <img id="content" src="./test.jpg" alt="">
-</body>
+    <!-- 17.7 一 -->
+    <h1>从时钟中拖出时间戳</h1>
+    <span id="clock"></span>
+    <textarea cols="60" rows="20"></textarea>
+    <!-- 17.7 二 -->
+    <ul class="dnd">
+      <li>11111</li>
+    </ul>
+    <ul>
+      <li>2</li>
+    </ul>
+  </body>
 <script>
   /**
    * 17.6
    */
   whenReady(function() {
     enclose(document.getElementById("content"), 400, 200, -200, -300);
+  })
+  /**
+   * 17.7 一
+   */
+  whenReady(function(){
+    var clock = document.getElementById("clock");
+    var icon = new Image(); // 用于拖动的图片
+    icon.src = "./test.jpg";
+
+    function displayTime() {
+      var now = new Date();
+      var hrs = now.getHours(), mins = now.getMinutes();
+      if ( mins < 10) mins = "0" + mins;
+      clock.innerHTML = hrs + ":" + mins;
+      setTimeout(displayTime, 60000)
+    }
+    displayTime();
+    // 使元素可以拖动
+    clock.draggable = true;
+    // 设置拖动事件处理程序
+    clock.ondragstart = function(event) {
+      var event = event || window.event;
+      var dt = event.dataTransfer; // 拖放API的关键
+
+      dt.setData("Text", Date() + "\n");
+
+      // 告诉浏览器拖动图标表现时间戳
+      if ( dt.setDragImage) {
+        dt.setDragImage(icon, 0, 0)
+      }
+
+    }
+  })
+  /**
+   * 17.7 二 
+   */
+  whenReady(function() {
+    // 查找<ul class="dnd">元素,并调用dnd函数
+    var lists = document.getElementsByTagName("ul");
+    var regexp = /\bdnd\b/;
+
+    for (var i = 0; i < lists.length; i++) {
+      if (regexp.test(lists[i].className)) {
+        dnd(lists[i])
+      }
+    }
+    // 为列表元素添加拖放事件
+    function dnd(list) {
+      var original_class = list.className; //保存原始类名
+      var entered = 0;
+      list.ondragenter = function(e) {
+        e = e || window.event;
+        var from = e.relatedTarget;
+        entered++;
+        if ((from && !ischild(from, list)) || entered == 1) {
+          var dt = e.dataTransfer;
+          var types = dt.types; // 数据格式
+          if (!types || (types.contains && types.contains("text/plain"))||(types.indexOf && types.indexOf("text/plain")!=-1)) {
+            list.className = original_class + " droppable";
+            return false
+          }
+          return;
+        }
+        return false;
+      }
+      // 当拖放对象移出列表或者从其子元素中移出时，会调用这个处理程序
+      list.ondragleave = function(e) {
+        e = e || window.event;
+        var to = e.relatedTarget;
+        entered--;
+        if ((to && !ischild(to, list)) || entered <= 0) {
+          list.className = original_class;
+          entered = 0;
+        }
+        return false;
+      }
+      // 放置的时候，调用
+      list.ondrop = function(e) {
+        e = e || window.event;
+        var dt = e.dataTransfer;
+        var text = dt.getData("Text");
+        if (text) {
+          var item = document.createElement("li");
+          item.draggable = true;
+          item.appendChild(document.createTextNode(text));
+          list.appendChild(item);
+          list.className = original_class;
+          entered = 0;
+          return false;
+        }
+      };
+      // 使原始所有列表项都可拖动
+      var items = list.getElementsByTagName("li");
+      for(var i=0; i < items.length; i++) {
+        items[i].draggable = true;
+      }
+      // 当在列表中开始拖动对象，会调用这个处理程序
+      list.ondragstart = function(e) {
+        var e = e || window.event;
+        var target = e.target || e.srcElement;
+        if (target.tagName !== "LI") return false;
+        var dt = e.dataTransfer;
+        dt.setData("Text", target.innerText || target.textContent);
+        dt.effectAllowed = "copyMove";
+      };
+      // 当成功放置后，调用
+      list.ondragend = function(e) {
+        e = e || window.event;
+        var target = e.target || e.srcElement;
+        if (e.dataTransfer.dropEffect === "move") {
+          target.parentNode.removeChild(target);
+        }
+        // 工具函数
+        function ischild(a, b) {
+          for(;a; a=a.parentNode) {
+            if ( a===b) return true
+          }
+          return false;
+        }
+      }
+    }
   })
 </script>
 </html>

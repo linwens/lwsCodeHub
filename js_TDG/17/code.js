@@ -319,3 +319,6 @@ function enclose(content, framewidth, frameheight, contentX, contentY) {
     return false;
   }
 }
+/**
+ * 17.7
+ */
