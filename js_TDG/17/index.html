@@ -46,9 +46,12 @@
     <ul class="dnd">
       <li>11111</li>
     </ul>
-    <ul>
+    <ul class="dnd">
       <li>2</li>
     </ul>
+    <!-- 17.8 -->
+    邮政编码：<input type="text" data-allowed-chars="0123456789" data-messageid="zipwarn" />
+    <span id="zipwarn" style="color: red;visibility: hidden;">只支持数字</span>
   </body>
 <script>
   /**
@@ -168,13 +171,13 @@
         if (e.dataTransfer.dropEffect === "move") {
           target.parentNode.removeChild(target);
         }
-        // 工具函数
-        function ischild(a, b) {
-          for(;a; a=a.parentNode) {
-            if ( a===b) return true
-          }
-          return false;
+      }
+      // 工具函数
+      function ischild(a, b) {
+        for(;a; a=a.parentNode) {
+          if ( a===b) return true
         }
+        return false;
       }
     }
   })

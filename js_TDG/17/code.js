@@ -320,5 +320,35 @@ function enclose(content, framewidth, frameheight, contentX, contentY) {
   }
 }
 /**
- * 17.7
+ * 17.8
  */
+function InputFilter() {
+  var inputelts = document.getElementsByTagName("input");
+
+  for(var i = 0; i < inputelts.length; i++) {
+    var elt = inputelts[i];
+    if (elt.type != "text" || !elt.getAttribute("data-allowed-chars")) continue
+    // 注册事件处理程序
+    if (elt.addEventListener) {
+      elt.addEventListener("keypress", filter, false);
+      elt.addEventListener("textInput", filter, false);
+      elt.addEventListener("textinput", filter, false);
+    } else {
+      elt.attachEvent("onkeypress", filter)
+    }
+  }
+  function filter(event) {
+    var e = event || window.event;
+    var target = e.target || e.srcElement;
+    var text = null;
+    if (e.type === "textinput" || e.type === "textInput") {
+      text = e.data;
+    } else {
+      var code = e.charCode || e.keyCode;
+      if (code<32 || e.charCode == 0 || e.ctrlKey || e.altKey) return;
+      var text = String.fromCharCode(code); // fromCharCode() 可接受一个指定的 Unicode 值，然后返回一个字符串
+    }
+    // 从input元素中寻找所需信息
+    
+  }
+}
