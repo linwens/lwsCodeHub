@@ -349,6 +349,134 @@ function InputFilter() {
       var text = String.fromCharCode(code); // fromCharCode() 可接受一个指定的 Unicode 值，然后返回一个字符串
     }
     // 从input元素中寻找所需信息
-    
+    var allowed = target.getAttribute("data-allowed-chars");
+    var messageid = target.getAttribute("data-messageid");
+    if (messageid) {
+      var messageElement = document.getElementById(messageid)
+    }
+    for (var i = 0 ; i < text.length; i++) {
+      var c = text.charAt(i); // charAt() 方法可返回指定位置的字符
+      if (allowed.indexOf(c) == -1) {
+        if (messageElement) messageElement.style.visibility = "visible";
+        // 取消默认行为，不可再插入文本信息
+        if (e.preventDefault) e.preventDefault();
+        if (e.returnValue) e.returnValue = false;
+        return false;
+      }
+    }
+    if (messageElement) messageElement.style.visibility = "hidden";
   }
+}
+
+// 探测文本输入，并强制所有输入都是大写
+function forceToUpperCase(element) {
+  if (typeof element === "string") {
+    element = document.getElementById(element);
+  }
+  // 探测文本输入
+  element.oninput = upcase;
+  element.onpropertychange = upcaseOnPropertyChange; // 处理IE
+  // 写事件处理程序
+  function upcase(event) {
+    this.value = this.value.toUpperCase();
+  }
+  function upcaseOnPropertyChange(event) {
+    var e = event ||window.event;
+    if (e.propertyName === "value") {
+      // 移除onpropertychange处理程序，避免循环调用
+      this.onpropertychange = null;
+      this.value = this.value.toUpperCase();
+      // 然后回复原来的propertychange处理程序
+      this.onpropertychange = upcaseOnPropertyChange;
+    }
+  }
+}
+
+/**
+ * 17.9 键盘快捷键的Keymap类
+ */
+function Keymap(bindings) {
+  this.map = {}; // 处理程序映射 
+  if (bindings) {
+    for(name in bindings) {
+      this.bind(name, bindings[name]);
+    }
+  }
+}
+// 绑定指定的按键标识符和指定的处理程序函数
+Keymap.prototype.bind = function(key, func) {
+  this.map[Keymap.normalize(key)] = func;
+}
+// 删除指定按键标识符的绑定
+Keymap.prototype.unbind = function(key) {
+  delete this.map[Keymap.normalize(key)]
+}
+// 给元素绑定事件处理函数
+Keymap.prototype.install = function(element) {
+  var keymap = this;
+  function handler(event) {
+    return keymap.dispatch(event, element);
+  }
+  if (element.addEventListener) {
+    element.addEventListener("keydown", handler, false);
+  } else if (element.attachEvent) {
+    element.attachEvent("onkeydown", handler);
+  }
+}
+//基于Keymap绑定分派按键事件
+Keymap.prototype.dispatch = function(event, element) {
+  var modifiers = "";
+  var keyname = null;
+  if (event.altKey) modifiers += "alt_";
+  if (event.ctrlKey) modifiers += "ctrl_";
+  if (event.metaKey) modifiers += "meta_";
+  if (event.shiftKey) modifiers += "shift_";
+  
+  if (event.key) {
+    keyname = event.key; //基于3级DOM的实现
+  } else if (event.keyIdentifier && event.keyIdentifier.substring(0, 2) !== "U+") {
+    keyname = event.keyIdentifier; // safari chrome
+  } else {
+    keyname = Keymap.keyCodeToKeyName[event.keyCode]
+  }
+  if (!keyname) return;
+  var keyid = modifiers + keyname.toLowerCase();
+  var handler = this.map[keyid];
+  if (handler) { // 当前按键绑定了处理程序
+    var retval = handler.call(element, event, keyid);
+    if (retval === false) {
+      if (event.stopPropagation) {
+        event.stopPropagation()
+      } else {
+        event.cancelBubble = true
+      }
+      if (event.preventDefault) {
+        event.preventDefault()
+      } else {
+        event.returnValue = false;
+      }
+    }
+    return retval
+  }
+}
+// 把按键标识符转换成标准形式的工具函数
+Keymap.normalize = function(keyid) {
+  keyid = keyid.toLowerCase();
+  var words = keyid.split(/\s+|[\-+_]/); // 分割辅助键和键名
+  var keyname = words.pop(); //键名是最后一个
+  keyname = Keymap.aliases[keyname] || keyname; // 处理别名
+  words.sort();
+  words.push(keyname)
+  return words.join("_")
+}
+Keymap.aliases = {
+  "escape": "esc",
+  "delete": "del",
+  "return": "enter",
+  "ctrl": "control",
+  "space": "spacebar",
+  "ins": "insert",
+}
+Keymap.keyCodeToKeyName = {
+  
 }
