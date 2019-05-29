@@ -52,6 +52,11 @@
     <!-- 17.8 -->
     邮政编码：<input type="text" data-allowed-chars="0123456789" data-messageid="zipwarn" />
     <span id="zipwarn" style="color: red;visibility: hidden;">只支持数字</span>
+    <!-- 17.9 -->
+    <div>
+      <label for="keydown">测试键盘事件：</label>
+      <input type="text" id="keydown" style="background-color: #ddf;width: 100px;" />
+    </div>
   </body>
 <script>
   /**
@@ -185,5 +190,15 @@
    * 17.8
    */
   whenReady(InputFilter)
+  /**
+   * 17.9
+   */
+  var keymap = new Keymap({
+    "d": function(e) {
+      console.log(e)
+      console.log('按了d键')
+    }
+  });
+  var tt = keymap.install(document.getElementById("keydown"));
 </script>
 </html>
