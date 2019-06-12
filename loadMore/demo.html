@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" style="font-size:98px;">
+<head>
+	<meta charset="UTF-8">
+	<title>滑动加载插件</title>
+	<style>
+		html,body{
+			height: 100%;
+		}
+		html,body,ul{
+			margin: 0;
+			padding: 0;
+			outline:none;
+		}
+		ul,li{list-style:none;}
+		#wrapper{
+			width: 100%;
+			height: 100%;
+			overflow-y: scroll;
+		}
+		#wrapper ul{
+			
+		}
+		#wrapper li{
+			width: 100%;
+			height: 1.66rem;
+			line-height: 1.66rem;
+			text-align: center;
+			font-size: 0.6rem;
+			color: #555;
+			background: #F4F3F3;
+			border-bottom: 2px solid #000;
+		}
+	</style>
+	<script src="loadMore.js"></script>
+</head>
+<body>
+	<div id="wrapper">
+		<ul>
+			<li>第1条数据</li>
+			<li>第2条数据</li>
+			<li>第3条数据</li>
+			<li>第4条数据</li>
+			<li>第5条数据</li>
+			<li>第6条数据</li>
+			<li>第7条数据</li>
+			<li>第8条数据</li>
+			<li>第9条数据</li>
+			<li>第10条数据</li>
+			<li>第11条数据</li>
+		</ul>
+	</div>	
+	<script>
+		window.onload = function(){
+			var wrapper = document.getElementById('wrapper');
+			var myScroll = new XXScroll(wrapper);
+			console.log(myScroll);
+		}
+	</script>
+</body>
+</html>

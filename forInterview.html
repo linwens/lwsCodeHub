@@ -1,14 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh" id="J_html">
 <head>
 	<meta charset="UTF-8">
 	<title>interview</title>
 </head>
 <body>
+	<strike>strike标签</strike>
+
 	<p id="J_dom1" style="color:#eee;font-size: 18px;" onclick="alert('被点了')">DOM元素e的e.getAttribute(propName)和e.propName有什么区别和联系</p>
 	<div id="J_dom2" style="width:200px;height:50px;padding:0 10px;border:3px solid #333;margin: 0 14px;word-break:keep-all; ">测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth测试元素offsetWidth</div>
+	<div id="J_time"></div>
 	<script>
-		//-------------//*js概念部分*//---------------//
+
+		var yearEnd = new Date(Date.UTC(2019,0)).getTime();
+		var year2019 = Date.parse('Jan 1, 2019');//'2019/1/1 00:00:00'
+
+		function countDown(){
+			var now = new Date().getTime();
+			var esp = (year2019-now)/1000;
+			var dd = Math.floor(esp/60/60/24),
+				hh = Math.floor(esp/60/60%24)<10?'0'+Math.floor(esp/60/60%24):Math.floor(esp/60/60%24),
+				mm = Math.floor(esp/60%60)<10?'0'+Math.floor(esp/60%60):Math.floor(esp/60%60),
+				ss = Math.floor(esp%60)<10?'0'+Math.floor(esp%60):Math.floor(esp%60);
+			document.getElementById('J_time').innerText = '距离2019年还剩：'+dd+'天'+hh+'小时'+mm+'分钟'+ss+'秒';
+			setTimeout(function(){
+				countDown()
+			}, 1000);
+		}
+		window.onload = function(){
+			countDown();
+			var obj = {
+	            value: 1,
+	            arr:['jame','wade','paul'],
+	            o:{
+	            	a:1,
+	            	b:2
+	            },
+	            fn:function(){
+	            	console.log('你Deep Copy啊');
+	            }
+	        };
+	        function foo(o) {
+	        	console.log(o);  //{value:1}
+	        	o = JSON.parse(JSON.stringify(o)); //切断联系 
+	        	console.log(o);  //{value:1}
+	            o.value = 2;
+	            o.arr[2] = 'bosh';
+	            o.o.a = 11;
+	            console.log(o.value); //2
+	        }
+	        foo(obj);
+	        console.log(obj) //
+		}
+		
+//-------------//*js概念部分*//---------------//
 	//1、DOM元素e的e.getAttribute(propName)和e.propName有什么区别和联系
 		/**
 		 *e.getAttribute(propName)可以获取元素的指定属性propName,这个属性可以标准属性也可以是自定义的属性。
@@ -20,11 +65,11 @@
 
 	//2、offsetWidth/offsetHeight,clientWidth/clientHeight与scrollWidth/scrollHeight的区别
 		/**
-		 *元素.offsetWidth：元素在水平方向上占用的空间大小，以像素计。包括元素的内容宽度；（可见的）垂直滚动条的宽度；左右内边距宽度；左边框宽度；不包括外边距。把垂直滚动条跨度看成是绝对定位元素，好理解些。
+		 *元素.offsetWidth：元素在水平方向上占用的空间大小，以像素计。包括元素的内容宽度；（可见的）垂直滚动条的宽度；左右内边距宽度；左右边框宽度；不包括外边距。把垂直滚动条宽度看成是绝对定位元素，好理解些。
 		 *元素.clientWidth:显示的是元素内可视区的宽度，它包括1、元素的内容宽度(width属性)，2、左右内边距宽度；如果元素包含垂直滚动条，就要在1、2的基础上减去滚动条的宽度。
 		 *元素.scrollWidth:显示的是元素内实际内容的宽度，如果是一大串文字内容并且不换行，就能看出效果
 		 *window.screen对象反应的是终端屏幕的信息，比如screen.width指的是屏幕的像素宽度；screen.availWidth指的是屏幕的像素宽度减系统部件宽度之后的值，比如Windows系统把底部任务栏设置为右边显示，就能看到screen.availWidth的变化。
-		 *window.innerWidth:浏览器页面视图区的宽度
+		 *window.innerWidth:浏览器页面视图区的宽度，包含滚动条，如果有的话。
 		 *window.outerWidth:浏览器整个窗口的宽度
 		 *《js高程》12.2.3
 		**/
@@ -60,12 +105,135 @@
 	//6、sessionStorage,localStorage,cookie区别
 		/**
 		 *sessionStorage:不能跨标签，随浏览器关闭清除，5MB
-		 *localStorage:无存储时间限制，除非用户清缓存。5MB
-		 *cookie:Cookie是不可跨域名的，随浏览器关闭清除，4KB。验证是否能跨标签
+		 *localStorage:无存储时间限制，除非用户清缓存或者通过js清除。5MB
+		 *cookie:Cookie是不可跨域名的，随浏览器关闭清除，4KB。只要符合同源策略都可以访问cookie。
 		 *
 		 *sessionStorage和localStorage都是storage的实例，无论是 localStorage 还是 sessionStorage 中保存的数据都仅限于该页面的协议
 		 *补充：
 		 *session：标签打开也是不共享的
+		**/
+
+	//8、javascript有哪几种方法定义函数
+		/**
+		 *1、function命令：function fnName(){}可以不加分号
+		 *2、函数表达式(等式)：var fn = function(){};要加分号等号后面也可以是具名函数，var fn= function x(){};加了名字方便函数内部调用自身，有个名字也方便调试。
+		 *3、Function构造函数，var fn = new Function(arguments,...,函数体字符串);最后一个参数就是函数体。没人用这个
+		**/
+
+
+	//13、javascript有哪些方法定义对象
+		/**
+		 *1、对象字面量：var obj = {};
+		 *2、构造函数：var obj = new Object();
+		 *3、ES6的Object.create()：var obj = Object.create(Object.prototype);使用Object.create()方法，直接以某个实例对象作为模板，生成一个新的实例对象。
+		**/
+
+	//14、15 ===和==运算符
+		/**
+		 *相等运算符在比较之前会转换运算符前后的操作数，然后再比较它们的相等性。
+		 *补充：
+		 *1、null==undefined（true）;
+		 *2、如果两个操作数都是对象，则比较它们是不是同一个对象，否则即使对象的内容完全相同也不等。同样适用于全等。如{a:1}=={a:1}（false）
+		 *3、如果操作数是对象，就会通过valueOf()先转换成基本类型再做比较。
+		 *全等运算符不进行转换就开始比较，所以数据类型不同就不等。
+		**/
+
+	//18、<,>,<=,>=的比较规则
+		/**
+		 *1、如果两个操作数都是数值，则执行数值比较。
+		 *2、如果两个操作数都是字符串，则比较两个字符串对应的字符编码值。
+		 *3、如果一个操作数是数值，则将另一个操作数转换为一个数值，然后执行数值比较。如果无法转换成数值，就转成NaN;任何数据类型与NaN比较都是false。
+		 *4、如果一个操作数是布尔值，则先将其转换为数值，然后再执行比较。
+		 *5、如果一个操作数是对象，则调用这个对象的 valueOf()方法，用得到的结果按照前面的规则执行比较。如果对象没有 valueOf()方法，则调用 toString()方法，并用得到的结果根据前面的规则执行比较。
+		 *
+		**/
+
+	//19、+运算符工作流程
+		/**
+		 *1、数值直接进行相加运算；字符串直接拼接；
+		 *2、如果不是数值也不是字符串，就先toString()再拼接。
+		**/
+
+	//20、函数内部arguments变量有哪些特性,有哪些属性,如何将它转换为数组
+		/**
+		 *1、arguments只能在函数内部访问，它是一个类数组包含了函数的实参信息，不是数组但是有length属性，同时可以通过方括号语法访问它的每个元素。
+		 *2、arguments的长度由函数调用时实参个数决定而不是函数定义时形参个数决定。
+		 *3、arguments中元素的值时刻与传入的参数的值同步，但它们的内存是独立的，只是值同步。
+		 *4、没有传递值的命名参数将自动被赋予 undefined 值。
+		 *转换为数组
+		 *Array.prototype.apply(arguments)
+		**/
+
+//-------------//*HTML、HTTP、web综合*//---------------//
+	//2、前端需要注意哪些SEO
+		/**
+		 *1、网页tittle、description、keywords;权重由高到低。
+		 *2、HTML代码语义化；语义化代码让搜索引擎容易理解网页。
+		 *3、a标签加title；非装饰的img标签加alt
+		 *4、提高网速----涉及网页性能优化（可扩展）
+		**/
+
+	//12、如何进行网站性能优化
+		/**
+		 *1、涉及图片：图片压缩，iconfont，雪碧图减少请求数
+		 *2、
+		**/
+
+	//7、什么是web语义化,有什么好处
+		/**
+		 *1、就是用指定语义的标签去标记你想要的HTML结构；如：你要一个文章，就是要article标签，想要一个段落就用p标签，等等。
+		 *2、css语义化我理解的就是class类名要语义化。
+		 *好处：
+		 *1、易于理解与运营维护；
+		 *2、拿掉css装饰，整个页面的呈现也是完整的，而不是杂乱无章。
+		 *3、有利于搜索引擎收录
+		**/
+
+	//3、web开发中会话跟踪的方法有哪些
+		/**
+		 *1、input隐藏域，最早Java后端用freeMark，就把用户id存在input隐藏域的value里供页面调用。
+		 *2、url传参，比如标id传到下一个页面，在页面上调用。用getQueryString函数去截参数值。
+		 *3、cookie:http://javascript.ruanyifeng.com/bom/cookie.html
+		 *4、session:
+		**/
+
+	//4、<img>的title和alt有什么区别
+		/**
+		 *title：是全局属性，设置元素的额外信息，鼠标移动到图片上时，会显示；alt只有当图片加载失败的时候才会显示。
+		**/
+
+	//5、doctype是什么,举例常见doctype及特点
+		/**
+		 *<!DOCTYPE> 声明，用于告知浏览器当前页面是使用那个HTML版本进行编写的。因为不同的HTML版本下标签的支持情况是不一样的。
+		 *注：<!DOCTYPE>标签对大小写不敏感，没有结束标签，必须写在页面文档首行。
+		**/
+
+	//6、HTML全局属性(global attribute)有哪些
+		/**
+		 *1、应该知道的：class、id、style
+		 *2、lang:规定元素内容的语言，可以方便搜索引擎识别，也可以基于语言的不同做页面的差别展示;title:设置元素的额外信息，鼠标上移的时候会显示提示框;data-*用于存储数据
+		 *3、别的属性有印象，但实际需求上没涉及过就不太熟悉。
+		**/
+
+	//13、什么是渐进增强
+		/**
+		 *先保证所有人都能访问页面的基本内容和功能，然后再为高级浏览器和高带宽用户提供更好的用户体验。
+		 *补充：优雅降级
+		 *一开始就构建站点的最完整的功能，然后针对低浏览器测试和修复bug
+		**/
+
+//-------------//*javascript编程部分*//---------------//
+	//2、写一个倒计时
+		/**
+		 *1、Date.parse('Jan 1, 2019')获取指定时间距离1970年1月1号午夜毫秒数；要注意传参的格式
+		 *2、使用Date.UTC(2019,0)指的是指定时间到格林威治时间的1970年1月1号午夜,所以该方法还会自动 ± 当地时差。
+		 *3、算小时、分钟、秒要用余数
+		 *4、setTimeout每隔一秒递归。
+		**/
+	//6、编写javascript深度克隆函数deepClone
+		/**
+		 *《高程--4.1.2：复制变量值》
+		 *
 		**/
 	</script>
 </body>

@@ -1,4 +1,6 @@
 ;(function(win, lib) {
+    //dpr概念：设备物理像素/设备逻辑像素
+    //scale概念：缩放大小，idealviewport/visualviewport
     var doc = win.document;
     var docEl = doc.documentElement;
     var metaEl = doc.querySelector('meta[name="viewport"]');
@@ -52,7 +54,7 @@
     }
 
     docEl.setAttribute('data-dpr', dpr);
-    //不处女座meta，就生成meta
+    //不存在meta，就生成meta
     if (!metaEl) {
         metaEl = doc.createElement('meta');
         metaEl.setAttribute('name', 'viewport');
@@ -67,8 +69,10 @@
     }
 
     function refreshRem(){
+        //Element.getBoundingClientRect()方法返回元素的大小(width,height)及其相对于视口的位置(top,right,bottom,left)。
     	//getBoundingClientRect().width获取整个页面的物理像素宽度
         var width = docEl.getBoundingClientRect().width;
+        console.log(width);
         //这个判断针对平板等大屏幕，限制了最大宽度
         if (width / dpr > 540) {
             width = 540 * dpr;
@@ -119,3 +123,4 @@
     }
 
 })(window, window['lib'] || (window['lib'] = {}));
+//设置lib属性的意义是：

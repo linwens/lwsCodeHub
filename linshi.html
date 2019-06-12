@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>jquery学习</title>
+	<script src="./jquery1.12.1.js"></script>
+</head>
+<body>
+	<div class="test1">
+		<ul class="ul0">
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
+	<div class="test2">
+		<ul class="ul1">
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
+	<script>
+		$('ul').removeClass(' ')
+		/*
+		addClass: function( value ) {
+			var classes, elem, cur, curValue, clazz, j, finalValue,
+				i = 0;
+
+			if ( jQuery.isFunction( value ) ) {
+				return this.each( function( j ) {
+					jQuery( this ).addClass( value.call( this, j, getClass( this ) ) );
+				} );
+			}
+
+			if ( typeof value === "string" && value ) {
+				classes = value.match( rnotwhite ) || [];
+
+				while ( ( elem = this[ i++ ] ) ) {
+					curValue = getClass( elem );
+					cur = elem.nodeType === 1 &&
+						( " " + curValue + " " ).replace( rclass, " " );
+
+					if ( cur ) {
+						j = 0;
+						while ( ( clazz = classes[ j++ ] ) ) {
+							if ( cur.indexOf( " " + clazz + " " ) < 0 ) {
+								cur += clazz + " ";
+							}
+						}
+
+						// only assign if different to avoid unneeded rendering.
+						finalValue = jQuery.trim( cur );
+						if ( curValue !== finalValue ) {
+							jQuery.attr( elem, "class", finalValue );
+						}
+					}
+				}
+			}
+
+			return this;
+		},
+		*/
+	</script>
+</body>
+</html>
