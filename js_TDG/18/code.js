@@ -221,7 +221,73 @@ whenReady(function() {
     target.ondragenter = function(e) {
       console.log("dragenter")
       if (uploading) return
-      
+      var types = e.dataTransfer.types;
+      if (types && ((types.contains && types.contains("Files")) || (types.indexOf && types.indexOf("Files") !== -1))) {
+        target.classList.add("wantdrop");
+        return false;
+      }
+    };
+    target.ondrop = function(e) {
+      if (uploading) return false
+      var files = e.dataTransfer.files;
+      if (files && files.length) {
+        uploading = true
+        var message = "Uploading files:<ul>";
+        for (var i = 0 ;i < files.length; i++) {
+          message += "<li>" + files[i].name + "</li>"
+        }
+        message += "</ul>"
+
+        target.innerHTML = message
+        target.classList.remove("wantdrop")
+        target.classList.add("uploading")
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", url)
+        var body = new FormData()
+        for (var i = 0; i < files.length; i++) {
+          body.append(i, files[i]); // 注意append是 FormData实例的方法
+        }
+        xhr.upload.onprogress = function(e) {
+          if (e.lengthComputable) {
+            target.innerHTML = message + Math.round(e.loaded/e.total*100) + "% Complete";
+          }
+        }
+
+        xhr.upload.onload = function(e) {
+          uploading = false;
+          target.classList.remove("uploading");
+          target.innerHTML = "Drop files to upload"
+        }
+        xhr.send(body)
+
+        return false
+      }
+      target.classList.remove("wantdrop")
     }
   }
 })
+
+/**
+ * 18.1.5 
+ */
+function timedGetText(url, timeout, callback) {
+  var request = new XMLHttpRequest()
+  var timedout = false;
+  var timer = setTimeout(function() {
+    timedout = true;
+    request.abort() //中止请求
+  }, timeout)
+  request.open("GET", url)
+  // 部分请求达到，可能会改变status的值，导致触发了回掉函数，而实际上部分请求已经超时了
+  // 所以书上说用load事件没这个风险
+  request.onreadystatechange = function() {
+    if (request.readyState !==4) return
+    if (timedout) return // 已经超时了就不继续后面的
+    clearTimeout(timer)
+    if (request.status === 200) {
+      callback(request.responseText)
+    }
+  }
+  request.send(null)
+}
