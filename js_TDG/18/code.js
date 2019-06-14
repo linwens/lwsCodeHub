@@ -215,5 +215,13 @@ whenReady(function() {
     if (!url) continue
     createFileUploadDropTarget(target, url);
   }
-  function createFileUploadDropTarget(target, url) {}
+  function createFileUploadDropTarget(target, url) {
+    var uploading = false; // 标识是否正在上传
+    console.log(target, url)
+    target.ondragenter = function(e) {
+      console.log("dragenter")
+      if (uploading) return
+      
+    }
+  }
 })
