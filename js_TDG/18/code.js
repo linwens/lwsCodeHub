@@ -291,3 +291,59 @@ function timedGetText(url, timeout, callback) {
   }
   request.send(null)
 }
+
+/**
+ * 18.1.6
+ */
+whenReady(function() {
+  // 通过 XMLHttpRequest中的 withCredentials，测试浏览器是否支持CORS跨域
+  var supportsCORS = (new XMLHttpRequest()).withCredentials !== undefined;
+  // 遍历文档中的所有链接
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    var link = links[i];
+    if (!link.href) continue
+    if (link.title) continue
+    // 如果是一个跨域链接
+    if (link.host !== location.host || link.protocol !== location.protocol) {
+      link.title = "站外链接";
+      if (!supportsCORS) continue // 不支持跨越就退出
+    }
+    if (link.addEventListener) {
+      link.addEventListener("mouseover", mouseoverHandler, false);
+    } else {
+      link.attachEvent("mouseover", mouseoverHandler)
+    }
+  }
+
+  function mouseoverHandler(e) {
+    var link = e.target || e.srcElement; //e.srcElement 针对IE的兼容处理，可以捕获当前事件作用的对象
+    var url = link.href;
+    var req = new XMLHttpRequest();
+    req.open("HEAD", url) // HEAD方法，仅仅询问头信息
+    req.onreadystatechange = function() {
+      if (req.readyState !== 4) return
+      if (req.status === 200) {
+        var type = req.getResponseHeader("Content-Type");
+        var size = req.getResponseHeader("Content-Length");
+        var date = req.getResponseHeader("Last-Modified");
+        link.title = "类型: " + typpe + "\n" + "大小: " + size + "\n" + "时间: " + date;
+      } else {
+        if (!link.title) {
+          link.title = "Couldn't fetch details:\n" + req.status + " " + req.statusText;
+        }
+      }
+    };
+    req.send(null);
+    // 一处处理程序，仅向一次获取这些头信息
+    if (link.removeEventListener) {
+      link.removeEventListener("mouseover", mouseoverHandler, false);
+    } else {
+      link.detachEvent("onmouseover", mouseoverHandler)
+    }
+  }
+})
+
+/**
+ * 18.2
+ */
