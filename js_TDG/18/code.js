@@ -345,5 +345,153 @@ whenReady(function() {
 })
 
 /**
- * 18.2
+ * 18.2 JSONP
  */
+function getJSONP(url, callback) {
+  var cbnum = "cb" + getJSONP.counter++;
+  var cbname = "getJSONP." + cbnum;
+
+  if (url.indexOf("?") === -1) {
+    url += "?jsonp=" + cbname;
+  } else {
+    url += "&jsonp=" + cbname;
+  }
+
+  // 创建script标签用于发送请求
+  var script = document.createElement("script");
+  getJSONP[cbnum] = function(response) {
+    try {
+      callback(response)
+    } finally { // 无论结果如何，都会执行的代码块
+      delete getJSONP[cbnum]
+      script.parentNode.removeChild(script)
+    }
+  };
+  script.src = url;
+  document.body.appendChild(script)
+}
+getJSONP.counter = 0; // 用于创建唯一回调函数名称的计数器
+
+/**
+ * 18.3
+ */
+window.onload = function() {
+  var nick = prompt("Enter your nickname")
+  var input = document.getElementById("input");
+  input.focus();
+
+  // 通过 EventSource 注册新消息的通知
+  var chat = new EventSource("/chat");
+  chat.onmessage = function(event) {
+    var msg = event.data;
+    var node = document.createTextNode(msg);
+    var div = document.createElement("div");
+    div.appendChild(node);
+    document.body.insertBefore(div, input)
+    input.scrollIntoView() // 保证input元素可见
+  }
+
+  // 使用 XMLHttpRequest把用户的消息发送给服务器
+  input.onchange = function() {
+    var msg = nick + ': ' + input.value;
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/chat");
+    xhr.setRequestHeader("Content-Type", "text/plain; charset=UTF-8");
+    xhr.send(msg);
+    input.value = "";
+  }
+}
+  // XMLHttpRequest 模拟 EventSource
+if (window.EventSource === undefined) {
+  window.EventSource = function(url) {
+    var xhr;
+    var evtsrc = this;
+    var charsReceived = 0;
+    var type = null;
+    var data = "";
+    var eventName = "message";
+    var lastEventId = "";
+    var retrydelay = 1000;
+    var aborted = false;
+
+    xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = function() {
+      switch(xhr.readyState) {
+        case 3: processData(); break;
+        case 4: reconnect(); break;
+      }
+    }
+    function reconnect() {
+      if (aborted) return
+      if (xhr.status >= 300) return
+      setTimeout(connect, retrydelay) // 等待1秒后重连
+    }
+    // 通过connect创建一个长期存在的链接
+    connect()
+    function connect() {
+      charsReceived = 0;
+      type = null;
+      xhr.open("GET", url);
+      xhr.setRequestHeader("Cache-Control", "no-cache");
+      if (lastEventId) {
+        xhr.setRequestHeader("Last-Event-ID", lastEventId);
+      }
+      xhr.send();
+    }
+
+    function processData() {
+      if (!type) {
+        type = xhr.getResponseHeader('Content-Type');
+        if (type !== "text/event-stream") {
+          aborted = true;
+          xhr.abort();
+          return;
+        }
+      }
+
+      var chunk = xhr.responseText.substring(charsReceived);
+      charsReceived = xhr.responseText.length;
+
+      var lines = chunk.replace(/(\r\n|\r|\n)$/, "").split(/\r\n|\r|\n/);
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i], 
+            pos = line.indexOf(":"), 
+            name, 
+            value="";
+        if (pos === 0) continue
+        if (pos> 0) {
+          name = line.substring(0, pos);
+          value = line.substring(pos+1);
+          if (value.charAt(0) == " ") {
+            value = value.substring(1);
+          }
+        } else {
+          name = line;
+        }
+
+        switch(name) {
+          case "event": eventName = value; break;
+          case "data": data += value + "\n"; break;
+          case "id": lastEventId = value; break;
+          case "retry": retrydelay = parseInt(value) || 1000; break;
+          default: break;
+        }
+
+        if (line === "") {
+          if (evtsrc.onmessage &&data != "") {
+            if (data.charAt(data.length-1) = "\n") {
+              data = data.substring(0, data.length -1)
+            }
+            evtsrc.onmessage({
+              type: eventName,
+              data: data,
+              origin: url
+            });
+          }
+          data = "";
+          continue;
+        }
+      }
+    }
+  }
+}
