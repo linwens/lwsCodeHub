@@ -373,7 +373,7 @@ function getJSONP(url, callback) {
 getJSONP.counter = 0; // 用于创建唯一回调函数名称的计数器
 
 /**
- * 18.3
+ * 18.3 聊天室
  */
 window.onload = function() {
   var nick = prompt("Enter your nickname")
