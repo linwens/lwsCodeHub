@@ -18,25 +18,24 @@ s.len = 4; // 这行代码执行，创建一个临时的字符串对象，并给
 var t = s.len; // t=undefined
 
 var s = "test", n = 1, b = true;
-var S = new String(s);
-var N = new Number(n);
-var B = new Boolean(b);
+var S = new String(s); // object
+var N = new Number(n); // object
+var B = new Boolean(b); // object
 
-console.log(typeof S) // object
 
 /**
  * 3.7
  */
 var o = {x:1}, p = {x:1};
-console.log(o===p); // false
+o===p; // false
 var a =[], b =[];
-console.log(a===b); // false
+a===b; // false
 
 var a =[];
 var b = a;
 b[0] = 1;
-console.log(a[0]) // 1
-console.log(a===b) // true
+a[0] // 1
+a===b // true
 
 var a = ['a', 'b', 'c'];
 var b = [];
@@ -54,9 +53,62 @@ function equalArrays(a, b) {
 /**
  * 3.8 JavaScript类型转换
  */
-var kk = new Number(null) ; //
-console.log(kk)
-var jj = new String([]); //
-var ll = new Number([]); //
-console.log(jj)
-console.log(ll)
+var kk = new Number(null) ; // 0
+var jj = new String([]); // ""
+var ll = new Number([]); // 0
+
+
+/**
+ * 3.8.3
+ */
+var aa = new Boolean(false); // object
+
+/**
+ * 3.10
+ */
+// 嵌套作用域
+var scope = "global scope";
+function checkscope() {
+  var scope = "local scope";
+  function nested() {
+    var scope = "nested scope";
+    return scope;
+  }
+  return nested();
+}
+checkscope(); // nested scope
+
+/**
+ * 3.10.1
+ */
+// 函数作用域内声明的所有变量在函数体内始终是可见的
+function test(o) {
+  var i = 0;
+  if (typeof o == "object") {
+    var j = 0;
+    for(var k = 0; k < 10; k++) {
+      console.log(k) // 0~9
+    }
+    console.log(k)  // 10
+  }
+  console.log(j) // 0
+}
+test({});
+
+// 声明提前 (hoisting)
+var scope = "global";
+function f() {
+  console.log(scope);
+  var scope = "local";
+  console.log(scope)
+}
+f();
+
+/**
+ * 3.10.2
+ */
+var truevar = 1;
+fakevar = 2;
+delete truevar; // false  变量不可被删除
+delete fakevar; // true  变量被删除
+
