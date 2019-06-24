@@ -42,3 +42,35 @@ function tail(o) {
   for(; o.text; o = o.next) /* empty */
   return o;
 }
+/**
+ * 5.5.4
+ */
+var o = {x: 1, y: 2, z: 3};
+var a = [], i = 0;
+for (a[i++] in o) { /* empty */ }
+console.log(a) // ['x', 'y', 'z']
+for ( i in a ) console.log(i) // 0 1 2
+
+/**
+ * 5.6.2
+ */
+var matrix = [[1, 2, 3], [6, 7, 8], [4, 5, 9]];
+var sum = 0, success = false;
+
+// compute_sum: 是个表标签语句
+compute_sum: if (matrix) {
+  for (var x = 0;  x < matrix.length; x++) {
+    var row = matrix[x];
+    if (!row) break compute_sum;
+    for (var y = 0; y < row.length; y++) {
+      var cell = row[y];
+      if (isNaN(cell)) break compute_sum
+      sum += cell
+    }
+  }
+  success = true;
+}
+console.log(sum) // 45
+/**
+ * 5.6.3
+ */
