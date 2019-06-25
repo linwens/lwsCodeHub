@@ -72,5 +72,23 @@ compute_sum: if (matrix) {
 }
 console.log(sum) // 45
 /**
- * 5.6.3
+ * 5.6.5
  */
+function factorial(x) {
+  if (x < 0) throw new Error("x不能是负数");
+
+  for (var f=1; x>1; f*=x, x--){}
+  console.log(f)
+  return f
+}
+factorial(10)
+/**
+ * 5.6.6
+ */
+try {
+  var n = Number(prompt("请输入一个正整数", ""));
+  var f = factorial(n);
+  alert(n+"| = "+f)
+} catch (ex) {
+  alert(ex)
+}
