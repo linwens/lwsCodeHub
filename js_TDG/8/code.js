@@ -23,6 +23,7 @@ var f = function fact(x) {
     return x*fact(x-1)
   }
 }
+var data = []
 data.sort(function(a, b) { return a-b });
 var tensquared = (function(x) {return x*x}(10));
 
@@ -45,3 +46,45 @@ var calculator = {
 calculator.add();
 calculator.result // 2
 
+var o = {
+  m: function() {
+    var self = this;
+    console.log(this === o)
+    f();
+    function f() {
+      console.log(this === o)
+      console.log(self === o)
+    }
+  }
+}
+
+/**
+ * 8.3.1
+ */
+function getPropertyNames(o, /* optional */ a) {
+  a = a || []
+  for (var property in o) a.push(property)
+  return a;
+}
+var a = getPropertyNames(o);
+var p = {}
+getPropertyNames(p, a)
+
+/**
+ * 8.3.2
+ */
+function f(x, y, z) {
+  // 校验实参个数是否正确
+  if (arguments.length != 3) {
+    throw new Error('function f called with ' + arguments.length + 'arguments, but it expects 3 arguments.');
+  }
+}
+
+function max(/* ... */) {
+  var max = Number.NEGATIVE_INFINITY; // -Infinity
+  for (var i = 0; i < arguments.length; i++) {
+    if (arguments[i] > max) max = arguments[i]
+  }
+  return max;
+}
+var largest = max(1, 10, 100, 2, 3, 1000, 4, 5, 10000, 6);
