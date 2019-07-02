@@ -280,10 +280,54 @@ function counter() {
   }
 }
 var c = counter(), d = counter();
-c.count();
-d.count();
-c.reset();
-c.count();
-d.count();
+// c.count();
+// d.count();
+// c.reset();
+// c.count();
+// d.count();
 
+function counter(n) {
+  return {
+    get count() { return n++ },
+    set count(m) {
+      if (m >= n) n = m;
+      else throw Error("count can only be set to a larger value");
+    }
+  }
+}
 
+function addPrivateProperty(o, name, predicate) {
+  var value;
+  o["get" + name] = function() { return value;}
+  o["set" + name] = function(v) {
+    if (predicate && !predicate(v)) {
+      throw Error("set" + name + ": invalid value " + v);
+    } else {
+      value = v
+    }
+  }
+}
+var o = {};
+addPrivateProperty(o, "Name", function(x) { return typeof x == "string"});
+o.setName("Frank");
+console.log(o.getName());
+// o.setName(0)
+
+function constfunc(v) {
+  return function() {return v}
+}
+var funcs = [];
+for (var i = 0; i < 10; i++) {
+  funcs[i] = constfunc(i)
+}
+console.log(funcs[5]()) // 5
+
+function constfuncs() {
+  var funcs = [];
+  for (var i = 0; i < 10; i++) {
+    funcs[i] = function() {return i}
+  }
+  return funcs
+}
+var funcs = constfuncs();
+console.log(funcs[5]()) // 10
