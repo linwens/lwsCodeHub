@@ -331,3 +331,73 @@ function constfuncs() {
 }
 var funcs = constfuncs();
 console.log(funcs[5]()) // 10
+
+/**
+ * 8.7.1
+ */
+function check(args) {
+  var actual = args.length; //实参个数
+  var expected = args.callee.length; // 期望的实参个数
+  if (actual !== expected) {
+    throw Error("Expected " + expected + "args; got " + actual);
+  }
+}
+function f(x, y, z) {
+  check(arguments);
+  return x + y + z;
+}
+
+/**
+ * 8.7.3  monkey-patching
+ */
+function trace(o, m) {
+  var original = o[m]; // 保存原始方法
+  o[m] = function() {
+    console.log(new Date(), "Entering: ", m);
+    var result = original.apply(this, arguments); // this指向 o (因为o[m])
+    console.log(new Date(), "Exiting: ", m);
+    return result
+  }
+}
+
+/**
+ * 8.7.4
+ */
+function f(y) { return this.x + y; }
+var o = {x: 1}
+var g = f.bind(o);
+g(2); //3
+
+function bind(f, o) {
+  if (f.bind) return f.bind(o) // bind 是 Function上的一个方法
+  else return function() {
+    return f.apply(o, arguments);
+  }
+}
+
+var sum = function(x, y) { return x + y}
+var succ = sum.bind(null, 1)
+succ(2) //3
+function f(y, z) { return this.x + y + z}
+var g = f.bind({x: 1}, 2);
+g(3) // 6
+
+// 模拟bind
+if (!Function.prototype.bind) {
+  Function.prototype.bind = function(o, /*, args */) {
+    var self = this, boundArgs = arguments;
+    // bind方法返回一个函数
+    return function() {
+      var args = [], i;
+      // 将调用bind的实参合并入args
+      for (i = 1; i < boundArgs.length; i++) {
+        args.push(boundArgs[i])
+      }
+      // bind()调用以后生成的新函数调用时的实参，再合并
+      for (i = 0; i < arguments.length; i++) {
+        args.push(arguments[i])
+      }
+      return self.apply(o, args)
+    }
+  }
+}
