@@ -401,3 +401,47 @@ if (!Function.prototype.bind) {
     }
   }
 }
+
+/**
+ * 8.7.6
+ */
+var scope = "global";
+function constructFunction() {
+  var scope = "local";
+  return new Function("return scope");
+}
+constructFunction()(); // "global"
+
+/**
+ * 8.8.1
+ */
+var data = [1,1,3,5,5];
+var total = 0;
+for (var i = 0; i < data.length; i++) {
+  total += data[i]
+}
+// 求平均数
+var mean = total/data.length; 
+total = 0;
+for (var i = 0; i < data.length; i++) {
+  var deviation = data[i] - mean;
+  total += deviation * deviation;
+}
+// 求标准差
+var stddev = Math.sqrt(total/(data.length-1))
+//------------函数式编程
+// map方法操作数组里的所有元素，返回新数组；
+// reduce()方法将数组里的元素一次进行组合，生成单个值；
+var sum = function(x, y) { return x+y;}
+var square = function(x) { return x*x;}
+var data = [1,1,3,5,5];
+var mean = data.reduce(sum)/data.length;
+var deviations = data.map(function(x) {return x-mean;});
+var stddev = Math.sqrt(deviations.map(square).reduce(sum)/(data.length-1));
+
+
+
+
+
+
+
