@@ -439,9 +439,172 @@ var mean = data.reduce(sum)/data.length;
 var deviations = data.map(function(x) {return x-mean;});
 var stddev = Math.sqrt(deviations.map(square).reduce(sum)/(data.length-1));
 
+var map = Array.prototype.map
+          ? function(a, f) { return a.map(f)}
+          : function(a, f) {
+            var results = [];
+            for (var i = 0, len = a.length; i < len; i++) {
+              if (i in a) {
+                results[i] = f.call(null, a[i], i, a);
+              }
+            }
+            return results;
+          };
+var reduce = Array.prototype.reduce
+             ? function(a, f, initial) {
+               if (arguments.length > 2) { // 有传入初始值
+                 return a.reduce(f, initial);
+               } else {
+                 return a.reduce(f)
+               }
+             }
+             : function(a, f, initial) {
+                var i = 0, len = a.length, accumulator;
+                if (arguments.length > 2) {
+                  accumulator = initial
+                } else {
+                  if (len == 0) throw TypeError()
+                  while (i < len) {
+                    if (i in a) {
+                      accumulator = a[i++];
+                      break; // 找到数组a中第一个已定义的索引，用来做初始值
+                    } else {
+                      i++
+                    }
+                  }
+                  if (i == len) {
+                    throw TypeError()
+                  }
+                }
+                while (i < len) {
+                  if (i in a) {
+                    accumulator = f.call(undefined, accumulator, a[i], i , a);
+                    i++;
+                  }
+                }
+                return accumulator;
+              }
+var sum = function(x, y) { return x+y;}
+var square = function(x) { return x*x;}
+var data = [1,1,3,5,5];
+var mean = reduce(data, sum)/data.length;
+var deviations = map(data, function(x) {return x-mean;});
+var stddev = Math.sqrt(reduce(map(deviations, square), sum)/(data.length-1));
 
+/**
+ * 8.8.2
+ */
+function not(f) {
+  return function() {
+    console.log(this);
+    var result = f.apply(this, arguments);
+    return !result;
+  }
+}
+var even = function(x) {
+  return x % 2 === 0
+}
+var odd = not(even);
+[1, 1, 3, 5, 5].every(odd); // true ,此时odd里的this指向window
 
+function mapper(f) {
+  return function(a) { return map(a, f)} // 相比于上面的not,返回的函数需要传实参？
+}
+var increment = function(x) { return x+1;};
+var incrementer = mapper(increment)
+incrementer([1,2,3])
 
+function compose(f, g) {
+  return function() {
+    // f()直传一个参数用call；g()传多个参数用apply
+    return f.call(this, g.apply(this, arguments));
+  }
+}
+var square = function(x) { return x*x; };
+var sum = function(x, y) { return x+y };
+var squareofsum = compose(square, sum);
+squareofsum(2, 3); // 25
 
+/**
+ * 8.8.3
+ */
+// 将类数组转为真正的数组
+function array(a, n) {
+  return Array.prototype.slice.call(a, n || 0);
+}
 
+// 这个函数的实参传递至 左侧
+function partialLeft(f /*, ... */) {
+  var args = arguments;
+  return function() {
+    var a = array(args, 1); // 把第一个作为函数的实参去掉
+    a = a.concat(array(arguments)); // 注意这里的arguments和上面的arguments不是同一个哦
+    return f.apply(this, a)
+  }
+}
 
+// 这个函数的实参传递至 右侧
+function partialRight(f /*, ... */) {
+  var args = arguments;
+  return function() {
+    var a = array(arguments);
+    a = a.concat(array(args, 1))
+    return f.apply(this, a)
+  }
+}
+
+//
+function partial(f /*, ... */) {
+  var args = arguments; // 外部实参
+  return function() {
+    var a = array(args, 1);
+    var i = 0, j = 0;
+    for (; i < a.length; i++) {
+      if (a[i] === undefined) {
+        a[i] = arguments[j++] // 用内部实参填充外部实参的undefined
+      }
+    }
+    a = a.concat(array(arguments, j)); // 填充所有实参
+    return f.apply(this, a)
+  }
+}
+
+var f = function(x, y, z) { return x * (y - z);};
+// 因为最后生成的实参顺序不一样，导致结果不一样
+partialLeft(f, 2)(3, 4)
+partialRight(f, 2)(3, 4)
+partial(f, undefined, 2)(3, 4)
+
+/**
+ * 8.8.4
+ */
+function memorize(f) {
+  var cache = {}; // 将值保存到闭包内
+  return function() {
+    var key = arguments.length + Array.prototype.join.call(arguments, ",");
+    // 如果缓存中存在这个值，直接返回，不存在就走f函数调用计算新值，缓存并返回
+    console.log(key)
+    console.log(key in cache)
+    console.log(cache)
+    if (key in cache) return cache[key]
+    else return cache[key] = f.apply(this, arguments)
+  }
+}
+// 返回两个整数的最大公约数
+function gcd(a ,b) {
+  var t;
+  if (a < b) {
+    t = b, b = a, a = t;
+  }
+  while(b != 0) {
+    t = b, b = a%b, a = t;
+  }
+  return a;
+}
+var gcdmemo = memorize(gcd);
+gcdmemo(85, 187) // 17
+var factorial = memorize(function(n) {
+  return (n <= 1) ? 1 : n * factorial(n - 1);
+})
+factorial(5) // 120
+console.dir(factorial)
