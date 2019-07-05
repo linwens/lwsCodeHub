@@ -154,9 +154,26 @@ String.prototype.trim = String.prototype.trim || function() {
   return this.replace(/^\s+|\s+$/g, "");
 }
 Function.prototype.getName = function() {
-  return this.name || this.toString().match(/function\s*([^()*]\(/)[1];
+  // 正则的解释：match()[1]拿到的是子表达式([^(]*)里的东西，这个pattern指的是 非( 的任意多个值, 即函数名
+  return this.name || this.toString().match(/function\s*([^(]*)\(/)[1];
 }
 
 /**
- * 9.5
+ * 9.5.3
+ */
+function type(o) {
+  var t, c, n; // type, class, name
+  if (0 === null) return 'null';
+  if (o !== o) return "nan";
+  if ((t = typeof o) !== "object") return t;
+  if ((c = classof(o)) !== "Object") return c;
+  if (o.constructor && typeof o.constructor === "function" && (n = o.constructor.getName())) return n;
+  return "Object";
+}
+function classof(o) {
+  return Object.prototype.toString.call(o).slice(8, -1);
+}
+
+/**
+ * 9.5.4
  */
