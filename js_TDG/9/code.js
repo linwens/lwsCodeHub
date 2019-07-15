@@ -340,3 +340,91 @@ var hand = deck.deal(13).sort(Card.orderBySuit);
 /**
  * 9.6.3
  */
+extend(Set.prototype, {
+  toString: function() {
+    var s = "{",
+    i = 0;
+    this.foreach(function(v) {
+      s += ((i++ > 0) ? ", " : "") + v;
+    })
+    return s + "}";
+  },
+  toLocaleString: function() {
+    var s = "{". i = 0;
+    this.foreach(function(v) {
+      if (i++ > 0) s += ", ";
+      if (v == null) s += v;
+      else s += v.toLocaleString();
+    });
+    return s + "}";
+  },
+  toArray: function() {
+    var a = [];
+    this.foreach(function(v) {
+      a.push(v);
+    })
+    return a;
+  }
+})
+Set.prototype.toJSON = Set.prototype.toArray;
+
+/**
+ * 9.6.4
+ */
+Range.prototype.constructor = Range;
+Range.prototype.equals = function(that) {
+  if (that == null) return false;
+  if (that.constructor !== Range) return false;
+  return this.from == that.from && this.to == that.to;
+}
+
+Set.prototype.equals = function (that) {
+  if (this === that) return true;
+  if (!(that instanceof Set)) return false;
+  if (this.size() != that.size()) return false;
+  try{
+    this.foreach(function(v) {
+      if (!that.contains(v)) throw false; // 通过抛出异常来中止foreach循环
+    })
+    return true;
+  } catch(x) {
+    if (x === false) return false;
+    throw x
+  }
+}
+
+/**
+ * 9.6.5
+ */
+var generic = {
+  toString: function() {
+    var s = '[';
+    if (this.constructor && this.constructor.name) {
+      s += this.constructor.name + ": ";
+    }
+    var n = 0;
+    for (var name in this) {
+      if (!this.hasOwnProperty(name)) continue;
+      var value = this[name];
+      if (typeof value === "function") continue;
+      if (n++) s += ", ";
+      s += name + '=' + value;
+    }
+    return s + ']';
+  },
+  equals: function(that) {
+    if (that == null) return false;
+    if (this.constructor !== that.constructor) return false;
+    for (var name in this) {
+      if (name === "|**objectid**|") continue;
+      if (!this.hasOwnProperty(name)) continue;
+      if (this[name] !== that[name]) return false;
+    }
+    return true;
+  }
+}
+
+/**
+ * 9.6.6
+ */
+function Range()
