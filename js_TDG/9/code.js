@@ -208,7 +208,7 @@ function Set() {
 Set.prototype.add = function() {
   for (var i = 0; i < arguments.length; i++) {
     var val = arguments[i];
-    var str = Set.v2s(val);
+    var str = Set._v2s(val);
     if (!this.values.hasOwnProperty(str)) {
       this.values[str] = val;
       this.n++;
@@ -427,4 +427,58 @@ var generic = {
 /**
  * 9.6.6
  */
-function Range()
+function Range(from, to) {
+  this.from = function() {return from};
+  this.to = function() {return to};
+}
+Range.prototype = {
+  constructor: Range,
+  includes: function(x) {
+    return this.from() <= x && x <= this.to();
+  },
+  foreach: function(f) {
+    for (var x = Math.ceil(this.from(), max = this.to()); x <= max; x++) {
+      f(x)
+    }
+  },
+  toString: function() {
+    return "(" + this.from() + "..." + this.to() + ")"
+  }
+}
+
+var r = new Range(1, 5);
+r.from = function() {return 0};
+
+/**
+ * 9.6.7
+ */
+function Set() {
+  this.values = {};
+  this.n = 0;
+
+  if (arguments.length == 1 && isArrayLike(arguments[0])) {
+    this.add.apply(this, arguments[0])
+  } else if (arguments.length > 0) {
+    this.add.apply(this, arguments);
+  }
+}
+
+Complex.polar = function(r, theta) {
+  return new Complex(r*Math.cos(theta), r*Math.sin(theta));
+}
+Set.fromArray = function(a) {
+  s = new Set();
+  s.add.apply(s, a);
+  return s;
+}
+function SetFromArray(a) {
+  Set.apply(this, a);
+}
+SetFromArray.prototype = Set.prototype;
+
+var s = new SetFromArray([1,2,3]);
+s instanceof Set; // true
+
+/**
+ * 9.7
+ */
