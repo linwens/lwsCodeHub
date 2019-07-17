@@ -523,5 +523,55 @@ SingletonSet.prototype.equals = function(that) {
  */
 // 在子类中调用父类的构造函数和方法
 function NonNullSet() {
-  
+  Set.apply(this, arguments);
 }
+NonNullSet.prototype = inherit(Set.prototype);
+NonNullSet.prototype.constructor = NonNullSet;
+
+NonNullSet.prototype.add = function() {
+  for (var i = 0; i < arguments.length; i++) {
+    if (arguments[i] == null) {
+      throw new Error("Can't add null or undefined to a NonNullSet");
+    }
+  }
+  return Set.prototype.add.apply(this, arguments)
+}
+
+// 类工厂和方法链
+function filteredSubclass(superclass, filter) {
+  var constructor = function() {
+    superclass.apply(this, arguments)
+  }
+  var proto = constructor.prototype = inherit(superclass.prototype);
+  proto.constructor = constructor;
+  proto.add = function() {
+    for (var i = 0; i < arguments.length; i++) {
+      var v = arguments[i];
+      if (!filter(v)) throw ("Value " + v + " rejected by filter");
+    }
+    superclass.prototype.add.apply(this, arguments);
+  }
+  return constructor;
+}
+
+var StringSet = filteredSubclass(Set, function(x) { return typeof x === "string"});
+var MySet = filteredSubclass(NonNullSet, function(x) {return typeof x !== "function"});
+
+var NonNullSet = (function() {
+  var superclass = Set;
+  return superclass.extend(function() {superclass.apply(this, arguments)}, 
+  {
+    add: function() {
+      for (var i = 0; i < arguments.length; i++) {
+        if (arguments[i] == null) {
+          throw new Error("Can't add null or undefined");
+        }
+      }
+      return superclass.prototype.add.apply(this, arguments)
+    }
+  })
+}());
+
+/**
+ * 9.7.3
+ */
