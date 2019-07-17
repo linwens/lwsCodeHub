@@ -521,3 +521,7 @@ SingletonSet.prototype.equals = function(that) {
 /**
  * 9.7.2
  */
+// 在子类中调用父类的构造函数和方法
+function NonNullSet() {
+  
+}
