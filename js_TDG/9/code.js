@@ -480,5 +480,44 @@ var s = new SetFromArray([1,2,3]);
 s instanceof Set; // true
 
 /**
- * 9.7
+ * 9.7.1
+ */
+function defineSubclass(superclass, // 父类的构造函数
+                        constructor, // 新子类的构造函数
+                        methods, // 实例方法， 复制到原型
+                        statics) // 类属性， 复制到构造函数
+{
+  constructor.prototype = inherit(superclass.prototype);
+  constructor.prototype.constructor = constructor;
+  if (methods) extend(constructor.prototype, methods);
+  if (statics) extend(constructor, statics);
+  return constructor;
+}
+Function.prototype.extend = function(constructor, methods, statics) {
+  return defineSubclass(this, constructor, methods, statics);
+}
+
+// 构造函数
+function SingletonSet(member) {
+  this.member = member;
+}
+SingletonSet.prototype = inherit(Set.prototype);
+extend(SingletonSet.prototype, {
+  constructor: SingletonSet,
+  add: function() { throw "read-only set";},
+  remove: function() { throw "read-only set";},
+  size: function() {return 1;},
+  foreach: function(f, context) {
+    f.call(context, this.member);
+  },
+  contains: function(x) {
+    return x === this.member;
+  }
+})
+SingletonSet.prototype.equals = function(that) {
+  return that instanceof Set && that.size()==1 && that.contains(this.member);
+}
+
+/**
+ * 9.7.2
  */
