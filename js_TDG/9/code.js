@@ -575,3 +575,284 @@ var NonNullSet = (function() {
 /**
  * 9.7.3
  */
+var FilteredSet = Set.extend(function FilteredSet(set, filter) {
+  this.set = set;
+  this.filter = filter;
+}, {
+  add: function() {
+    if (this.filter) {
+      for (var i = 0; i < arguments.length; i++) {
+        var v = arguments[i];
+        if (!this.filter(v)) {
+          throw new Error("FilteredSet: value " + v +" rejected by filter");
+        }
+      }
+    }
+    this.set.add.apply(this.set, arguments);
+    return this;
+  },
+  remove: function() {
+    this.set.remove.apply(this.set, arguments);
+    return this;
+  },
+  contains: function(v) {
+    return this.set.contains(v);
+  },
+  size: function() {
+    return this.set.size();
+  },
+  foreach: function(f, c) {
+    this.set.foreach(f, c)
+  }
+});
+var s = new FilteredSet(new Set(), function(x) {
+  return x !== null;
+})
+var t = new FilteredSet(s, {
+  function (x) {
+    return !(x instanceof Set);
+  }
+});
+
+/**
+ * 9.7.4
+ */
+function abstractmethod() {
+  throw new Error("abstract method")
+}
+function AbstractSet() {
+  throw new Error("Can't instantiate abstract classes")
+}
+AbstractSet.prototype.contains = abstractmethod;
+
+var NotSet = AbstractSet.extend(function NotSet(set) {
+  this.set = set;
+}, {
+  contains: function (x) { return !this.set.contains(x);},
+  toString: function (x) { return "~" + this.set.toString();},
+  equals: function (that) {
+    return that instanceof NotSet && this.set.equals(that.set);
+  }
+});
+
+var AbstractEnumerableSet = AbstractSet.extend(function() {
+  throw new Error("Can't instantiate abstract classes")
+}, {
+  size: abstractmethod,
+  foreach: abstractmethod,
+  isEmpty: function() {return this.size() == 0},
+  toString: function() {
+    var s = "{", i = 0;
+    this.foreach(function(v) {
+      if (i++>0) s += ", ";
+      s += v
+    });
+    return s + "}"
+  },
+  toLocaleString: function() {
+    var s = "{", i = 0;
+    this.foreach(function(v) {
+      if (i++>0) s += ", ";
+      if (v == null) s += v;
+      else s += v.toLocaleString();
+    })
+    return s + "}";
+  },
+  toArray: function() {
+    var a = [];
+    this.foreach(function(v) {
+      a.push(v)
+    });
+    return a;
+  },
+  equals: function(that) {
+    if (!(that instanceof AbstractEnumerableSet)) return false;
+    if (this.size() != that.size()) return false;
+    try {
+      this.foreach(function(v) {
+        if (!that.contains(v)) throw false;
+      });
+      return true;
+    } catch(x) {
+      if (x === false) return false;
+      throw x;
+    }
+  }
+});
+
+var SingletonSet = AbstractEnumerableSet.extend(function SingletonSet(member) {
+  this.member = member;
+}, {
+  contains: function(x) {
+    return x === this.member;
+  },
+  size: function() { return 1;},
+  foreach: function(f, ctx) {
+    f.call(ctx, this.member)
+  }
+});
+
+var AbstractWritableSet = AbstractEnumerableSet.extend(function() {
+  throw new Error("Can't instantiate abstract classes")
+}, {
+  add: abstractmethod,
+  remove: abstractmethod,
+  union: function(that) {
+    var self = this;
+    that.foreach(function(v) {
+      self.add(v)
+    });
+    return this;
+  },
+  intersection: function(that) {
+    var self = this;
+    this.foreach(function(v) {if (!that.contains(v)) self.remove(v)});
+    return this;
+  },
+  difference: function(that) {
+    var self = this;
+    that.foreach(function(v) { self.remove(v)});
+    return this;
+  }
+});
+
+var ArraySet = AbstractEnumerableSet.extend(function ArraySet() {
+  this.values = [];
+  this.add.apply(this, arguments);
+}, {
+  contains: function(v) { return this.values.indexOf(v) != -1},
+  size: function() {return this.values.length;},
+  foreach: function(f, c) { this.values.forEach(f, c);},
+  add: function() {
+    for (var i = 0; i < arguments.length; i++) {
+      var arg = arguments[i];
+      if (!this.contains(arg)) this.values.push(arg);
+    }
+    return this;
+  },
+  remove: function() {
+    for (var i = 0; i < arguments.length; i++) {
+      var p = this.values.indexOf(arguments[i]);
+      if (p == -1) continue;
+      this.values.splice(p, 1);
+    }
+    return this;
+  }
+});
+/**
+ * 9.8.1
+ */
+(function() {
+  Object.defineProperty(Object.prototype, "objectId", {
+    get: idGetter,
+    enumerable: false,
+    configurable: false
+  });
+  function idGetter() {
+    if (!(idprop in this)) {
+      if (!Object.isExtensible(this)) {
+        throw Error("Can't define id for nonextensible objects");
+      }
+      Object.defineProperty(this, idprop, {
+        value: nextid++,
+        writable: false,
+        enumerable: false,
+        configurable: false
+      });
+      return this[idprop];
+    };
+    var idprop = "|**objectId**|";
+    var nextid = 1;
+  }
+} ())
+
+/**
+ * 9.8.2
+ */
+function Range(from, to) {
+  var props = {
+    from: {
+      value: from,
+      enumerable: true,
+      writable: false,
+      configurable: false
+    },
+    to: {
+      value: to,
+      enumerable: true,
+      writable: false,
+      configurable: false
+    }
+  };
+  if (this instanceof Range) {
+    Object.defineProperties(this, props);
+  } else {
+    return Object.create(Range.prototype, props);
+  }
+}
+Object.defineProperties(Range.prototype, {
+  includes: {
+    value: function(x) {
+      return this.from <= x && x <= this.to
+    }
+  },
+  foreach: {
+    value: function(f) {
+      for (var x = Math.ceil(this.from); x <= this.to; x++) {
+        f(x)
+      }
+    }
+  },
+  toString: {
+    value: function() {
+      return "(" + this.from + "..." + this.to + ")"
+    }
+  }
+});
+
+function freezeProps(o) {
+  var props = (arguments.length == 1) ? Object.getOwnPropertyNames(o) : Array.prototype.splice.call(arguments, 1);
+  props.forEach(function(n) {
+    if (!Object.getOwnPropertyDescriptor(o, n).configurable) return;
+    Object.defineProperty(o, n, {
+      writable: false,
+      configurable: false
+    });
+  })
+  return o;
+}
+function hideProps(o) {
+  var props = (arguments.length == 1) ? Object.getOwnPropertyNames(o) : Array.prototype.splice.call(arguments, 1);
+  props.forEach(function(n) {
+    if (!Object.getOwnPropertyDescriptor(o, n).configurable) return;
+    Object.defineProperty(o, n, {
+      enumerable: false
+    })
+  })
+  return o;
+}
+
+function Range(from, to) {
+  this.from = from;
+  this.to = to;
+  freezeProps(this);
+}
+
+Range.prototype = hideProps({
+  constructor: Range,
+  includes: function(x) {
+    return this.from <= x && x <= this.to
+  },
+  foreach: function(f) {
+    for(var x = Math.ceil(this.from); x <= this.to; x++) {
+      f(x)
+    }
+  },
+  toString: function() {
+    return "(" + this.from + "..." + this.to + ")"
+  }
+})
+
+/**
+ * 9.8.3
+ */
