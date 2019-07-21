@@ -447,7 +447,7 @@ Range.prototype = {
 }
 
 var r = new Range(1, 5);
-r.from = function() {return 0};
+// r.from = function() {return 0};
 
 /**
  * 9.6.7
@@ -856,3 +856,245 @@ Range.prototype = hideProps({
 /**
  * 9.8.3
  */
+function Range(from, to) {
+  if (from > to) throw new Error("Range: from must be <= to");
+
+  function getFrom() { return from }
+  function getTo() { return to }
+  function setFrom(f) {
+    if (f <= to) from = f;
+    else throw new Error("Range: from must be <= to");
+  }
+  function setTo(t) {
+    if (t >= from) to = t;
+    else throw new Error("Range: to must be >= from");
+  }
+  Object.defineProperties(this, {
+    from: {
+      get:getFrom,
+      set: setFrom,
+      enumerable: true,
+      configurable: false
+    },
+    to: {
+      get: getTo,
+      set: setTo,
+      enumerable: true,
+      configurable: false
+    }
+  })
+}
+
+Range.prototype = hideProps({
+  constructor: Range,
+  includes: function(x) {
+    return this.from <= x && x <= this.to
+  },
+  foreach: function(f) {
+    for (var x = Math.ceil(this.from); x <= this.to; x++) {
+      f(x)
+    }
+  },
+  toString: function() {
+    return "(" + this.from + "..." + this.to + ")"
+  }
+});
+
+var original_sort_method = Array.prototype.sort;
+Array.prototype.sort = function() {
+  var start = new Date();
+  original_sort_method.apply(this, arguments);
+  var end = new Date();
+  console.log("Array sort took" + (end - start) + " milliseconds.")
+}
+
+/**
+ * 9.8.5
+ */
+function StringSet() {
+  this.set = Object.create(null); // 创建一个不包含原型的对象
+  this.n = 0;
+  this.add.apply(this, arguments);
+}
+StringSet.prototype = Object.create(AbstractWritableSet.prototype, {
+  constructor: { value: StringSet },
+  contains: {
+    value: function(x) {
+      return x in this.set;
+    }
+  },
+  size: {
+    value: function(x) {
+      return this.n
+    }
+  },
+  foreach: {
+    value: function(f, c) {
+      Object.keys(this.set).forEach(f, c); // c 参数用于指定this值
+    }
+  },
+  add: {
+    value: function() {
+      for (var i = 0; i < arguments.length; i++) {
+        if (!(arguments[i] in this.set)) {
+          this.set[arguments[i]] = true;
+          this.n++;
+        }
+      }
+      return this;
+    }
+  },
+  remove: {
+    value: function() {
+      for (var i = 0; i <arguments.length; i++) {
+        if (arguments[i] in this.set) {
+          delete this.set[arguments[i]];
+          this.n--
+        }
+      }
+      return this;
+    }
+  }
+});
+
+/**
+ * 9.8.6
+ */
+(function namespace() {
+  function properties() {
+    var names;
+    if (arguments.length == 0) {
+      names = Object.getOwnPropertyNames(this);
+    } else if (arguments.length == 1 && Array.isArray(arguments[0])) {
+      names = arguments[0]
+    } else {
+      names = Array.prototype.splice.call(arguments, 0)
+    }
+    return new Properties(this, names);
+  }
+
+  Object.defineProperty(Object.prototype, "properties", {
+    value: properties,
+    enumerable: false,
+    writable: true,
+    configurable: true
+  });
+
+  function Properties(o, names) {
+    this.o = o;
+    this.names = names;
+  }
+
+  Properties.prototype.hide = function() {
+    var o = this.o, hidden = {enumerable: false};
+    this.names.forEach(function(n) {
+      if (o.hasOwnProperty(n)) {
+        Object.defineProperty(o, n, hidden)
+      }
+    })
+    return this;
+  }
+
+  Properties.prototype.freeze = function() {
+    var o = this.o, frozen = { writable: false, configurable: false};
+    this.names.forEach(function(n) {
+      if (o.hasOwnProperty(n)) {
+        Object.defineProperty(o, n, frozen)
+      }
+    })
+    return this;
+  }
+
+  Properties.prototype.descriptors = function() {
+    var o = this.o, desc = {};
+    this.names.forEach(function(n) {
+      if (!o.hasOwnProperty(n)) return;
+      desc[n] = Object.getOwnPropertyDescriptor(o, n);
+    })
+    return desc;
+  }
+
+  Properties.prototype.toString = function() {
+    var o = this.o;
+    var lines = this.names.map(nameToString);
+    return "{\n " + lines.join(",\n ") + "\n}";
+
+    function nameToString(n) {
+      var s = "", desc = Object.getOwnPropertyDescriptor(o, n);
+      if (!desc) return "nonexistent " + n + ": undefined";
+      if (!desc.configurable) s += "permanent ";
+      if ((desc.get && !desc.set) || !desc.writable) s += "readonly ";
+      if (!desc.get || desc.set) s += "accessor " + n
+      else s += n + ": " + ((typeof desc.value === "function") ? "function" : desc.value);
+      return s 
+    }
+  }
+  // 调用刚增加的方法
+  Properties.prototype.properties().hide();
+} ())
+
+/**
+ * 9.9.2
+ */
+var Set = (function invocation() {
+  function Set() {
+    this.values = {};
+    this.n = 0;
+    this.add.apply(this, arguments);
+  }
+
+  Set.prototype.contains = function(value) {
+    return this.values.hasOwnProperty(v2s(value));
+  }
+  Set.prototype.size = function() { return this.n}
+  Set.prototype.add = function() {}
+  Set.prototype.remove = function() {
+    Set.prototype.foreach = function(f, c) {}
+  }
+  function v2s(val) {}
+  function objectId(o) {}
+  var nextId = 1;
+  return Set;
+} ())
+
+// 引入模块, 方法1
+var collections;
+if (!collections) collections = {};
+collections.sets = (function namespace() {
+  /** 省略代码，下面示例为了不报错 */
+  var AbstractSet = null;
+  var NotSet = null;
+
+  return {
+    AbstractSet: AbstractSet,
+    NotSet: NotSet
+    //...
+  }
+} ())
+
+// 引入模块, 方法2
+var collections;
+if (!collections) collections = {};
+collections.sets = (new function namespace() {
+  /** 省略代码，下面示例为了不报错 */
+  var AbstractSet = null;
+  var NotSet = null;
+
+  this.AbstractSet = AbstractSet;
+  this.NotSet = NotSet;
+  //...
+}())
+
+// 引入模块, 方法3
+var collections;
+if (!collections) collections = {};
+collections.sets = {};
+(function namespace() {
+  /** 省略代码，下面示例为了不报错 */
+  var AbstractSet = null;
+  var NotSet = null;
+
+  collections.sets.AbstractSet = AbstractSet;
+  collections.sets.NotSet = NotSet;
+  //...
+} ())
