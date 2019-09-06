@@ -421,7 +421,7 @@ window.onload = function() {
 /**
  * 15.8.1
  */
-function getScrollOffset(w) {
+function getScrollOffsets(w) {
 
   w = w || window;
   if (w.pageXOffset != null) {
@@ -465,4 +465,59 @@ function getViewportSize(w) {
 
 /**
  * 15.8.2
+ */
+var box = e.getBoundingClientRect();
+var offsets = getScrollOffsets();
+var x = box.left + offsets.x;
+var y = box.top + offsets.y;
+
+var w = box.width || (box.right - box.left);
+var h = box.height || (box.bottom - box.top);
+
+/**
+ * 15.8.4
+ */
+var documentHeight = document.documentElement.offsetHeight;
+var viewportHeight = window.innerHeight;
+window.scrollTo(0, documentHeight - viewportHeight);
+
+/**
+ * 15.8.5
+ */
+function getElementPosition(e) {
+  var x = 0, y = 0;
+  while(e != null) {
+    x += e.offsetLeft;
+    y += e.offsetTop;
+    e = e.offsetParent;
+  }
+  return {x: x, y: y};
+}
+// 考虑滚动条
+function getElementPos(elt) {
+  var x = 0, y = 0;
+  // 循环累加偏移量
+  for(var e = elt; e != null; e = e.offsetParent) {
+    x += e.offsetLeft;
+    y += e.offsetTop;
+  }
+
+  for(var e = elt.parentNode; e != null && e.nodeType == 1; e = e.parentNode) {
+    x -= e.scrollLeft;
+    y -= e.scrollTop;
+  }
+  return {x: x, y: y};
+}
+
+/**
+ * 15.9
+ */
+var methods = document.forms.shipping.elements.method;
+var shipping_method;
+for (var i = 0; i < methods.length; i++) {
+  if (methods[i].checked) shipping_method = methods[i].value
+}
+
+/**
+ * 15.9.2
  */
