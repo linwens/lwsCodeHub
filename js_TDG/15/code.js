@@ -466,6 +466,7 @@ function getViewportSize(w) {
 /**
  * 15.8.2
  */
+var e = document.getElementById('log');
 var box = e.getBoundingClientRect();
 var offsets = getScrollOffsets();
 var x = box.left + offsets.x;
@@ -519,5 +520,58 @@ for (var i = 0; i < methods.length; i++) {
 }
 
 /**
- * 15.9.2
+ * 15.10.1
  */
+if (document.referrer.indexOf("http://www.google.com/search?") == 0) {
+  var args = document.referrer.substring(ref.indexOf("?")+1).split("&");
+  for(var i = 0; i < args.length; i++) {
+    if (args[i].substring(0, 2) == "q=") {
+      document.write('<p>Welcome Google User.');
+      document.write("You searched for: " + unescape(args[i].substring(2)).replace('+', ' '));
+      break;
+    }
+  }
+}
+
+/**
+ * 15.10.2
+ */
+function ElementStream(elt) {
+  if (typeof elt === "string") elt = document.getElementById(elt);
+  this.elt = elt;
+  this.buffer = '';
+}
+ElementStream.prototype.write = function() {
+  this.buffer += Array.prototype.join.call(arguments, "");
+};
+ElementStream.prototype.writeIn = function() {
+  this.buffer += Array.prototype.join.call(arguments, "") + "\n"
+}
+ElementStream.prototype.close = function() {
+  this.elt.innerHTML = this.buffer;
+  this.buffer = "";
+}
+
+/**
+ * 15.10.3
+ */
+function getSelectedText() {
+  if (window.getSelection) {
+    return window.getSelection().toString();
+  } else if (document.selection) {
+    return document.selection.createRange().text;
+  }
+}
+
+/**
+ * 15.10.4
+ */
+function bold() {
+  document.execCommand("bold", false, url)
+}
+function link() {
+  var url = prompt("Enter link destination");
+  if (url) {
+    document.execCommand("createlink", false, url);
+  }
+}

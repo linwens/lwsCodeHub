@@ -18,6 +18,15 @@
       <label><input type="radio" name="method" value="overnite">Overnight</label>
     </fieldset>
   </form>
+  <!-- 15.10.4 -->
+  <div id="editor" contenteditable>Click to edit</div>
+  <iframe src="about:blank" id="editor-ifr"></iframe>
+  <script>
+    window.onload = function() {
+      var editor = document.getElementById("editor-ifr");
+      editor.contentDocument.designMode = "on";
+    }
+  </script>
   <script src="./code.js"></script>
 </body>
 </html>
