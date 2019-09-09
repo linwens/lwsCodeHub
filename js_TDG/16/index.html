@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>权威指南第16章</title>
+  <style></style>
+  <script src="./code.js"></script>
+</head>
+<body>
+  <div style="position: absolute; left: 25%; right:25%; top: 25%; height: 50%; border: 2px solid black"></div>
+  <div id="shake">shake</div>
+  <div id="fade">fade</div>
+  <button onclick="shake(this, fadeOut);">Shake and Fade</button>
+  <script>
+    window.onload = function() {
+      shake('shake');
+      fadeOut('fade');
+    }
+  </script>
+</body>
+</html>
