@@ -13,6 +13,13 @@
     .reveal *.handle {
       display: block;
     }
+    #clock {
+      font: bold 24pt sans;
+      background: #ddf;
+      padding: 10px;
+      border: solid black 2px;
+      border-radius: 10px;
+    }
   </style>
   <script>
     window.onload = function() {
@@ -31,6 +38,15 @@
           }
         }
       }
+      // 13.2.1
+      displayTime();
+    }
+    // 13.2.1
+    function displayTime() {
+      var elt = document.getElementById("clock");
+      var now = new Date();
+      elt.innerHTML = now.toLocaleTimeString();
+      setTimeout(displayTime, 1000);
     }
   </script>
 </head>
@@ -39,5 +55,7 @@
     <h1 class="handle">Click Here to Reveal Hidden Text</h1>
     <p>This paragraph is hidden. It appears when you click on the title.</p>
   </div>
+  <h1>Digital Clock</h1>
+  <span id="clock"></span>
 </body>
 </html>
