@@ -26,5 +26,11 @@ onLoad(function() {
 })
 
 /**
- * 13.3.3
+ * 13.4.6
  */
+/*@cc_on
+  @if (@_jscript)
+    alert('You are using IE')
+  @else*/
+    alert('You are not using IE')
+ /*@end@*/
