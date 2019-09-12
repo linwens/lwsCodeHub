@@ -80,3 +80,41 @@ alert("Hello, " + name); */
 /**
  * 14.6
  */
+window.onerror = function(msg, url, line) {
+  if (onerror.num++ < onerror.max) {
+    alert("ERROR: " + msg + "\n" + url + ":" + line);
+    return true;
+  }
+}
+onerror.max = 3;
+onerror.num = 0;
+
+/**
+ * 14.8.1
+ */
+var w = window.open("smallwin.html", "smallwin", "width=400,height=350,status=yes,resizable=yes");
+window.onload = function(){
+  var btn = document.getElementById('winOpen');
+  btn.addEventListener('click', function(e){
+    var w = window.open();
+    w.alert("About to visit http://example.com");
+    w.location = "http://example.com";
+  
+    w.alert(w.opener != null); // true
+    w.alert(w.opener === window); // true
+    w.close();
+  })
+
+}
+
+/**
+ * 14.8.2
+ */
+window.onload = function(){
+  var elt = document.getElementById("f1");
+  var win = elt.contentWindow; // contentWindow获取窗体的window对象
+
+  // 窗体的window对象的frameElement获取当前窗体对应的iframe元素
+  alert(win.frameElement === elt); // true
+  alert(window.frameElement === null); // true
+}
