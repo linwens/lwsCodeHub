@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>权威指南21章</title>
+  <script src="./code.js"></script>
+</head>
+<body>
+  <img width="300" height="500" src="http://gallery.shy-u.top/testGallery12.jpg" alt="" data-rollover="http://gallery.shy-u.top/new_gallery_test9.jpg">
+  <!-- 21.3 -->
+  <div id="piechart"></div>
+  <div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+      <defs>
+        <linearGradient id="fade">
+          <stop offset="0%" stop-color="#008"/>
+          <stop offset="100%" stop-color="#ccf"/>
+        </linearGradient>
+      </defs>
+      <rect x="100" y="200" width="800" height="600" stroke="black" stroke-width="25" fill="url(#fade)"/>
+    </svg>
+  </div>
+  <script>
+    window.onload = function(){
+      var box = document.getElementById('piechart');
+      box.appendChild(pieChart([12, 23, 34, 45], 640, 400, 200, 200, 150, ['red', 'blue', 'yellow', 'green'], ['North', 'South', 'East', 'West'], 400, 100));
+    }
+  </script>
+</body>
+</html>
