@@ -96,4 +96,148 @@ function pieChart(data, width, height, cx, cy, r, colors, labels, lx, ly) {
 }
 
 // svg时钟
-function updateTime(){}
+function updateTime(){
+  var now = new Date();
+  var min = now .getMinutes();
+  var hour = (now.getHours() % 12) + min/60;
+  var minangle = min * 6;
+  var hourangle = hour * 3;
+
+  var minhand = document.getElementById("minutehand");
+  var hourhand = document.getElementById("hourhand");
+
+  minhand.setAttribute("transform", "rotate(" + minangle + ",50,50)");
+  hourhand.setAttribute("transform", "rotate(" + hourangle + ",50,50)");
+
+  setTimeout(updateTime, 60000);
+}
+
+/**
+ * 21.4
+ */
+
+
+/**
+ * 21.4.1
+ */
+function polygon(c, n, x, y, r, angle, counterclockwise) {
+  angle = angle || 0;
+  counterclockwise = counterclockwise || false; // 默认顺时针
+  // 一个圆，以半径为斜边求sin cos
+  c.moveTo(x + r*Math.sin(angle), y - r*Math.cos(angle)); // 第一个顶点（12点钟方向）
+  var delta = 2 * Math.PI/n;
+  for (var i = 1; i < n; i++) {
+    angle += counterclockwise ? -delta : delta;
+    c.lineTo(x + r*Math.sin(angle), y - r*Math.cos(angle));
+  }
+  c.closePath();
+}
+onLoad(function() {
+  var demo1 = document.getElementById("demo1");
+  var ctx1 = demo1.getContext("2d");
+  ctx1.beginPath();
+  polygon(ctx1, 3, 50, 70, 50);
+  polygon(ctx1, 4, 150, 60, 50, Math.PI/4);
+  polygon(ctx1, 5, 255, 55, 50);
+  polygon(ctx1, 6, 365, 53, 50, Math.PI/6);
+  polygon(ctx1, 4, 365, 53, 20, Math.PI/4, true); // 逆时针 ，确保 非零绕线原则
+
+  ctx1.fillStyle = "#ccc";
+  ctx1.strokeStyle = "#008";
+  ctx1.lineWidth = 5;
+  ctx1.fill();
+  ctx1.stroke();
+})
+
+/**
+ * 21.4.2
+ */
+CanvasRenderingContext2D.prototype.revert = function() {
+  this.restore();
+  this.save();
+  return this;
+}
+CanvasRenderingContext2D.prototype.attrs = function(o) {
+  if (o) {
+    for (var a in o) {
+      this[a] = o[a];
+    }
+    return this;
+  } else {
+    return {
+      fillStyle: this.fillStyle,
+      font: this.font,
+      globalAlpha: this.globalAlpha,
+      globalCompositeOperation: this.globalCompositeOperation,
+      lineCap: this.lineCap,
+      lineJoin: this.lineJoin,
+      lineWidth: this.lineWidth,
+      miterLimit: this.miterLimit,
+      textAlign: this.textAlign,
+      textBaseline: this.textBaseline,
+      shadowBlur: this.shadowBlur,
+      shadowColor: this.shadowColor,
+      shadowOffsetX: this.shadowOffsetX,
+      shadowOffsetY: this.shadowOffsetY,
+      strokeStyle: this.strokeStyle
+    }
+  }
+}
+
+/**
+ * 21.4.3
+ */
+function shear(c, kx, ky) {
+  c.transform(1, ky, kx, 1, 0, 0);
+}
+function rotateAbout(x, theta, x, y) {
+  var ct = Math.cos(theta),
+  st = Math.sin(theta);
+  c.transform(ct, -st, st, ct, -x*ct-y*st+x, x*st-y*ct+y);
+}
+
+// 科赫雪花
+var deg = Math.PI/180;
+
+function snowflake(c, n, x, y, len) {
+  c.save();
+  c.translate(x, y);
+  c.moveTo(0, 0);
+  leg(n);
+  c.rotate(-120*deg);
+  leg(n);
+  c.rotate(-120*deg);
+  leg(n);
+  c.closePath();
+  c.restore();
+
+  function leg(n){
+    c.save();
+    if (n == 0) {
+      c.lineTo(len, 0);
+    } else {
+      c.scale(1/3, 1/3);
+      leg(n-1);
+      c.rotate(60*deg);
+      leg(n-1);
+      c.rotate(-120*deg);
+      leg(n-1);
+      c.rotate(60*deg);
+      leg(n-1);
+    }
+    c.restore();
+    c.translate(len, 0);
+  }
+}
+
+onLoad(function() {
+  var demo2 = document.getElementById("demo2");
+  var ctx2 = demo2.getContext("2d");
+  snowflake(ctx2, 0, 5, 115, 125)
+  snowflake(ctx2, 1, 145, 115, 125)
+  snowflake(ctx2, 2, 285, 115, 125)
+  snowflake(ctx2, 3, 425, 115, 125)
+  snowflake(ctx2, 4, 565, 115, 125)
+
+  ctx2.stroke();
+})

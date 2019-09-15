@@ -6,11 +6,83 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>权威指南21章</title>
   <script src="./code.js"></script>
+  <style>
+    #clock{
+      stroke: black;
+      stroke-linecap: round;
+      fill: #eef;
+    }
+    #face{
+      stroke-width: 3px;
+    }
+    #ticks{
+      stroke-width: 2px;
+    }
+    #hourhand{
+      stroke-width: 5px;
+    }
+    #minutehand{
+      stroke-width: 3px;
+    }
+    #numbers{
+      font-family: sans-serif;
+      font-size: 7pt;
+      font-weight: bold;
+      text-anchor: middle;
+      stroke: none;
+      fill: black;
+    }
+
+  </style>
 </head>
 <body>
   <img width="300" height="500" src="http://gallery.shy-u.top/testGallery12.jpg" alt="" data-rollover="http://gallery.shy-u.top/new_gallery_test9.jpg">
+  <!-- 21.4.4 -->
+  <canvas id="demo2" width="700" height="200"></canvas>
+  <!-- 21.4.1 -->
+  <canvas id="demo1" width="500" height="200"></canvas>
+  <!-- 21.4 -->
+  <div>
+    this is a red square: <canvas id="square" width=10 height=10></canvas>
+    this is a blue circle: <canvas id="circle" width=10 height=10></canvas>
+  </div>
   <!-- 21.3 -->
   <div id="piechart"></div>
+  <svg id="clock" viewBox="0 0 100 100" width="500" height="500">
+    <defs>
+      <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur" />
+        <feOffset in="blur" dx="1" dy="1" result="shadow"/>
+        <feMerge>
+          <feMergeNode in="SourceGraphic"/>
+          <feMergeNode in="shadow"/>
+        </feMerge>
+      </filter>
+    </defs>
+    <circle id="face" cx="50" cy="50" r="45" />
+    <g id="ticks">
+      <line x1='50.00' y1='5.000' x2='50.00' y2='10.00' />
+      <line x1='72.50' y1='11.03' x2='70.00' y2='15.36' />
+      <line x1='88.97' y1='27.50' x2='84.64' y2='30.00' />
+      <line x1='95.00' y1='50.00' x2='90.00' y2='50.00' />
+      <line x1='88.97' y1='72.50' x2='84.64' y2='70.00' />
+      <line x1='72.50' y1='88.97' x2='70.00' y2='84.64' />
+      <line x1='50.00' y1='95.00' x2='50.00' y2='90.00' />
+      <line x1='27.50' y1='88.97' x2='30.00' y2='84.64' />
+      <line x1='11.03' y1='72.50' x2='15.36' y2='70.00' />
+      <line x1='5.000' y1='50.00' x2='10.00' y2='50.00' />
+      <line x1='11.03' y1='27.50' x2='15.36' y2='30.00' />
+      <line x1='27.50' y1='11.03' x2='30.00' y2='15.36' />
+    </g>
+    <g id="numbers">
+      <text x="50" y="18">12</text><text x="85" y="53">3</text>
+      <text x="50" y="88">6</text><text x="16" y="53">9</text>
+    </g>
+    <g id="hands" filter="url(#shadow)">
+      <line id="hourhand" x1="50" y1="50" x2="50" y2="24" />
+      <line id="minutehand" x1="50" y1="50" x2="50" y2="20" />
+    </g>
+  </svg>
   <div>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
       <defs>
@@ -24,8 +96,24 @@
   </div>
   <script>
     window.onload = function(){
+      // 21.4
+      var square = document.getElementById("square");
+      var contextS = square.getContext("2d");
+      contextS.fillStyle = "#f00";
+      contextS.fillRect(0, 0, 10, 10);
+
+      var circle = document.getElementById("circle");
+      var contextC = circle.getContext("2d");
+      contextC.beginPath();
+      contextC.arc(5, 5, 5, 0, 2*Math.PI, true);
+      contextC.fillStyle = "#00f";
+      contextC.fill();
+      //21.3
       var box = document.getElementById('piechart');
       box.appendChild(pieChart([12, 23, 34, 45], 640, 400, 200, 200, 150, ['red', 'blue', 'yellow', 'green'], ['North', 'South', 'East', 'West'], 400, 100));
+    
+      // 展示时钟
+      updateTime()
     }
   </script>
 </body>
