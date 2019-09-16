@@ -289,3 +289,213 @@ onLoad(function() {
 /**
  * 21.4.6
  */
+onLoad(function() {
+  var demo4 = document.getElementById("demo4");
+  var ctx4 = demo4.getContext("2d");
+
+  var offscreen = document.createElement("canvas");
+  offscreen.width = offscreen.height = 10;
+  offscreen.getContext("2d").strokeRect(0, 0, 6, 6);
+  var pattern = ctx4.createPattern(offscreen, "repeat");
+
+  var bgfade = ctx4.createLinearGradient(0, 0, demo4.width, demo4.height);
+  bgfade.addColorStop(0.0, "transparent");
+  bgfade.addColorStop(0.7, "rgba(100, 100, 100, 0.9)");
+  bgfade.addColorStop(1.0, "rgba(0, 0, 0, 0)");
+
+  var peekhole = ctx4.createRadialGradient(300, 300, 100, 300, 300, 300);
+  peekhole.addColorStop(0.0, "transparent");
+  peekhole.addColorStop(0.7, "rgba(100, 100, 100, 0.9)");
+  peekhole.addColorStop(1.0, "rgba(0, 0, 0, 0)");
+
+  ctx4.fillStyle = bgfade;
+  ctx4.fillRect(0, 0, 600, 600);
+  ctx4.strokeStyle = pattern;
+  ctx4.lineWidth = 100;
+  ctx4.strokeRect(100, 100, 400, 400);
+  ctx4.fillStyle = peekhole;
+  ctx4.fillRect(0, 0, 600, 600);
+
+});
+
+/**
+ * 21.4.10
+ */
+onLoad(function() {
+  var demo5 = document.getElementById("demo5");
+  var ctx5 = demo5.getContext("2d");
+
+  ctx5.font = "bold 60pt sans-serif";
+  ctx5.lineWidth = 2;
+  ctx5.strokeStyle = "#000";
+
+  ctx5.strokeRect(175, 25, 50, 325);
+  ctx5.strokeText("<canvas>", 15, 330);
+
+  polygon(ctx5, 3, 200, 225, 200);
+  polygon(ctx5, 3, 200, 225, 100, 0, true);
+
+  ctx5.clip();
+
+  ctx5.lineWidth = 10;
+  ctx5.stroke();
+
+  ctx5.fillStyle = "#aaa";
+  ctx5.fillRect(175, 25, 50, 325);
+  ctx5.fillStyle = "#888";
+  ctx5.fillText("<canvas>", 15, 330);
+});
+
+/**
+ * 21.4.11
+ */
+onLoad(function() {
+  var demo6 = document.getElementById("demo6");
+  var ctx6 = demo6.getContext("2d");
+
+  ctx6.shadowColor = "rgba(100, 100, 100, 0.4)";
+  ctx6.shadowOffsetX = ctx6.shadowOffsetY = 3;
+  ctx6.shadowBlur = 5;
+
+  ctx6.lineWidth = 10;
+  ctx6.strokeStyle = "blue";
+  ctx6.strokeRect(100, 100, 300, 200);
+  ctx6.font = "Bold 36pt Helvetica";
+  ctx6.fillText("Hello World", 115, 225);
+
+  ctx6.shadowOffsetX = ctx6.shadowOffsetY = 20;
+  ctx6.shadowBlur = 10;
+  ctx6.fillStyle = "red";
+  ctx6.fillRect(50, 25, 200, 65);
+  // 命中检测
+  demo6.onclick = function(event) {
+    if (hitpath(ctx6, event)) {
+      alert('Hit!path')
+    }
+  }
+});
+
+/**
+ * 21.4.12
+ */
+onLoad(function() {
+  var demo7 = document.getElementById("demo7");
+  var ctx7 = demo7.getContext("2d");
+
+  ctx7.moveTo(5, 5);
+  ctx7.lineTo(45, 45);
+  ctx7.lineWidth = 8;
+  ctx7.lineCap = "round";
+  ctx7.stroke();
+
+  ctx7.translate(50, 100);
+  ctx7.rotate(-45 * Math.PI / 180);
+  ctx7.scale(10, 10);
+
+  ctx7.drawImage(ctx7.canvas, 0, 0, 50, 50, 0, 0, 50, 50);
+
+  var img = document.createElement("img");
+  img.src = demo7.toDataURL();
+  document.body.appendChild(img);
+  // 测试动态模糊
+  smear(ctx7, 4, 0, 0, 600, 400);
+  // 命中检测
+  demo7.onclick = function(event) {
+    if (hitpaint(ctx7, event)) {
+      alert('Hit!paint')
+    }
+  }
+});
+
+/**
+ * 21.4.14
+ */
+function smear(c, n, x, y, w, h) {
+  var pixels = c.getImageData(x, y, w, h);
+
+  var width = pixels.width;
+  var height = pixels.height;
+
+  var data = pixels.data;
+  var m = n-1;
+  for (var row = 0; row < height; row++) {
+    var i = row*width*4 + 4;
+    for (var col = 1; col < width; col++, i += 4) {
+      data[i] = (data[i] + data[i-4]*m)/n;
+      data[i+1] = (data[i+1] + data[i-3]*m)/n;
+      data[i+2] = (data[i+2] + data[i-2]*m)/n;
+      data[i+3] = (data[i+3] + data[i-1]*m)/n;
+    }
+  }
+  c.putImageData(pixels, x, y);
+}
+
+/**
+ * 21.4.15
+ */
+function hitpath(context, event) {
+  var canvas = context.canvas;
+  var bb = canvas.getBoundingClientRect();
+
+  var x = (event.clientX-bb.left)*(canvas.width/bb.width);
+  var y = (event.clientY-bb.top)*(canvas.height/bb.width);
+
+  return context.isPointInPath(x, y);
+}
+
+function hitpaint(context, event) {
+  var canvas = context.canvas;
+  var bb = canvas.getBoundingClientRect();
+  var x = (event.clientX-bb.left)*(canvas.width/bb.width);
+  var y = (event.clientY-bb.top)*(canvas.height/bb.width);
+
+  var pixels = context.getImageData(x, y, 1, 1);
+
+  for(var i = 3; i < pixels.data.length; i+=4) {
+    if (pixels.data[i] !== 0) return true;
+  }
+  return false;
+}
+
+/**
+ * 21.4.16
+ */
+onLoad(function() {
+  var elts = document.getElementsByClassName("sparkline");
+  main: for(var e = 0; e < elts.length; e++) {
+    var elt = elts[e];
+    var content = elt.textContent || elt.innerText;
+    var content = content.replace(/^\s+|\s+$/g, "");
+    var text = content.replace(/#.*$/gm, "");
+    text = text.replace(/[\n\r\t\v\f]/g, " ");
+    var data = text.split(/\s+|\s*,\s*/);
+    for (var i = 0;i < data.length; i++) {
+      data[i] = Number(data[i]);
+      if (isNaN(data[i])) continue main;
+    }
+
+    var style = getComputedStyle(elt, null);
+    var color = style.color;
+    var height = parseInt(elt.getAttribute("data-height")) || parseInt(style.fontSize) || 20;
+    var width = parseInt(elt.getAttribute("data-width")) || data.length * (parseInt(elt.getAttribute("data-dx")) || height/6);
+    var ymin = parseInt(elt.getAttribute("data-ymin")) || Math.min.apply(Math, data);
+    var ymax = parseInt(elt.getAttribute("data-ymax")) || Math.max.apply(Math, data);
+    if (ymin >= ymax) ymax = ymin + 1;
+
+    var canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    canvas.title = content;
+    elt.innerHTML = "";
+    elt.appendChild(canvas);
+
+    var context = canvas.getContext("2d");
+    for (var i = 0; i < data.length; i++) {
+      var x = width*i/data.length;
+      var y = (ymax-data[i])*height/(ymax-ymin);
+      context.lineTo(x, y);
+    }
+    context.strokeStyle = color;
+    context.stroke();
+  }
+})
