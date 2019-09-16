@@ -185,7 +185,7 @@ CanvasRenderingContext2D.prototype.attrs = function(o) {
 }
 
 /**
- * 21.4.3
+ * 21.4.4
  */
 function shear(c, kx, ky) {
   c.transform(1, ky, kx, 1, 0, 0);
@@ -241,3 +241,51 @@ onLoad(function() {
 
   ctx2.stroke();
 })
+
+/**
+ * 21.4.5
+ */
+function rads(x) {
+  return Math.PI*x/180
+}
+
+onLoad(function() {
+  var demo3 = document.getElementById("demo3");
+  var ctx3 = demo3.getContext("2d");
+
+  ctx3.beginPath();
+  ctx3.arc(75, 100, 50, 0, rads(360), false);
+
+  ctx3.moveTo(200, 100);
+  ctx3.arc(200, 100, 50, rads(-60), rads(0), false);
+  ctx3.closePath();
+
+  ctx3.moveTo(325, 100);
+  ctx3.arc(325, 100, 50, rads(-60), rads(0), true);
+  ctx3.closePath();
+
+  ctx3.moveTo(450, 50);
+  ctx3.arcTo(500, 50, 500, 150, 30);
+  ctx3.arcTo(500, 150, 400, 150, 20);
+  ctx3.arcTo(400, 150, 400, 50, 10);
+  ctx3.arcTo(400, 50, 500, 50, 0);
+  ctx3.closePath();
+
+  ctx3.moveTo(75, 250);
+  ctx3.quadraticCurveTo(100, 200, 175, 250);
+  ctx3.fillRect(100-3, 200-3, 6, 6)
+
+  ctx3.moveTo(200, 250);
+  ctx3.bezierCurveTo(220, 220, 280, 280, 300, 250);
+  ctx3.fillRect(220-3, 220-3, 6, 6);
+  ctx3.fillRect(280-3, 280-3, 6, 6);
+
+  ctx3.fillStyle = "#aaa";
+  ctx3.lineWidth = 5;
+  ctx3.fill();
+  ctx3.stroke();
+})
+
+/**
+ * 21.4.6
+ */
