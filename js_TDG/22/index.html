@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>权威指南22章</title>
+  <script src="./code.js"></script>
+  <style>
+    #prompt {font-size: 16pt;}
+    table{
+      width: 90%;
+      margin: 10px;
+      margin-left: 5%;
+    }
+    #low, #high {
+      background-color: lightgrey;
+      height: 1em;
+    }
+    #mid {
+      background-color: green;
+    }
+  </style>
+</head>
+<body>
+  <!-- 22.3 -->
+  <a href="./tweet.html">测试postMessage</a>
+  <!-- 22.2 -->
+  <h1 id="heading">I'm thinking of a number...</h1>
+  <table>
+    <tr>
+      <td id="low"></td>
+      <td id="mid"></td>
+      <td id="high"></td>
+    </tr>
+  </table>
+  <lable id="prompt"></lable>
+  <input type="text" id="input">
+  <!-- 22.1 -->
+  <button id="getPos">获取位置信息</button>
+  <div id="posMSG"></div>
+  <script>
+    /**
+     * 22.3
+     **/
+    window.addEventListener("message", function(data) {
+      // 接受子窗口发来的信息
+      console.log(data)
+    }, false);
+    window.onload = newgame;
+    window.onpopstate = popState;
+    // 22.1
+    /* window.onload = function() {
+      var btn = document.getElementById('getPos');
+      var msgBox = document.getElementById('posMSG');
+      btn.addEventListener("click", function() {
+        var map = getmap();
+        console.log(map)
+        document.body.appendChild(map);
+        whereami(msgBox)
+      })
+    } */
+  </script>
+</body>
+</html>
