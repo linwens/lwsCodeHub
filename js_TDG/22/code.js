@@ -173,3 +173,170 @@ window.addEventListener("load", function() {
 /**
  * 22.4
  */
+function smear(img) {
+  img.crossOrigin = '';
+  var canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  var context = canvas.getContext("2d");
+      context.drawImage(img, 0, 0);
+  var pixels = context.getImageData(0, 0, img.width, img.height);
+
+  var worker = new Worker("./SmearWorker.js");
+  worker.postMessage(pixels);
+
+  worker.onmessage = function(e) {
+    if (typeof e.data === "string") { // 当上面的worker.postMessage(pixels)直接传字符串时，会进入这个if
+      console.log("Worker: " + e.data);
+      return;
+    }
+    var smeared_pixels = e.data;
+    context.putImageData(smeared_pixels, 0, 0);
+    img.src = canvas.toDataURL();
+    worker.terminate();
+    canvas.width = canvas.height = 0;
+  }
+}
+// worker里走同步ajax请求
+var worker2 = new Worker("./syncXHR.js");
+    // 去触发./syncXHR.js里的onmessage
+    worker2.postMessage(['https://www.shy-u.top/ajax/getList?curPage=1&pageSize=3&from=front']);
+worker2.onmessage = function(e) {
+  console.log(e)
+  worker2.terminate()
+}
+
+/**
+ * 22.5 不好懂
+ */
+var bytes = new Uint8Array(1024);
+for (var i = 0; i < bytes.length; i++) {
+  bytes[i] = i & 0xFF;
+}
+var copy = new Uint8Array(bytes);
+var ints = new Int32Array([0, 1, 2, 3]);
+
+function sieve(n) {
+  var a = new Int8Array(n+1);
+  var max = Math.floor(Math.sqrt(n));
+  var p = 2;
+  while(p <= max) {
+    for(var i = 2*p; i <= n; i += p) {
+      a[i] = 1;
+    }
+    while(a[++p]);
+  }
+  while(a[n]) n--;
+  return n;
+}
+
+var matrix = new Float64Array(9);
+var _3DPoint = new Int16Array(3);
+var rgba = new Uint8Array(4);
+var sudoku = new Uint8Array(81);
+
+var bytes = new Uint8Array(1024);
+var pattern = new Uint8Array([0, 1, 2, 3]);
+bytes.set(pattern);
+bytes.set(pattern, 4);
+bytes.set([0, 1, 2, 3], 8);
+
+var ints = new Int16Array([0,1,2,3,4,5,6,7,8,9]);
+var last3 = ints.subarray(ints.length-3, ints.length);
+console.log(last3[0]); // 7
+
+var buf = new ArrayBuffer(1024*1024);
+var asbytes = new Uint8Array(buf);
+var asints = new Int32Array(buf);
+var lastK = new Uint8Array(buf, 1023*1024);
+var ints2 = new Int32Array(buf, 1024, 256);
+
+var little_endian = new Int8Array(new Int32Array([1]).buffer)[0] === 1;
+
+var data = new ArrayBuffer(4*10);
+var view = new DataView(data);
+var int = view.getInt32(0);
+int = view.getInt32(4, false);
+int = view.getInt32(8, true);
+view.setInt32(8, int, false);
+
+/**
+ * 22.6.1
+ */
+function fileinfo(files) {
+  for(var i = 0; i < files.length; i++) {
+    var f = files[i];
+    console.log(f.name,'| ' + f.size,'| ' + f.type,'| ' + f.lastModifiedDate);
+  }
+}
+
+/**
+ * 22.6.2
+ */
+function getBlob(url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", url);
+  xhr.responseType = "blob";
+  xhr.onload = function() {
+    callback(xhr.response);
+  }
+  xhr.send(null);
+}
+
+/**
+ * 22.6.3
+ */
+/* var bb = new BlobBuilder(); // BlobBuilder 已废弃，被 Blob 方法替代
+bb.append("this blob contains this text and 10 big-endian 32-bit signed ints.");
+bb.append("\0");
+var ab = new ArrayBuffer(4*10);
+var dv = new DataView(ab);
+for(var i = 0; i < 10; i++) {
+  dv.setInt32(i*4, i)
+}
+bb.append(ab);
+var blob = bb.getBlob("x-optional/mime-type-here"); */
+
+var getBlobURL = (window.URL && URL.createObjectURL.bind(URL)) || (window.webkitURL && webkitURL.createObjectURL.bind(webkitURL)) || window.createObjectURL;
+
+var revokeBlobURL = (window.URL && URL.revokeObjectURL.bind(URL)) || (window.webkitURL && webkitURL.revokeObjectURL.bind(webkitURL)) || window.revokeObjectURL;
+
+window.onload = function() {
+  var droptarget = document.getElementById("droptarget");
+
+  droptarget.ondragenter = function(e) {
+    var types = e.dataTransfer.types;
+    if (!types || (types.contains && types.contains("Files")) || (types.indexOf && types.indexOf("Files") != -1)) {
+      droptarget.classList.add("active");
+      return false;
+    }
+  };
+
+  droptarget.ondragleave = function() {
+    droptarget.classList.remove("active");
+  }
+
+  droptarget.ondragover = function(e) {
+    return false;
+  }
+
+  droptarget.ondrop = function(e) {
+    var files = e.dataTransfer.files;
+    for (var i = 0; i < files.length; i++) {
+      var type = files[i].type;
+      if (type.substring(0, 6) !== "image/") {
+        continue
+      }
+      var img = document.createElement("img");
+      img.src = getBlobURL(files[i]);
+      img.onload = function() {
+        this.width = 100;
+        document.body.appendChild(this);
+        revokeBlobURL(this.src);
+      }
+    }
+    droptarget.classList.remove("active");
+    return false;
+  }
+}

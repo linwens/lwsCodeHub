@@ -20,9 +20,23 @@
     #mid {
       background-color: green;
     }
+    #droptarget {
+      border: solid black 2px;
+      width: 200px;
+      height: 200px;
+    }
+    #droptarget.active {
+      border: solid red 4px;
+    }
   </style>
 </head>
 <body>
+  <!-- 22.6.4 -->
+  <div id="droptarget">Drop Image Files Here</div>
+  <!-- 22.6.1 -->
+  <input type="file" accept="image/*" multiple onchange="fileinfo(this.files)">
+  <!-- 22.4 -->
+  <img src="./testimage.jpg" onclick="smear(this)" />
   <!-- 22.3 -->
   <a href="./tweet.html">测试postMessage</a>
   <!-- 22.2 -->
@@ -47,7 +61,7 @@
       // 接受子窗口发来的信息
       console.log(data)
     }, false);
-    window.onload = newgame;
+    // window.onload = newgame; // 这个会屏蔽掉后面的onload
     window.onpopstate = popState;
     // 22.1
     /* window.onload = function() {
