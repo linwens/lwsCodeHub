@@ -31,6 +31,16 @@
   </style>
 </head>
 <body>
+  <!-- 22.6.5 -->
+  <div>
+      readAsArrayBuffer:
+      <input type="file" onchange="typefile(this.files[0])">
+  </div>
+  <div>
+      Select the file to display:
+      <input type="file" onchange="readfile(this.files[0])">
+      <pre id="output"></pre>
+  </div>
   <!-- 22.6.4 -->
   <div id="droptarget">Drop Image Files Here</div>
   <!-- 22.6.1 -->

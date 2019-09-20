@@ -298,6 +298,9 @@ for(var i = 0; i < 10; i++) {
 bb.append(ab);
 var blob = bb.getBlob("x-optional/mime-type-here"); */
 
+/**
+ * 22.6.4
+ */
 var getBlobURL = (window.URL && URL.createObjectURL.bind(URL)) || (window.webkitURL && webkitURL.createObjectURL.bind(webkitURL)) || window.createObjectURL;
 
 var revokeBlobURL = (window.URL && URL.revokeObjectURL.bind(URL)) || (window.webkitURL && webkitURL.revokeObjectURL.bind(webkitURL)) || window.revokeObjectURL;
@@ -338,5 +341,148 @@ window.onload = function() {
     }
     droptarget.classList.remove("active");
     return false;
+  }
+}
+
+/**
+ * 22.6.5
+ */
+function readfile(f) {
+  var reader = new FileReader();
+  reader.readAsText(f);
+  reader.onload = function() {
+    var text = reader.result;
+    var out = document.getElementById("output");
+    out.innerHTML = "";
+    out.appendChild(document.createTextNode(text));
+  }
+  reader.onerror = function(e) {
+    console.log("Error", e);
+  }
+}
+
+function typefile(file) {
+  var slice = file.slice(0, 4);
+  var reader = new FileReader();
+  reader.readAsArrayBuffer(slice);
+  reader.onload = function(e) {
+    var buffer = reader.result;
+    var view = new DataView(buffer);
+    var magic = view.getUint32(0, false);
+    switch(magic) {
+      case 0x89504E47: file.verified_type = "image/png"; break;
+      case 0x47494638: file.verified_type = "image/gif"; break;
+      case 0x25504446: file.verified_type = "application/pdf"; break;
+      case 0x504b0304: file.verified_type = "application/zip"; break;
+    }
+    console.log(file.name, file.verified_type);
+  }
+}
+
+/**
+ * 22.7
+ */
+window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+// 同步 worker现成线程下
+// var fs = requestFileSystemSync(PERSISTENT, 1024*1024);
+
+// 异步
+window.requestFileSystem(TEMPORARY, 50*1024*1024, function(fs) {
+
+}, function(e) {
+  console.log(e);
+})
+
+window.requestFileSystem(PERSISTENT, 10*1024*1024, function(fs) {
+  fs.root.getFile("hello.txt", {}, function(entry) { // 获取文件系统
+    entry.file(function(file) { // 获取FileEntry对象
+      var reader = new FileReader(); // 获取file对象
+      reader.readAsText(file);
+      reader.onload = function() {
+        console.log(reader.result); // 读取文件内容
+      }
+    })
+  })
+})
+
+function logerr(e) {
+  console.log(e);
+}
+
+var filesystem;
+requestFileSystem(PERSISTENT, 10*1024*1024, function(fs) {
+  filesystem = fs;
+},logerr);
+
+function readTextFile(path, callback) {
+  filesystem.root.getFile(path, {}, function(entry) {
+    entry.file(function(file) {
+      var reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = function() {
+        callback(reader.result);
+      }
+      reader.onerror = logerr;
+    }, logerr)
+  }, logerr)
+}
+
+function appendToFile(path, contents, callback) {
+  filesystem.root.getFile(path, {create: true}, function(entry) {
+    entry.createWriter(function(writer) {
+      writer.seek(writer.length);
+      
+      var bb = new BlobBuilder();
+      bb.append(contents);
+      var blob = bb.getBlob();
+
+      writer.write(blob);
+      writer.onerror = logerr;
+      if (callback) {
+        writer.onwrite = callback;
+      }
+    }, logerr)
+  },logerr)
+}
+
+function deleteFile(name, callback) {
+  filesystem.root.getFile(name, {}, function(entry) {
+    entry.remove(callback, logerr);
+  }, logerr);
+}
+
+function makeDirectory(name, callback) {
+  filesystem.root.getDirectory(name, {
+    create: true,
+    exclusive: true
+  }, callback, logerr)
+}
+
+function listFiles(path, callback) {
+  if (!path) {
+    getFiles(filesystem.root)
+  } else {
+    filesystem.root.getDirectory(path, {}, getFiles. logerr)
+  }
+
+  function getFiles(dir) {
+    var reader = dir.createReader();
+    var list = [];
+    reader.readEntries(handleEntries, logerr);
+
+    function handleEntries(entries) {
+      if (entries.length == 0) {
+        callback(list);
+      } else {
+        for (var i = 0; i <entries.length; i++) {
+          var name = entries[i].name;
+          if (entries[i].isDirectory) {
+            name += "/";
+          }
+          list.push(name);
+        }
+        reader.readEntries(handleEntries, logerr);
+      }
+    }
   }
 }
