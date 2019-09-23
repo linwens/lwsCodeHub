@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>权威指南第15章</title>
+</head>
+<body>
+  <span class="sparkline" data-ymin="0" data-ymax="10">1 1 2 2 3 4 5 5 4 3 5 6 7 4 2 1</span>
+  <div id="log"></div>
+  <p></p>
+  <form name="shipping">
+    <fieldset>
+      <legend>Shipping Method</legend>
+      <label><input type="radio" name="method" value="1st">First-class</label>
+      <label><input type="radio" name="method" value="2day">2-day Air</label>
+      <label><input type="radio" name="method" value="overnite">Overnight</label>
+    </fieldset>
+  </form>
+  <!-- 15.10.4 -->
+  <div id="editor" contenteditable>Click to edit</div>
+  <iframe src="about:blank" id="editor-ifr"></iframe>
+  <script>
+    window.onload = function() {
+      var editor = document.getElementById("editor-ifr");
+      editor.contentDocument.designMode = "on";
+    }
+  </script>
+  <script src="./code.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>权威指南22章</title>
+  <script src="./code.js"></script>
+  <style>
+    #prompt {font-size: 16pt;}
+    table{
+      width: 90%;
+      margin: 10px;
+      margin-left: 5%;
+    }
+    #low, #high {
+      background-color: lightgrey;
+      height: 1em;
+    }
+    #mid {
+      background-color: green;
+    }
+    #droptarget {
+      border: solid black 2px;
+      width: 200px;
+      height: 200px;
+    }
+    #droptarget.active {
+      border: solid red 4px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 22.8 -->
+  <div>
+    <div>
+        <p>Enter a zip code to find its city:</p>
+        Zipcode: <input onchange="displayCity(this.value)">
+        City: <output id="city"></output>
+    </div>
+    <div>
+      <p>Enter a city name (case sensitive, without state) to find cities and their zipcodes</p>
+      City: <input onchange="displayZipcodes(this.value)">
+      <div id="zipcodes"></div>
+    </div>
+    <p><i>this example is only known to work in Firefox 4 and Chrome 11.</i></p>
+    <p><i>Your first query may take a very long time to complete.</i></p>
+    <p><i>You may need to start chrome with --unlimited-quota-for-indexeddb</i></p>
+  </div>
+  <!-- 22.6.5 -->
+  <div>
+      readAsArrayBuffer:
+      <input type="file" onchange="typefile(this.files[0])">
+  </div>
+  <div>
+      Select the file to display:
+      <input type="file" onchange="readfile(this.files[0])">
+      <pre id="output"></pre>
+  </div>
+  <!-- 22.6.4 -->
+  <div id="droptarget">Drop Image Files Here</div>
+  <!-- 22.6.1 -->
+  <input type="file" accept="image/*" multiple onchange="fileinfo(this.files)">
+  <!-- 22.4 -->
+  <img src="./testimage.jpg" onclick="smear(this)" />
+  <!-- 22.3 -->
+  <a href="./tweet.html">测试postMessage</a>
+  <!-- 22.2 -->
+  <h1 id="heading">I'm thinking of a number...</h1>
+  <table>
+    <tr>
+      <td id="low"></td>
+      <td id="mid"></td>
+      <td id="high"></td>
+    </tr>
+  </table>
+  <lable id="prompt"></lable>
+  <input type="text" id="input">
+  <!-- 22.1 -->
+  <button id="getPos">获取位置信息</button>
+  <div id="posMSG"></div>
+  <script>
+    /**
+     * 22.3
+     **/
+    window.addEventListener("message", function(data) {
+      // 接受子窗口发来的信息
+      console.log(data)
+    }, false);
+    // window.onload = newgame; // 这个会屏蔽掉后面的onload
+    window.onpopstate = popState;
+    // 22.1
+    /* window.onload = function() {
+      var btn = document.getElementById('getPos');
+      var msgBox = document.getElementById('posMSG');
+      btn.addEventListener("click", function() {
+        var map = getmap();
+        console.log(map)
+        document.body.appendChild(map);
+        whereami(msgBox)
+      })
+    } */
+  </script>
+</body>
+</html>

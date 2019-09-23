@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>websocket聊天室</title>
+</head>
+<body>
+  
+  <script>
+    /**
+     * 22.9
+     */
+    window.onload = function() {
+      var nick = prompt("Enter your nickname");
+      var input = document.getElementById("input");
+      input.focus();
+
+      var socket = new WebSocket("ws://" + location.host + "/");
+
+      socket.onmessage = function(event) {
+        var msg = event.data;
+        var node = document.createTextNode(msg);
+        var div = document.createElement("div");
+        div.appendChild(node);
+        document.body.insertBefore(div, input);
+        input.scrollIntoView();
+      }
+
+      input.onchange = function() {
+        var msg = nick + ": " + input.value;
+        socket.send(msg);
+        input.value = "";
+      }
+    }  
+  </script>
+</body>
+</html>

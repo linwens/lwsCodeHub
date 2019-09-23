@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>twitter搜索gadget</title>
+  <style>
+    body{
+      font: 9pt sans-serif;
+    }
+  </style>
+  <script src="https://cdn.bootcss.com/jquery/1.4.4/jquery.min.js"></script>
+</head>
+<body>
+  dddd
+  <script>
+    if (window.addEventListener) {
+      window.addEventListener("message", handleMessage, false);
+    } else {
+      window.attachEvent("onmessage", handleMessage);
+    }
+    function handleMessage(e) {
+      console.log('接收到其他窗口的message')
+      console.log(e)
+      if (e.source !== window.parent) return;
+
+      var searchterm = e.data;
+
+      jQuery.getJSON("http://search.twitter.com/search.json?callback=?", {q: searchterm}, function(data) {
+        var tweets = data.results;
+        var escaped = searchterm.replace("<", "&lt;");
+        var html = "<h2>" + escaped + "</h2>";
+        if (tweets.length == 0) {
+          html += "No tweets found";
+        } else {
+          html += "<dl>";
+          for(var i = 0; i < tweets.length; i++) {
+            var tweet = tweets[i];
+            var text = tweet.text;
+            var from = tweet.from_user;
+            var tweeturl = "http://twitter.com/#!/" + from + "/status/" + tweet.id_str;
+            html += "<dt><a target='_blank' href='>" + tweeturl + "'>" + tweet.from_user + "</a></dt><dd>" + tweet.text + "</dd>";
+          }
+          html += "</dl>";
+        }
+        document.body.innerHTML = html;
+      })
+    }
+
+    $(function() {
+      // 给父窗口发消息
+      window.parent.postMessage("Twitter Search v0.1", "*")
+    })
+  </script>
+</body>
+</html>
