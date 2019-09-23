@@ -486,3 +486,140 @@ function listFiles(path, callback) {
     }
   }
 }
+
+/**
+ * 22.8
+ */
+var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB;
+
+var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
+var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
+
+function logerr(e) {
+  console.log("IndexedDB error" + e.code + ": " + e.message);
+}
+
+function withDB(f) {
+  var request = indexedDB.open("zipcodes");
+  request.onerror = logerr;
+  request.onsuccess = function() {
+    var db = request.result;
+    if (db.version === "1") {
+      f(db)
+    } else {
+      initdb(db, f);
+    }
+  }
+}
+
+function lookupCity(zip, callback) {
+  withDB(function(db) {
+    var transaction = db.transaction(["zipcodes"], IDBTransaction.READ_ONLY, 0);
+
+    var objects = transaction.objectStore("zipcodes");
+
+    var request = objects.get(zip);
+    request.onerror = logerr;
+    request.onsuccess = function() {
+      var object = request.result;
+      if (object) {
+        callback(object.city + ", " + object.state);
+      } else {
+        callback("Unknown zip code");
+      }
+    }
+  })
+}
+
+function lookupZipcodes(city, callback) {
+  withDB(function(db) {
+    var transaction = db.transaction(["zipcodes"], IDBTransaction.READ_ONLY, 0);
+
+    var store = transaction.objectStore("zipcodes");
+    var index = store.index("cities");
+
+    var range = new IDBKeyRange.only(city);
+    var request = index.openCursor(range);
+    request.onerror = logerr;
+    request.onsuccess = function() {
+      var cursor = request.result;
+      if (!cursor) return;
+      var object = cursor.value;
+      callback(object);
+      cursor.continue();
+    };
+  });
+}
+
+function displayCity(zip) {
+  lookupCity(zip, function(s) {
+    document.getElementById('city').value = s;
+  })
+}
+
+function displayZipcodes(city) {
+  var output = document.getElementById("zipcodes");
+  output.innerHTML = "Matching zipcodes:";
+  lookupZipcodes(city, function(o) {
+    var div = document.createElement("div");
+    var text = o.zipcode + ": " + o.city + ", " + o.state;
+    div.appendChild(document.createTextNode(text));
+    output.appendChild(div);
+  })
+}
+
+function initdb(db, f) {
+  var statusline = document.createElement("div");
+  statusline.style.cssText = "position: fixed; left: 0px; top: 0px; width: 100%;" + "color: white; background-color: black; font: bold 18pt sans-serif;" + "padding: 10px;";
+  document.body.appendChild(statusline);
+  function status(msg) {
+    statusline.innerHTML = msg.toString()
+  }
+
+  status("Initializing zipcode database");
+
+  var request = db.setVersion("1");
+  request.onerror = status;
+  request.onsuccess = function() {
+    var store = db.createObjectStore("zipcodes", {keyPath: "zipcode"});
+    store.createIndex("cities", "city");
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "zipcodes.csv");
+    xhr.send();
+    xhr.onerror = status;
+    var lastChar = 0, numline = 0;
+    xhr.onprogress = xhr.onload = function(e) {
+      var lastNewline = xhr.responseText.lastIndexOf("\n");
+      if (lastNewline > lastChar) {
+        var chunk = xhr.responseText.substring(lastChar, lastNewline);
+        lastChar = lastNewline + 1;
+
+        var lines = chunk.split("\n");
+        numlines += lines.length;
+        var transaction = db.transaction(["zipcodes"], IDBTransaction.READ_WRITE);
+        var store = transaction.objectStore("zipcodes");
+
+        for (var i = 0; i < lines.length; i++) {
+          var fields = lines[i].split(",");
+          var record = {
+            zipcode: fields[0],
+            city: fields[1],
+            state: fields[2],
+            latitude: fields[3],
+            longitude: fields[4]
+          }
+          store.put(record);
+        }
+
+        status("Initializing zipcode database: loaded " + numlines + " records.");
+      }
+      if (e.type == "load") {
+        lookupCity("02134", function(s) {
+          document.body.removeChild(statusline);
+          withDB(f);
+        })
+      }
+    }
+  }
+}

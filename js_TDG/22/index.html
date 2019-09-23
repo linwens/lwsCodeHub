@@ -31,6 +31,22 @@
   </style>
 </head>
 <body>
+  <!-- 22.8 -->
+  <div>
+    <div>
+        <p>Enter a zip code to find its city:</p>
+        Zipcode: <input onchange="displayCity(this.value)">
+        City: <output id="city"></output>
+    </div>
+    <div>
+      <p>Enter a city name (case sensitive, without state) to find cities and their zipcodes</p>
+      City: <input onchange="displayZipcodes(this.value)">
+      <div id="zipcodes"></div>
+    </div>
+    <p><i>this example is only known to work in Firefox 4 and Chrome 11.</i></p>
+    <p><i>Your first query may take a very long time to complete.</i></p>
+    <p><i>You may need to start chrome with --unlimited-quota-for-indexeddb</i></p>
+  </div>
   <!-- 22.6.5 -->
   <div>
       readAsArrayBuffer:
