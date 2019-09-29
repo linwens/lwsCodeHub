@@ -1,17 +1,17 @@
 
-function defaultEquals(a, b) {
+export function defaultEquals(a, b) {
   return a === b
 }
 
 // 表示我们想要添加到列表的项
-class Node {
+export class Node {
   constructor(element) {
     this.element = element; // 元素本身的节点
     this.next = undefined; // 指向下一个元素的引用
   }
 }
 
-class LinkedList {
+export class LinkedList {
   constructor(equalsFn = defaultEquals) {
     this.count = 0;
     this.head = undefined; // 保存第一个元素的引用
@@ -39,11 +39,13 @@ class LinkedList {
       if (index === 0) {
         this.head = current.next
       } else {
-        let previous; // 当前节点的上一个元素
+        /* let previous; // 当前节点的上一个元素
         for (let i = 0; i < index; i++) { //注意：这里的当前元素指的是要删元素的上一个元素
           previous = current; // 这里获取当前元素上一个元素的引用(next)
           current = current.next; // 获取到了要删的元素
-        }
+        } */
+        const previous = this.getElementAt(index - 1);
+        current = previous.next;
         previous.next = current.next; // 将要删元素上一个元素的next指向要删元素的下一个元素，达到删除效果
       }
       this.count--;
@@ -82,7 +84,46 @@ class LinkedList {
     return false;
   }
 
-  
+  indexOf(element) {
+    let current = this.head;
+    for (let i = 0; i < this.count && current != null; i++) {
+      if (this.equalsFn(element, current.element)) {
+        return i;
+      }
+      current = current.next;
+    }
+    return -1;
+  }
+
+  remove(element) {
+    const index = this.indexOf(element);
+    return this.removeAt(index);
+  }
+
+  size() {
+    return this.count;
+  }
+
+  isEmpty() {
+    return this.size() === 0;
+  }
+
+  getHead() {
+    return this.head;
+  }
+
+  toString() {
+    if (this.head = null) {
+      return '';
+    }
+    let objString = `${this.head.element}`;
+    let current = this.head.next;
+    for (let i = 1; i < this.size() && current != null; i++) { // 从 1 开始遍历
+      objString = `${objString},${objString.element}`;
+      current = current.next;
+    }
+    return objString;
+  }
 }
 
 const list = new LinkedList();
