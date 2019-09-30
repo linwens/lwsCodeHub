@@ -6,11 +6,12 @@
   "configurations": [
 
 
+
     {
       "type": "node",
       "request": "launch",
       "name": "启动程序",
-      "program": "${workspaceFolder}\\7\\set.js"
+      "program": "${workspaceFolder}\\8\\HashTable.js"
     }
   ]
 }

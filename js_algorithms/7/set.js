@@ -1,4 +1,4 @@
-class Set {
+class _Set {
   constructor() {
     this.items = {};
   }
@@ -58,14 +58,14 @@ class Set {
   }
   // 并集
   union(otherSet) {
-    const unionSet = new Set();
+    const unionSet = new _Set();
     this.values().forEach(value => unionSet.add(value));
     otherSet.values().forEach(value => unionSet.add(value));
     return unionSet;
   }
   //交集
   intersection(otherSet) {
-    const intersectionSet = new Set();
+    const intersectionSet = new _Set();
     const values = this.values();
     const otherValues = otherSet.values();
     // 比较两个几个的大小，选小的进行迭代
@@ -85,7 +85,7 @@ class Set {
   }
   // 差集
   difference(otherSet) {
-    const differenceSet = new Set();
+    const differenceSet = new _Set();
     this.values().forEach(value => {
       if (!otherSet.has(value)) {
         differenceSet.add(value);
@@ -110,7 +110,7 @@ class Set {
   }
 }
 
-const set = new Set();
+const set = new _Set();
 set.add(1);
 console.log(set.values());
 console.log(set.has(1));
@@ -130,12 +130,12 @@ console.log(set.values());
 /**
  * 7.3.1
  */
-const setA = new Set();
+const setA = new _Set();
 setA.add(1);
 setA.add(2);
 setA.add(3);
 
-const setB = new Set();
+const setB = new _Set();
 setB.add(3);
 setB.add(4);
 setB.add(5);
@@ -147,11 +147,11 @@ console.log(unionAB.values());
 /**
  * 7.3.3
  */
-const setC = new Set();
+const setC = new _Set();
 setC.add(1);
 setC.add(2);
 setC.add(3);
-const setD = new Set();
+const setD = new _Set();
 setD.add(2);
 setD.add(3);
 setD.add(4);
@@ -161,14 +161,14 @@ console.log(differenceCD.values());
 /**
  * 7.3.4
  */
-const setE = new Set();
+const setE = new _Set();
 setE.add(1);
 setE.add(2);
-const setF = new Set();
+const setF = new _Set();
 setF.add(1);
 setF.add(2);
 setF.add(3);
-const setG = new Set();
+const setG = new _Set();
 setG.add(2);
 setG.add(3);
 setG.add(4);
