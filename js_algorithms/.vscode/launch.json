@@ -7,11 +7,12 @@
 
 
 
+
     {
       "type": "node",
       "request": "launch",
       "name": "启动程序",
-      "program": "${workspaceFolder}\\8\\HashTable.js"
+      "program": "${workspaceFolder}\\10\\BinarySearchTree.js"
     }
   ]
 }
