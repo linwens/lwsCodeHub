@@ -14,7 +14,7 @@
       "type": "node",
       "request": "launch",
       "name": "启动程序",
-      "program": "${workspaceFolder}\\12\\floyd-warshall.js"
+      "program": "${workspaceFolder}\\13\\sorting.js"
     }
   ]
 }
