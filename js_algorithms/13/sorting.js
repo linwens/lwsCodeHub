@@ -188,7 +188,7 @@ function countingSort(array) {
   });
 
   let sortedIndex = 0;
-  counts.forEach((count, i) => {
+  counts.forEach((count, i) => { // i 是array的element； count就是这个element对应的计数个数
     while (count > 0) { // {6}
       array[sortedIndex++] = i; // {7}
       count--; // {8}
@@ -206,4 +206,100 @@ function findMaxValue(array) {
     }
   }
   return max;
+}
+
+/**
+ * 13.1.7 桶排序
+ */
+function bucketSort(array, bucketSize = 5) { // {1}
+  if (array.length < 2) {
+    return array;
+  }
+  const buckets = createBuckets(array, bucketSize); // {2}
+  return sortBuckets(buckets); // {3}
+}
+
+function createBuckets(array, bucketSize) {
+  let minValue = array[0];
+  let maxValue = array[0];
+  for (let i = 1; i < array.length; i++) { // {4}
+    if (array[i] < minValue) {
+      minValue = array[i];
+    } else if (array[i] > maxValue) {
+      maxValue = array[i];
+    }
+  }
+
+  const bucketCount = Math.floor((maxValue - minValue) / bucketSize) + 1; // {5}
+  const buckets = [];
+  for (let i = 0; i < bucketCount; i++) { // {6}
+    buckets[i] = [];
+  }
+  for (let i = 0; i < array.length; i++) { // {7}
+    const bucketIndex = Math.floor((array[i] - minValue) / bucketSize); // {8}
+    buckets[bucketIndex].push(array[i]);
+  }
+  return buckets;
+}
+
+function sortBuckets(buckets) {
+  const sortedArray = []; // {9}
+  for (let i = 0; i < buckets.length; i++) { // {10}
+    if (buckets[i] != null) {
+      insertionSort(buckets[i]); // {11}
+      sortedArray.push(...buckets[i]); // {12}
+    }
+  }
+  return sortedArray;
+}
+
+/**
+ * 13.1.8 基数排序
+ */
+function radixSort(array, radixBase = 10) {
+  if (array.length < 2) {
+    return array;
+  }
+
+  let minValue = array[0];
+  let maxValue = array[0];
+  for (let i = 1; i < array.length; i++) { // {4}
+    if (array[i] < minValue) {
+      minValue = array[i];
+    } else if (array[i] > maxValue) {
+      maxValue = array[i];
+    }
+  }
+
+  let singificantDigit = 1; // {1} 证书的位数，从个位开始
+  while ((maxValue - minValue) / singificantDigit >= 1) { // {2}
+    array = countingSortForRadix(array, radixBase, singificantDigit, minValue); // {3}
+    singificantDigit *= radixBase; // {4}
+  }
+  return array;
+}
+
+function countingSortForRadix(array, radixBase, singificantDigit, minValue) {
+  let bucketsIndex;
+  const buckets = [];
+  const aux = [];
+
+  for (let i = 0; i < radixBase; i++) { // {5}
+    buckets[i] = 0;
+  }
+  for (let i = 0; i < array.length; i++) { // {6}
+    bucketsIndex = Math.floor(((array[i] - minValue) / singificantDigit) % radixBase); // {7}
+    buckets[bucketsIndex]++; // {8}
+  }
+  for (let i = 1; i < radixBase; i++) { // {9}
+    buckets[i] += buckets[i - 1];
+  }
+  for (let i = array.length - 1; i >= 0; i--) { // {10}
+    bucketsIndex = Math.floor(((array[i] - minValue) / singificantDigit) % radixBase); // {11}
+    aux[--buckets[bucketsIndex]] = array[i]; // {12}
+  }
+  for (let i = 0; i < array.length; i++) { // {13}
+    array[i] = aux[i];
+  }
+  return array;
 }
