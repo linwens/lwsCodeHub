@@ -11,11 +11,12 @@
 
 
 
+
     {
       "type": "node",
       "request": "launch",
       "name": "启动程序",
-      "program": "${workspaceFolder}\\14\\fezz.js"
+      "program": "${workspaceFolder}\\14\\greedy.js"
     }
   ]
 }
