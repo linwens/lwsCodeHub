@@ -13,11 +13,12 @@
 
 
 
+
     {
       "type": "node",
       "request": "launch",
       "name": "启动程序",
-      "program": "${workspaceFolder}\\14\\backtracking.js"
+      "program": "${workspaceFolder}\\array_algor_prac\\index.js"
     }
   ]
 }
