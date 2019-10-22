@@ -107,29 +107,60 @@ FreqStack.prototype.push = function(x) {
 * @return {number}
 */
 FreqStack.prototype.pop = function() {
-  let cache = {};
+  let cache = freq(this.items, this.count);
+  
+  let maxNum = max(cache, 'num'); // 最大频率对应的Key
   let idx = 0;
-  let num= 0;
-  for(let i = 0; i < this.count; i++) {
-      while (this.items.indexOf(this.items[i], idx + 1) > -1) {
-          idx = this.items.indexOf(this.items[i], idx + 1);
-          num++;
-          cache[this.items[i]] = {
-              idx: idx, // 最靠近栈顶
-              num: num // 频率最高
-          }
-      }
-      num = 0;
-      idx = 0;
+  for (let [key, value] of Object.entries(this.items)) {
+    while (idx<Number(key) && (value == maxNum)) {
+      idx = Number(key);
+    }
   }
-  for( let j in cache) {
-      let val = cache[j].num;
-  }
-  this.count--;
-  const rslt = this.items[cache[]];
-  delete this.items[cache[]];
+  // for( let i = this.count; i >-1; i--) {
+  //     if (this.items[i]>=0 && (this.items[i] == maxNum)) {
+  //         idx = i;
+  //         break;
+  //     }
+  // }
+  const rslt = this.items[idx];
+  delete this.items[idx];
   return rslt;
 };
+
+function freq(items, len) {
+  let cache = {};
+  for (let [key, value] of Object.entries(items)) {
+    if (cache[value]) {
+        cache[value]['num']++;
+    } else {
+      cache[value] = {
+        num: 1,
+        idx: 0
+      }
+    }
+    cache[value]['idx'] = Number(key);
+  }
+  // console.log('cache---------')
+  // console.log(JSON.stringify(items))
+  // console.log(JSON.stringify(cache))
+  return cache;
+}
+function max(cache) {
+  let arr = [];
+  let max = 0;
+  let idx = 0;
+  let tmp = null;
+  for (let [key, value] of Object.entries(cache)) {
+      while (max < value['num'] || (max == value['num'] && idx < value['idx'])) {
+          max = value['num']
+          idx = value['idx']
+          tmp = key
+      }
+  }
+  return tmp;
+}
+
+let bbb = new FreqStack();
 
 /** 
 * Your FreqStack object will be instantiated and called as such:
