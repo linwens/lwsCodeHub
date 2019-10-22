@@ -90,7 +90,7 @@ function IsPopOrder(pushV, popV) {
  * 895. 最大频率栈
  */
 var FreqStack = function() {
-  this.items = {};
+  this.freqMap = {};
   this.count = 0;
 };
 
@@ -99,7 +99,11 @@ var FreqStack = function() {
 * @return {void}
 */
 FreqStack.prototype.push = function(x) {
-  this.items[this.count] = x;
+  if (this.freqMap[x]) {
+    this.freqMap[x].push(this.count)
+  } else {
+    this.freqMap[x] = [this.count]
+  }
   this.count++;
 };
 
@@ -107,61 +111,49 @@ FreqStack.prototype.push = function(x) {
 * @return {number}
 */
 FreqStack.prototype.pop = function() {
-  let cache = freq(this.items, this.count);
-  
-  let maxNum = max(cache, 'num'); // 最大频率对应的Key
-  let idx = 0;
-  for (let [key, value] of Object.entries(this.items)) {
-    while (idx<Number(key) && (value == maxNum)) {
-      idx = Number(key);
-    }
-  }
-  // for( let i = this.count; i >-1; i--) {
-  //     if (this.items[i]>=0 && (this.items[i] == maxNum)) {
-  //         idx = i;
-  //         break;
-  //     }
-  // }
-  const rslt = this.items[idx];
-  delete this.items[idx];
-  return rslt;
-};
-
-function freq(items, len) {
-  let cache = {};
-  for (let [key, value] of Object.entries(items)) {
-    if (cache[value]) {
-        cache[value]['num']++;
-    } else {
-      cache[value] = {
-        num: 1,
-        idx: 0
-      }
-    }
-    cache[value]['idx'] = Number(key);
-  }
-  // console.log('cache---------')
-  // console.log(JSON.stringify(items))
-  // console.log(JSON.stringify(cache))
-  return cache;
-}
-function max(cache) {
-  let arr = [];
   let max = 0;
   let idx = 0;
-  let tmp = null;
-  for (let [key, value] of Object.entries(cache)) {
-      while (max < value['num'] || (max == value['num'] && idx < value['idx'])) {
-          max = value['num']
-          idx = value['idx']
-          tmp = key
-      }
+  let curKey = null;
+  for (let [key, value] of Object.entries(this.freqMap)) {
+    while(max < value.length || (max == value.length && idx < value[value.length - 1])) {
+      max = value.length;
+      idx = value[value.length - 1];
+      curKey = key;
+    }
   }
-  return tmp;
-}
+
+  this.freqMap[curKey].pop();
+  console.log('after---------')
+  console.log(JSON.stringify(this.freqMap))
+  return curKey;
+
+};
+
 
 let bbb = new FreqStack();
 
+bbb.push(5);
+bbb.push(1);
+bbb.push(2);
+bbb.push(5);
+bbb.push(5);
+bbb.push(5);
+bbb.push(1);
+bbb.push(6);
+bbb.push(1);
+bbb.push(5);
+console.log(JSON.stringify(bbb.freqMap));
+
+console.log('pop==>'+bbb.pop())
+console.log('pop==>'+bbb.pop())
+console.log('pop==>'+bbb.pop())
+console.log('pop==>'+bbb.pop())
+console.log('pop==>'+bbb.pop())
+console.log('pop==>'+bbb.pop())
+console.log('pop==>'+bbb.pop())
+console.log('pop==>'+bbb.pop())
+console.log('pop==>'+bbb.pop())
+console.log('pop==>'+bbb.pop())
 /** 
 * Your FreqStack object will be instantiated and called as such:
 * var obj = new FreqStack()
