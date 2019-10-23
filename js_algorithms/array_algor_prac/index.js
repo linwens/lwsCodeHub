@@ -90,7 +90,8 @@ function IsPopOrder(pushV, popV) {
  * 895. 最大频率栈
  */
 var FreqStack = function() {
-  this.freqMap = {};
+  this.freqMap = [];
+  this.cache = {}
   this.count = 0;
 };
 
@@ -99,32 +100,44 @@ var FreqStack = function() {
 * @return {void}
 */
 FreqStack.prototype.push = function(x) {
-  if (this.freqMap[x]) {
-    this.freqMap[x].push(this.count)
+  if (this.cache[x]) {
+    this.cache[x].push(this.count)
   } else {
-    this.freqMap[x] = [this.count]
+    this.cache[x] = [this.count]
   }
   this.count++;
+  // 思路是先排序，然后从后往前弹出
+  // 对象转map
+  this.freqMap = [];
+  for (let key of Object.keys(this.cache)) {
+    this.freqMap.push([key, this.cache[key]])
+  }
+  this.freqMap.sort(function(a, b) {
+    if (a[1].length > b[1].length || ( a[1].length == b[1].length && a[1][a[1].length - 1] > b[1][b[1].length - 1])) {
+      return 1
+    } else {
+      return -1
+    }
+  })
 };
 
 /**
 * @return {number}
 */
 FreqStack.prototype.pop = function() {
-  let max = 0;
-  let idx = 0;
+  let last = this.freqMap[this.freqMap.length - 1];
+  let last2 = this.freqMap[this.freqMap.length - 2];
   let curKey = null;
-  for (let [key, value] of Object.entries(this.freqMap)) {
-    while(max < value.length || (max == value.length && idx < value[value.length - 1])) {
-      max = value.length;
-      idx = value[value.length - 1];
-      curKey = key;
+  last[1].pop();
+  curKey = last[0];
+  
+  this.freqMap.sort(function(a, b) {
+    if (a[1].length > b[1].length || ( a[1].length == b[1].length && a[1][a[1].length - 1] > b[1][b[1].length - 1])) {
+      return 1
+    } else {
+      return -1
     }
-  }
-
-  this.freqMap[curKey].pop();
-  console.log('after---------')
-  console.log(JSON.stringify(this.freqMap))
+  });
   return curKey;
 
 };
@@ -132,22 +145,22 @@ FreqStack.prototype.pop = function() {
 
 let bbb = new FreqStack();
 
-bbb.push(5);
-bbb.push(1);
+bbb.push(4);
+bbb.push(0);
+bbb.push(9);
+bbb.push(3);
+bbb.push(4);
 bbb.push(2);
-bbb.push(5);
-bbb.push(5);
-bbb.push(5);
-bbb.push(1);
+console.log('pop==>'+bbb.pop())
 bbb.push(6);
+console.log('pop==>'+bbb.pop())
 bbb.push(1);
-bbb.push(5);
+console.log('pop==>'+bbb.pop())
+bbb.push(1);
+console.log('pop==>'+bbb.pop())
+bbb.push(4);
 console.log(JSON.stringify(bbb.freqMap));
 
-console.log('pop==>'+bbb.pop())
-console.log('pop==>'+bbb.pop())
-console.log('pop==>'+bbb.pop())
-console.log('pop==>'+bbb.pop())
 console.log('pop==>'+bbb.pop())
 console.log('pop==>'+bbb.pop())
 console.log('pop==>'+bbb.pop())
