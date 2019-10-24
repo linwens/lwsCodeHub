@@ -14,11 +14,12 @@
 
 
 
+
     {
       "type": "node",
       "request": "launch",
       "name": "启动程序",
-      "program": "${workspaceFolder}\\array_algor_prac\\index.js"
+      "program": "${workspaceFolder}\\array_algor_prac\\queue.js"
     }
   ]
 }
