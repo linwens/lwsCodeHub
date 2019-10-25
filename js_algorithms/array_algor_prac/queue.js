@@ -19,9 +19,126 @@ var reconstructQueue = function(people) {
   for(let i = 0; i < arrSorted.length; i++) { //arrSorted.length
     arr.splice(arrSorted[i][1], 0, arrSorted[i]); //学会用splice往数组任意位置插入值
   }
-  console.log(JSON.stringify(arr))
   return arr
 };
 
 reconstructQueue([[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]]);
+
+/**
+ * 641. 设计双端队列[中等]
+ */
+/**
+ * Initialize your data structure here. Set the size of the deque to be k.
+ * @param {number} k
+ */
+var MyCircularDeque = function(k) {
+  this.items = {};
+  this.count = 0;
+  this.lowestCount = 0;
+  this.mostCount = k;
+};
+
+/**
+* Adds an item at the front of Deque. Return true if the operation is successful. 
+* @param {number} value
+* @return {boolean}
+*/
+MyCircularDeque.prototype.insertFront = function(value) {
+  if (this.isFull()) {
+    return false
+  }
+
+  if (this.lowestCount > 0) {
+    this.lowestCount--;
+    this.items[this.lowestCount] = value;
+  } else {
+    for (let i = this.count; i >= 0; i--) {
+        this.items[i] = this.items[i - 1]
+    }
+    this.count++;
+    this.lowestCount = 0;
+    this.items[0] = value;
+  }
+
+  return true;
+};
+
+/**
+* Adds an item at the rear of Deque. Return true if the operation is successful. 
+* @param {number} value
+* @return {boolean}
+*/
+MyCircularDeque.prototype.insertLast = function(value) {
+  if (this.isFull()) {
+      return false
+  }
+  this.items[this.count] = value;
+  this.count++;
+
+  return true;
+};
+
+/**
+* Deletes an item from the front of Deque. Return true if the operation is successful.
+* @return {boolean}
+*/
+MyCircularDeque.prototype.deleteFront = function() {
+  if(this.isEmpty()) {
+      return false
+  }
+  delete this.items[this.lowestCount]
+  this.lowestCount++;
+  return true;
+};
+
+/**
+* Deletes an item from the rear of Deque. Return true if the operation is successful.
+* @return {boolean}
+*/
+MyCircularDeque.prototype.deleteLast = function() {
+  if(this.isEmpty()) {
+      return false
+  }
+  this.count--;
+  delete this.items[this.count];
+  return true;
+};
+
+/**
+* Get the front item from the deque.
+* @return {number}
+*/
+MyCircularDeque.prototype.getFront = function() {
+  if(this.isEmpty()) {
+      return -1
+  }
+  return this.items[this.lowestCount];
+};
+
+/**
+* Get the last item from the deque.
+* @return {number}
+*/
+MyCircularDeque.prototype.getRear = function() {
+  if(this.isEmpty()) {
+      return -1
+  }
+  return this.items[this.count - 1];
+};
+
+/**
+* Checks whether the circular deque is empty or not.
+* @return {boolean}
+*/
+MyCircularDeque.prototype.isEmpty = function() {
+  return this.lowestCount - this.count >= 0
+};
+
+/**
+* Checks whether the circular deque is full or not.
+* @return {boolean}
+*/
+MyCircularDeque.prototype.isFull = function() {
+  return this.count - this.lowestCount >= this.mostCount
+};
 
