@@ -142,3 +142,122 @@ MyCircularDeque.prototype.isFull = function() {
   return this.count - this.lowestCount >= this.mostCount
 };
 
+/**
+ * 622. 设计循环队列[中等]
+ */
+
+var MyCircularQueue = function(k) {
+  this.items = {};
+  this.count = 0;
+  this.lowestCount = 0;
+  this.mostCount = k;
+};
+
+/**
+* Insert an element into the circular queue. Return true if the operation is successful. 
+* @param {number} value
+* @return {boolean}
+*/
+MyCircularQueue.prototype.enQueue = function(value) {
+  if (this.isFull()) {
+      return false;
+  }
+  this.items[this.count] = value;
+  this.count++;
+  return true;
+};
+
+/**
+* Delete an element from the circular queue. Return true if the operation is successful.
+* @return {boolean}
+*/
+MyCircularQueue.prototype.deQueue = function() {
+  if (this.isEmpty()) {
+      return false;
+  }
+  const rslt = this.items[0];
+  delete this.items[0];
+  for (let i = 0; i < this.count - 1; i ++) {  // 先进先出，在队列容量受限的情况下，删除第一项后，把所有项前移，流出最后一个位置用于插入
+      this.items[i] = this.items[i + 1]
+  }
+  this.count--;
+  return true;
+  
+};
+
+/**
+* Get the front item from the queue.
+* @return {number}
+*/
+MyCircularQueue.prototype.Front = function() {
+  if (this.isEmpty()) {
+      return -1;
+  }
+  return this.items[this.lowestCount]
+};
+
+/**
+* Get the last item from the queue.
+* @return {number}
+*/
+MyCircularQueue.prototype.Rear = function() {
+  if (this.isEmpty()) {
+      return -1;
+  }
+  return this.items[this.count - 1]
+};
+
+/**
+* Checks whether the circular queue is empty or not.
+* @return {boolean}
+*/
+MyCircularQueue.prototype.isEmpty = function() {
+  return this.lowestCount - this.count >=0
+};
+
+/**
+* Checks whether the circular queue is full or not.
+* @return {boolean}
+*/
+MyCircularQueue.prototype.isFull = function() {
+  return this.count - this.lowestCount >= this.mostCount;
+};
+
+/**
+ * 899. 有序队列[困难]
+ */
+// 参考：https://www.cnblogs.com/mcomco/p/10349996.html
+
+var orderlyQueue = function(S, K) {
+  let rslt = [];
+  let arr = S.split(''); // 不传''就直接生成只有一项且内容为 S 的 数组
+  let max = '';
+  let idx = 0;
+  let tmp = S;
+      let count = 0;
+  
+  while(rslt.join('') <= tmp) {
+    if (count > 1000) {
+      console.log('炸了！');
+      break;
+    }
+      for(let i = 0; i < K; i++) {
+          while(max < arr[i]) {
+              max = arr[i];
+              idx = i;
+          }
+      }
+      console.log('idx==>'+idx)
+      arr.push(arr.splice(idx,1)[0])
+      console.log('arr==>'+JSON.stringify(arr))
+      rslt = arr// 抽出排到最后
+      if (rslt.join('') < tmp) {
+        tmp = rslt.join('');
+      }
+      count++;
+  }
+  console.log(tmp)
+  return tmp;
+};
+
+orderlyQueue('baaca', 2);
