@@ -164,6 +164,4 @@ console.log('pop==>'+bbb.pop()) */
 * var param_2 = obj.pop()
 */
 
-/**
- * 501. 二叉搜索树中的众数[简单]
- */
+
