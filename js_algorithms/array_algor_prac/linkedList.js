@@ -23,8 +23,8 @@ MyLinkedList.prototype.get = function(index) {
   if (!current) {
       return -1
   }
-  if (index >= 0 && index < this.count) {
-      for (let i = 0; i < index && current != undefined; i++) {
+  if (index >= 0) {
+      for (let i = 0; i <= index - 1 && current != undefined; i++) {
           current = current.next;
       }
       return current ? (current.element === undefined || current.element === null ? -1 : current.element) : -1;
@@ -83,9 +83,9 @@ MyLinkedList.prototype.addAtIndex = function(index, val) {
       this.addAtHead(val);
       this.count++;
   }
-  if (index > this.count) return false
+  if (index > this.count) return null
   
-  if (index > 0 && index < this.count) {
+  if (index > 0 && index <= this.count) {
       let prev = this.head;
       for (let i = 0; i < index - 1 && prev != undefined; i++) {
           prev = prev.next;
@@ -107,40 +107,20 @@ MyLinkedList.prototype.addAtIndex = function(index, val) {
 */
 MyLinkedList.prototype.deleteAtIndex = function(index) {
   let current = this.head;
-  if (index < 0) return false
+  if (index < 0) return null
   if (index === 0) {
     this.head = current.next;
   }
-  if (index > 0 && index < this.count) {
+  if (index > 0 && index <= this.count) {
     let prev = this.head;
     for (let i = 0; i < index - 1 && prev != undefined; i++) {
         prev = prev.next;
+    }
+    if (prev == current && this.count <= 1) { // 需要考虑index = 1的问题，this.count = 1 思路要改改
+      return null
     }
     current = prev.next;
     prev.next = current ? current.next : undefined;
   }
   this.count--;
 };
-
-let linkedList = new MyLinkedList();
-
-console.log(JSON.stringify(linkedList))
-linkedList.addAtHead(5);
-console.log(JSON.stringify(linkedList))
-linkedList.addAtHead(2);
-console.log(JSON.stringify(linkedList))
-linkedList.deleteAtIndex(1);
-linkedList.addAtIndex(1,9);
-linkedList.addAtHead(4);
-linkedList.addAtHead(9);
-linkedList.addAtHead(8);
-linkedList.get(3);
-linkedList.addAtTail(1);
-linkedList.addAtIndex(3,6);
-linkedList.addAtHead(3);
-
-console.log(JSON.stringify(linkedList.get(0)))
-linkedList.addAtHead(1);
-console.log(JSON.stringify(linkedList))
-linkedList.deleteAtIndex(0);
-console.log(JSON.stringify(linkedList))
