@@ -124,3 +124,30 @@ MyLinkedList.prototype.deleteAtIndex = function(index) {
   }
   this.count--;
 };
+
+
+/**
+ * 86. 分隔链表[中等]
+ */
+var partition = function(head, x) {
+    
+  let list1 = {val: 0, next: null};
+  let list2 = {val: 0, next: null};
+  let tmp1 = list1;
+  let tmp2 = list2;
+  
+  while(head != null) {
+      if (head.val >= x) {
+          tmp1.next = head;
+          tmp1 = tmp1.next;
+      } else {
+          tmp2.next = head;
+          tmp2 = tmp2.next;
+      }
+      head = head.next
+  }
+  
+  tmp2.next = list1.next;
+  tmp1.next = null
+  return list2.next
+};
