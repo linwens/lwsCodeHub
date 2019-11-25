@@ -151,3 +151,21 @@ var partition = function(head, x) {
   tmp1.next = null
   return list2.next
 };
+
+/**
+ * 160.相交链表[简单]
+ * 1、题目的意思是：两个链表已经是相交的了，也就是说相交以后的那段链表，值用的是同一个对象。
+ * 2、参数 headA 和 headB 是链表的一项，而不是整个链表
+ */
+
+var getIntersectionNode = function(headA, headB) {
+  while(headA) {
+      headA.sep = 1;
+      headA = headA.next;
+  }
+
+  while(headB) {
+      if (headB.sep) return headB
+      headB = headB.next
+  }
+};
