@@ -169,3 +169,81 @@ var getIntersectionNode = function(headA, headB) {
       headB = headB.next
   }
 };
+
+/**
+ * 148.排序链表[中等]
+ * 
+ */
+var sortList = function(head) {
+  if (head === null || head.next === null) {
+      return head;
+  }
+  return mergeSort(head);
+};
+// 递归切分
+function mergeSort(head) {
+  // 用于结束递归，避免一直递归下去
+  if (head === null || head.next === null) {
+      return head;
+  }
+
+  let slow = head;
+  let fast = head;
+  // 一次遍历，fast进两步，slow进一步，fast遍历到最后就停止slow的变量，实现取中间值
+
+  while(fast !== null) {
+      fast = fast.next;
+      fast = fast !== null ? fast.next : null;
+      if (fast !== null) {
+          slow = slow.next;
+      }
+  }
+
+  let half = slow.next; // 既然slow在中点的位置，那slow.next就是后半部分进行变量的起始点,所以half = slow.next而不是slow
+  slow.next = null;
+  // 接下来进行递归，直到分的不能再分
+  let left = mergeSort(head);
+  let right = mergeSort(half);
+  // 递归结束进行合并
+  return merge(left, right);
+}
+// 合并排序
+function merge(left, right) {
+  let res = null;
+  let cur = null; // 用于叠加的指针
+
+  while(left !== null && right !== null) {
+      let tmp = null;
+      if (left.val < right.val) {
+          tmp = left;
+          left = left.next;
+      } else {
+          tmp = right;
+          right = right.next;
+      }
+      if (res === null) { // 初始化
+          res = tmp;
+          cur = res; // cur指向res所占的内存
+      } else {
+          cur.next = tmp;
+          cur = cur.next; // cur被更新了，但是res在累加
+      }
+  }
+  // 最后收尾
+  if (left !== null) {
+      if (cur === null) {
+          cur = left;
+      } else {
+          cur.next = left;
+      }
+  }
+  if (right !== null) {
+      if (cur === null) {
+          cur = right;
+      } else {
+          cur.next = right;
+      }
+  }
+
+  return res;
+}
