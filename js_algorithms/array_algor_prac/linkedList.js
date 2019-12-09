@@ -247,3 +247,23 @@ function merge(left, right) {
 
   return res;
 }
+
+/**
+ * 206.反转链表[简单]
+ * 
+ */
+var reverseList = function(head) {
+  if (head === null || head.next === null) {
+      return head
+  }
+  // 递归到最后一项，存入newHead
+  let newHead = reverseList(head.next);
+  let tmp = newHead; // 复制newHead作为初始值，开始遍历，直到最后一项
+  while(tmp.next !== null) {
+      tmp = tmp.next;
+  }
+  tmp.next = head; // 最后一项指向当前head；实现反向拼接
+  tmp.next.next = null; // 拼接完清楚最后一项的next，以免溢出
+
+  return newHead;
+}
