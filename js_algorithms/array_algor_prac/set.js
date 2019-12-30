@@ -99,5 +99,30 @@ var intersectionSizeTwo = function(intervals) {
   return I_S_arr.length;
 };
 /**
- * 
+ * 565. 数组嵌套[中等]
  */
+var arrayNesting = function(nums) {
+  var lens = 0;
+  var S = [];
+  var tmp = 0;
+  var index = 0;
+  var cache = []
+
+  while(index < nums.length) {
+      if (cache.indexOf(index) > -1 || S.indexOf(nums[tmp]) > -1) {
+          lens = lens > S.length ? lens : S.length
+          index++
+          tmp = index;
+          S = [];
+          continue;
+      }
+      if (S.indexOf(nums[tmp]) < 0) {
+          S.push(nums[tmp])
+          cache.push(nums[tmp])
+          tmp = nums[tmp]
+      }
+  }
+
+  return lens
+};
+
